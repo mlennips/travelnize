@@ -1,0 +1,11 @@
+@Travelnize.API_HostAddress = http://localhost:5005
+
+GET {{LIT.Travelnize.API_HostAddress}}/users/
+Accept: application/json
+
+###
+
+GET {{LIT.Travelnize.API_HostAddress}}/users/1
+Accept: application/json
+
+###
