@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Common
 {
-    public record PermissionLevel : SimpleValueObject<string>
+    public record PermissionLevel : SingleValueObject<string>
     {
         private PermissionLevel(string value) : base(value)
         {

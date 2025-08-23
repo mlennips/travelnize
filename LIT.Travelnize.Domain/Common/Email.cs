@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Common
 {
-    public record Email : SimpleValueObject<string>
+    public record Email : SingleValueObject<string>
     {
         public Email(string value) : base(value)
         {

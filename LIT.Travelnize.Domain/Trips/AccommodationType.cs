@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public record AccommodationType : SimpleValueObject<string>
+    public record AccommodationType : SingleValueObject<string>
     {
         public AccommodationType(string value) : base(value)
         {

@@ -12,7 +12,6 @@ namespace LIT.Travelnize.Domain.Trips
         public string Name { get; private set; } = name;
         public string Description { get; private set; } = description;
         public DateRange TravelPeriod { get; private set; } = travelPeriod;
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public IReadOnlyCollection<TravelSegment> TravelSegments => travelSegments.AsReadOnly();
         public IReadOnlyCollection<Participant> Participants => participants.AsReadOnly();
         public IReadOnlyCollection<Transportation> Transportations => transportations.AsReadOnly();
@@ -166,14 +165,14 @@ namespace LIT.Travelnize.Domain.Trips
 
         public Result<Guid> AddTransportation(string name, string description, string identifier, Location departure,
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink,
-            string transportationType, List<Participant>? passengers = null)
+            TransportationType type, List<Participant>? passengers = null)
         {
             if (departureDate >= arrivalDate)
             {
                 return TripsErrors.InvalidTransportationDates;
             }
             var transportation = Transportation.Create(Id, name, description, identifier, departure, arrival,
-                departureDate, arrivalDate, routeLink, transportationType, passengers);
+                departureDate, arrivalDate, routeLink, type, passengers);
 
             transportations.Add(transportation);
             return transportation.Id;

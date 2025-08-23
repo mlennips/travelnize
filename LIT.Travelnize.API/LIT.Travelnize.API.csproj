@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LIT.Travelnize.Application\LIT.Travelnize.UseCases.csproj" />
+    <ProjectReference Include="..\LIT.Travelnize.Infrastructure\LIT.Travelnize.Infrastructure.csproj" />
     <ProjectReference Include="..\LIT.Travelnize.ServiceDefaults\LIT.Travelnize.ServiceDefaults.csproj" />
   </ItemGroup>
 

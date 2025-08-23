@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Common
 {
-    public record ExternalUrl : SimpleValueObject<string>
+    public record ExternalUrl : SingleValueObject<string>
     {
         public ExternalUrl(string value) : base(value)
         {

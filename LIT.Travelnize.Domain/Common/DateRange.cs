@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Common
 {
-    public class DateRange : IValueObject
+    public record DateRange : ValueObject
     {
         public DateTime Start { get; }
         public DateTime End { get; }
@@ -21,6 +21,12 @@ namespace LIT.Travelnize.Domain.Common
         public bool Overlaps(DateRange other)
         {
             return Start < other.End && End > other.Start;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Start;
+            yield return End;
         }
     }
 }
