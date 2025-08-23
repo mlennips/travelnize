@@ -1,4 +1,5 @@
 using LIT.Travelnize.API.Endpoints;
+using LIT.Travelnize.ServiceDefaults;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
