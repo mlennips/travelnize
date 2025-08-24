@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {
-    public class TripDbContext : DbContext
+    public class TripContext : DbContext
     {
-        protected TripDbContext()
+        protected TripContext()
         {
         }
 
-        public TripDbContext(DbContextOptions options) : base(options)
+        public TripContext(DbContextOptions options) : base(options)
         {
         }
 
