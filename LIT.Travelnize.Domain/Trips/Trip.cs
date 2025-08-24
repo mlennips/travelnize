@@ -3,24 +3,37 @@ using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Trip(Guid id, Guid userId, string name, string description, DateRange travelPeriod,
-        List<TravelSegment> travelSegments, List<Participant> participants, List<Transportation> transportations) : AggregateRoot
+    public class Trip : AggregateRoot
     {
-        public override Guid Id { get; } = id;
-        public Guid UserId { get; private set; } = userId;
+        private readonly List<TravelSegment> _travelSegments = [];
+        private readonly List<Participant> _participants = [];
+        private readonly List<Transportation> _transportations = [];
 
-        public string Name { get; private set; } = name;
-        public string Description { get; private set; } = description;
-        public DateRange TravelPeriod { get; private set; } = travelPeriod;
-        public IReadOnlyCollection<TravelSegment> TravelSegments => travelSegments.AsReadOnly();
-        public IReadOnlyCollection<Participant> Participants => participants.AsReadOnly();
-        public IReadOnlyCollection<Transportation> Transportations => transportations.AsReadOnly();
+        public override Guid Id { get; init; }
+        public Guid UserId { get; init; }
 
-        public static Trip Create(Guid userId, string name, string description, DateTime startDate, DateTime endDate)
+        public string Name { get; private set; } = default!;
+        public string Description { get; private set; } = default!;
+        public DateRange TravelPeriod { get; private set; } = default!;
+        public IReadOnlyCollection<TravelSegment> TravelSegments { get => _travelSegments.AsReadOnly(); init => _travelSegments = value.ToList(); }
+        public IReadOnlyCollection<Participant> Participants { get => _participants.AsReadOnly(); init => _participants = value.ToList(); }
+        public IReadOnlyCollection<Transportation> Transportations { get => _transportations.AsReadOnly(); init => _transportations = value.ToList(); }
+
+        public static Trip Create(Guid userId, string name, string description, DateRange travelPeriod, string userName, Email userEmail)
         {
-            var dateRange = new DateRange(startDate, endDate);
-            var trip = new Trip(Guid.NewGuid(), userId, name, description, dateRange, [], [], []);
-            trip.AddParticipant(userId, "", null, PermissionLevel.Admin);
+            var trip = new Trip()
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Name = name,
+                Description = description,
+                TravelPeriod = travelPeriod,
+                TravelSegments = [],
+                Participants = [],
+                Transportations = []
+            };
+            trip.AddParticipant(userId, userName, userEmail);
+
             return trip;
         }
 
@@ -31,11 +44,11 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
 
-        public Result<Guid> AddTravelSegment(DateTime startDate, DateTime endDate, string description)
+        public Result<TravelSegment> AddTravelSegment(DateTime startDate, DateTime endDate, string description)
         {
             var newSegment = TravelSegment.Create(Id, description, new DateRange(startDate, endDate));
-            travelSegments.Add(newSegment);
-            return newSegment.Id;
+            _travelSegments.Add(newSegment);
+            return newSegment;
         }
 
         public Result RemoveTravelSegment(Guid segmentId)
@@ -46,7 +59,7 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripsErrors.TravelSegmentNotFound;
             }
 
-            travelSegments.Remove(segment);
+            _travelSegments.Remove(segment);
             return Result.Success();
         }
 
@@ -63,7 +76,7 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
 
-        public Result<Guid> AddDestinationToTravelSegment(Guid segmentId, string name, string description, Location location)
+        public Result<Destination> AddDestinationToTravelSegment(Guid segmentId, string name, string description, Location location)
         {
             var segment = TravelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
@@ -73,7 +86,7 @@ namespace LIT.Travelnize.Domain.Trips
 
             var destination = Destination.Create(Id, segmentId, name, description, segment.DateRange, location);
             segment.AddDestination(destination);
-            return destination.Id;
+            return destination;
         }
 
         public Result RemoveDestinationFromTravelSegment(Guid segmentId, Guid destinationId)
@@ -109,18 +122,18 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
 
-        public Result<Guid> AddParticipant(Guid userId, string name, Email? email, PermissionLevel permissionLevel)
+        public Result<Participant> AddParticipant(Guid userId, string name, Email email)
         {
-            var participant = Participant.Create(Id, userId, name, email, permissionLevel);
-            participants.Add(participant);
-            return participant.Id;
+            var participant = Participant.CreateAsUser(Id, userId, name, email);
+            _participants.Add(participant);
+            return participant;
         }
 
-        public Result<Guid> AddParticipant(string name, Email email, PermissionLevel permissionLevel)
+        public Result<Participant> AddParticipant(string name, Email email)
         {
-            var participant = Participant.Create(Id, name, email, permissionLevel);
-            participants.Add(participant);
-            return participant.Id;
+            var participant = Participant.CreateAsGuest(Id, name, email);
+            _participants.Add(participant);
+            return participant;
         }
 
         public Result RemoveParticipant(Guid participantId)
@@ -131,7 +144,7 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripsErrors.ParticipantNotFound;
             }
 
-            participants.Remove(participant);
+            _participants.Remove(participant);
             return Result.Success();
         }
 
@@ -163,7 +176,7 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
 
-        public Result<Guid> AddTransportation(string name, string description, string identifier, Location departure,
+        public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink,
             TransportationType type, List<Participant>? passengers = null)
         {
@@ -174,8 +187,8 @@ namespace LIT.Travelnize.Domain.Trips
             var transportation = Transportation.Create(Id, name, description, identifier, departure, arrival,
                 departureDate, arrivalDate, routeLink, type, passengers);
 
-            transportations.Add(transportation);
-            return transportation.Id;
+            _transportations.Add(transportation);
+            return transportation;
         }
     }
 }

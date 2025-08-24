@@ -4,14 +4,16 @@ namespace LIT.Travelnize.Domain.Common
 {
     public record Location : ValueObject
     {
-        public Location(Address address, Coordinates? coordinates)
+        public Location() : this(new Address(), new Coordinates()) { }
+
+        public Location(Address address, Coordinates coordinates)
         {
             Address = address;
             Coordinates = coordinates;
         }
 
         public Address Address { get; }
-        public Coordinates? Coordinates { get; }
+        public Coordinates Coordinates { get; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
@@ -21,5 +23,7 @@ namespace LIT.Travelnize.Domain.Common
                 yield return Coordinates;
             }
         }
+
+        public static Location Empty => new();
     }
 }

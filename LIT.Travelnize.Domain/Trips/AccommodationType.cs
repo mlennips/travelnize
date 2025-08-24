@@ -4,6 +4,8 @@ namespace LIT.Travelnize.Domain.Trips
 {
     public record AccommodationType : SingleValueObject<string>
     {
+        public AccommodationType() : this("Other") { }
+
         public AccommodationType(string value) : base(value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -29,7 +31,7 @@ namespace LIT.Travelnize.Domain.Trips
             "Other"
         ];
 
-        public static AccommodationType Default => new("Other");
+        public static AccommodationType Default => new();
     }
 
 

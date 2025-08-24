@@ -3,24 +3,37 @@ using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Destination(Guid id, Guid tripId, Guid travelSegmentId, string name, string description,
-        DateRange dateRange, Location location, List<Accommodation> accommodations, ExternalUrl? imageUrl, ExternalUrl? url) : IEntity
+    public class Destination : IEntity
     {
-        public Guid Id { get; } = id;
-        public Guid TripId { get; } = tripId;
-        public Guid TravelSegmentId { get; set; } = travelSegmentId;
-        public string Name { get; private set; } = name;
-        public string Description { get; private set; } = description;
-        public DateRange DateRange { get; private set; } = dateRange;
-        public Location Location { get; private set; } = location;
-        public ExternalUrl? ImageUrl { get; private set; } = imageUrl;
-        public ExternalUrl? Url { get; private set; } = url;
-        public IReadOnlyCollection<Accommodation> Accommodations => accommodations.AsReadOnly();
+        private readonly List<Accommodation> _accommodations = [];
+
+        public Guid Id { get; init; }
+        public Guid TripId { get; init; }
+        public Guid TravelSegmentId { get; private set; }
+        public string Name { get; private set; } = default!;
+        public string Description { get; private set; } = default!;
+        public DateRange DateRange { get; private set; } = default!;
+        public Location Location { get; private set; } = default!;
+        public ExternalUrl? ImageUrl { get; private set; }
+        public ExternalUrl? Website { get; private set; }
+        public IReadOnlyCollection<Accommodation> Accommodations { get => _accommodations.AsReadOnly(); init => _accommodations = value.ToList(); }
 
         internal static Destination Create(Guid tripId, Guid travelSegmentId, string name, string description,
             DateRange dateRange, Location location, ExternalUrl? imageUrl = null, ExternalUrl? url = null)
         {
-            return new Destination(Guid.NewGuid(), tripId, travelSegmentId, name, description, dateRange, location, [], imageUrl, url);
+            return new Destination()
+            {
+                Id = Guid.NewGuid(),
+                TripId = tripId,
+                TravelSegmentId = travelSegmentId,
+                Name = name,
+                Description = description,
+                DateRange = dateRange,
+                Location = location,
+                ImageUrl = imageUrl,
+                Website = url,
+                Accommodations = []
+            };
         }
 
         internal Result Update(string name, string description, Location location)

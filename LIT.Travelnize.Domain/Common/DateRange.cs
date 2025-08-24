@@ -4,8 +4,8 @@ namespace LIT.Travelnize.Domain.Common
 {
     public record DateRange : ValueObject
     {
-        public DateTime Start { get; }
-        public DateTime End { get; }
+        public DateTime Start { get; init; }
+        public DateTime End { get; init; }
 
         public DateRange(DateTime start, DateTime end)
         {

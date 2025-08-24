@@ -3,25 +3,40 @@ using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Participant(Guid id, Guid tripId, Guid? userId, string name, Email? email, 
-        PermissionLevel permissionLevel) : IEntity
+    public class Participant : IEntity
     {
-        public Guid Id { get; } = id;
-        public Guid TripId { get; } = tripId;
-        public Guid? UserId { get; private set; } = userId;
+        public Guid Id { get; init; }
+        public Guid TripId { get; init; }
+        public Guid? UserId { get; private set; }
 
-        public string Name { get; private set; } = name;
-        public Email? Email { get; private set; } = email;
-        public PermissionLevel PermissionLevel { get; private set; } = permissionLevel;
+        public string Name { get; private set; } = default!;
+        public Email? Email { get; private set; }
+        public PermissionLevel PermissionLevel { get; private set; } = default!;
 
-        internal static Participant Create(Guid tripId, Guid userId, string name, Email? email, PermissionLevel permissionLevel)
+        internal static Participant CreateAsUser(Guid tripId, Guid userId, string name, Email? email)
         {
-            return new Participant(Guid.NewGuid(), tripId, userId, name, email, permissionLevel);
+            return new Participant
+            {
+                Id = Guid.NewGuid(),
+                TripId = tripId,
+                UserId = userId,
+                Name = name,
+                Email = email,
+                PermissionLevel = PermissionLevel.User
+            };
         }
 
-        internal static Participant Create(Guid tripId, string name, Email? email, PermissionLevel permissionLevel)
+        internal static Participant CreateAsGuest(Guid tripId, string name, Email? email)
         {
-            return new Participant(Guid.NewGuid(), tripId, null, name, email, permissionLevel);
+            return new Participant
+            {
+                Id = Guid.NewGuid(),
+                TripId = tripId,
+                UserId = null,
+                Name = name,
+                Email = email,
+                PermissionLevel = PermissionLevel.Guest
+            };
         }
 
         internal Result Update(string name, Email email)

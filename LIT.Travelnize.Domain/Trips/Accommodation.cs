@@ -3,23 +3,32 @@ using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Accommodation(Guid id, Guid tripId, Guid travelSegmentId, string name, AccommodationType type,
-        Address address, DateTime checkIn, DateTime checkOut) : IEntity
+    public class Accommodation : IEntity
     {
-        public Guid Id { get; } = id;
-        public Guid TripId { get; } = tripId;
-        public Guid TravelSegmentId { get; } = travelSegmentId;
+        public Guid Id { get; init; }
+        public Guid TripId { get; init; }
+        public Guid TravelSegmentId { get; init; }
 
-        public string Name { get; private set; } = name;
-        public AccommodationType Type { get; private set; } = type;
-        public Address Address { get; private set; } = address;
-        public DateTime CheckIn { get; private set; } = checkIn;
-        public DateTime CheckOut { get; private set; } = checkOut;
+        public string Name { get; private set; } = default!;
+        public AccommodationType Type { get; private set; } = default!;
+        public Address Address { get; private set; } = default!;
+        public DateTime CheckIn { get; private set; }
+        public DateTime CheckOut { get; private set; }
 
         internal static Accommodation Create(Guid tripId, Guid travelSegmentId, string name, AccommodationType type, 
             Address address, DateTime checkIn, DateTime checkOut)
         {
-            return new Accommodation(Guid.NewGuid(), tripId, travelSegmentId, name, type, address, checkIn, checkOut);
+            return new Accommodation()
+            {
+                Id = Guid.NewGuid(),
+                TripId = tripId,
+                TravelSegmentId = travelSegmentId,
+                Name = name,
+                Type = type,
+                Address = address,
+                CheckIn = checkIn,
+                CheckOut = checkOut
+            };
         }
 
         internal Result Update(string name, AccommodationType type, Address address, DateTime checkIn, DateTime checkOut)
@@ -34,6 +43,7 @@ namespace LIT.Travelnize.Domain.Trips
             Address = address;
             CheckIn = checkIn;
             CheckOut = checkOut;
+
             return Result.Success();
         }
     }

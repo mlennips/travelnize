@@ -4,7 +4,7 @@ namespace LIT.Travelnize.Domain.Common
 {
     public record PermissionLevel : SingleValueObject<string>
     {
-        private PermissionLevel(string value) : base(value)
+        public PermissionLevel(string value) : base(value)
         {
             if (string.IsNullOrWhiteSpace(value) || !IsValidPermissionLevel(value))
             {
@@ -13,13 +13,14 @@ namespace LIT.Travelnize.Domain.Common
         }
         private static bool IsValidPermissionLevel(string level)
         {
-            return level == Guest.Value || level == Admin.Value;
+            return AllLevels.Contains(level);
         }
 
         public static PermissionLevel Guest { get; } = new PermissionLevel("Guest");
+        public static PermissionLevel User { get; } = new PermissionLevel("User");
         public static PermissionLevel Admin { get; } = new PermissionLevel("Admin");
 
-        public static IEnumerable<PermissionLevel> AllLevels => [Guest, Admin];
+        public static IEnumerable<string> AllLevels => [Guest.Value, Guest.Value, Admin.Value];
         public static implicit operator string(PermissionLevel level) => level.Value;
         public static implicit operator PermissionLevel(string value) => new(value);
     }

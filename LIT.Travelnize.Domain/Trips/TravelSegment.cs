@@ -3,19 +3,27 @@ using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class TravelSegment(Guid id, Guid tripId, string description,
-        List<Destination> destinations, DateRange dateRange) : IEntity
+    public class TravelSegment : IEntity
     {
-        public Guid Id { get; } = id;
-        public Guid TripId { get; } = tripId;
+        private readonly List<Destination> _destinations = [];
 
-        public string Description { get; private set; } = description;
-        public DateRange DateRange { get; private set; } = dateRange;
-        public IReadOnlyCollection<Destination> Destinations => destinations.AsReadOnly();
+        public Guid Id { get; init; }
+        public Guid TripId { get; init; }
+
+        public string Description { get; private set; } = default!;
+        public DateRange DateRange { get; private set; } = default!;
+        public IReadOnlyCollection<Destination> Destinations { get => _destinations.AsReadOnly() ; init => _destinations = value.ToList(); }
 
         internal static TravelSegment Create(Guid tripId, string description, DateRange dateRange)
         {
-            return new TravelSegment(Guid.NewGuid(), tripId, description, [], dateRange);
+            return new TravelSegment()
+            {
+                Id = Guid.NewGuid(),
+                TripId = tripId,
+                Description = description,
+                DateRange = dateRange,
+                Destinations = []
+            };
         }
 
         internal void Update(DateTime startDate, DateTime endDate, string description)
@@ -34,7 +42,7 @@ namespace LIT.Travelnize.Domain.Trips
             {
                 return TripsErrors.DestinationDateRangeOutOfSegmentRange;
             }
-            destinations.Add(destination);
+            _destinations.Add(destination);
             return Result.Success();
         }
 
@@ -45,7 +53,7 @@ namespace LIT.Travelnize.Domain.Trips
             {
                 return TripsErrors.DestinationNotFound;
             }
-            destinations.Remove(destination);
+            _destinations.Remove(destination);
             return Result.Success();
         }
     }

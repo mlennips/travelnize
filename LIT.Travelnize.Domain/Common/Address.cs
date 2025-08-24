@@ -1,12 +1,19 @@
 ﻿using LIT.Travelnize.Domain.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIT.Travelnize.Domain.Common
 {
     public record Address : ValueObject
     {
-        public Address(string name, string street, string houseNumber, string postalCode, string city, string country)
+        public Address() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty)
         {
-            Name = name;
+
+        }
+
+        public Address(string line1, string line2, string street, string houseNumber, string postalCode, string city, string country)
+        {
+            Line1 = line1;
+            Line2 = line2;
             Street = street;
             HouseNumber = houseNumber;
             PostalCode = postalCode;
@@ -14,7 +21,8 @@ namespace LIT.Travelnize.Domain.Common
             Country = country;
         }
 
-        public string Name { get; }
+        public string Line1 { get; }
+        public string Line2 { get; }
         public string Street { get; }
         public string HouseNumber { get; }
         public string PostalCode { get; }
@@ -23,12 +31,12 @@ namespace LIT.Travelnize.Domain.Common
 
         public override string ToString()
         {
-            return $"{Name}, {Street} {HouseNumber}, {PostalCode} {City}, {Country}";
+            return $"{Line1}, {Street} {HouseNumber}, {PostalCode} {City}, {Country}";
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Name;
+            yield return Line1;
             yield return Street;
             yield return HouseNumber;
             yield return PostalCode;
@@ -36,6 +44,6 @@ namespace LIT.Travelnize.Domain.Common
             yield return Country;
         }
 
-        public static Address Empty => new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+        public static Address Empty => new();
     }
 }

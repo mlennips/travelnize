@@ -3,30 +3,41 @@ using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Transportation(Guid id, Guid tripId, string name, string description, string identifier, Location? departure, 
-        Location? arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl? routeLink,
-        TransportationType type, List<Participant> passengers) : IEntity
+    public class Transportation : IEntity
     {
-        public Guid Id { get; } = id;
-        public Guid TripId { get; } = tripId;
+        public Guid Id { get; init; }
+        public Guid TripId { get; init; }
 
-        public string Name { get; private set; } = name;
-        public string Description { get; private set; } = description;
-        public string Identifier { get; private set; } = identifier;
-        public Location? Departure { get; private set; } = departure;
-        public Location? Arrival { get; private set; } = arrival;
-        public DateTime DepartureDate { get; private set; } = departureDate;
-        public DateTime ArrivalDate { get; private set; } = arrivalDate;
-        public ExternalUrl? RouteLink { get; private set; } = routeLink;
-        public TransportationType Type { get; private set; } = type;
-        public IReadOnlyCollection<Participant> Passengers { get; private set; } = passengers.AsReadOnly();
+        public string Name { get; private set; } = default!;
+        public string Description { get; private set; } = default!;
+        public string Identifier { get; private set; } = default!;
+        public Location Departure { get; private set; } = default!;
+        public Location Arrival { get; private set; } = default!;
+        public DateTime DepartureDate { get; private set; }
+        public DateTime ArrivalDate { get; private set; }
+        public ExternalUrl RouteLink { get; private set; } = default!;
+        public TransportationType Type { get; private set; } = default!;
+        public IReadOnlyCollection<Participant> Passengers { get; private set; } = [];
 
         internal static Transportation Create(Guid tripId, string name, string description, string identifier, Location departure, 
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink, 
             TransportationType type, List<Participant>? passengers = null)
         {
-            return new Transportation(Guid.NewGuid(), tripId, name, description, identifier, departure, arrival, 
-                departureDate, arrivalDate, routeLink, type, passengers ?? []);
+            return new Transportation()
+            {
+                Id = Guid.NewGuid(),
+                TripId = tripId,
+                Name = name,
+                Description = description,
+                Identifier = identifier,
+                Departure = departure,
+                Arrival = arrival,
+                DepartureDate = departureDate,
+                ArrivalDate = arrivalDate,
+                RouteLink = routeLink,
+                Type = type,
+                Passengers = passengers ?? []
+            };
         }
 
         internal Result Update(string name, string description, string identifier, Location departure, 
