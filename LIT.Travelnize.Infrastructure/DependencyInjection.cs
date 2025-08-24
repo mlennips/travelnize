@@ -17,7 +17,7 @@ namespace LIT.Travelnize.Infrastructure
         {
             string? connectionString = configuration.GetConnectionString("travelnize");
 
-            services.AddDbContext<TripContext>(options =>
+            services.AddDbContext<TripDbContext>(options =>
                 options.UseNpgsql(connectionString ?? throw new InvalidOperationException("Connection string 'travelnize' not found.")));
 
             return services;

@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {
-    public class TripContext : DbContext
+    public class TripDbContext : DbContext
     {
-        protected TripContext()
+        protected TripDbContext()
         {
         }
 
-        public TripContext(DbContextOptions options) : base(options)
+        public TripDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -54,7 +54,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("your_connection_string_here"); 
+
         }
     }
 }
