@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA1848: LoggerMessage-Delegaten verwenden
+dotnet_diagnostic.CA1848.severity = none

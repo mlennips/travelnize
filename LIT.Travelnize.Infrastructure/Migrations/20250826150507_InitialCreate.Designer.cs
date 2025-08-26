@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace LIT.Travelnize.Infrastructure.Migrations
 {
-    [DbContext(typeof(TripContext))]
-    [Migration("20250824165313_InitialCreate")]
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20250826150507_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -197,7 +197,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("TripSegments");
+                    b.ToTable("TravelSegments");
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Trip", b =>
@@ -609,7 +609,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
 
                             b1.HasKey("TravelSegmentId");
 
-                            b1.ToTable("TripSegments");
+                            b1.ToTable("TravelSegments");
 
                             b1.WithOwner()
                                 .HasForeignKey("TravelSegmentId");

@@ -3,16 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {
-    /// <summary>
-    /// Run after changes to the model: dotnet ef migrations add [Message] --project LIT.Travelnize.Infrastructure --startup-project LIT.Travelnize.API
-    /// Apply to database: dotnet ef database update --project LIT.Travelnize.Infrastructure --startup-project LIT.Travelnize.API
-    public class TripContext : DbContext
+    public class AppDbContext : DbContext
     {
-        protected TripContext()
+        protected AppDbContext()
         {
         }
 
-        public TripContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
@@ -26,6 +23,8 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Run after changes to the model: dotnet ef migrations add [Message] --project LIT.Travelnize.Infrastructure --startup-project LIT.Travelnize.API
+            // Apply to database: dotnet ef database update --project LIT.Travelnize.Infrastructure --startup-project LIT.Travelnize.API
             base.OnModelCreating(modelBuilder);
 
             BuildTrip(modelBuilder);
@@ -113,10 +112,5 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 });
             });
         }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-
-        //}
     }
 }

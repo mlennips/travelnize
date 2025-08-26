@@ -5,7 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <PublishAot>true</PublishAot>
+    <PublishAot>false</PublishAot>
+    <UseProxySourceGenerator>true</UseProxySourceGenerator>
     
     <!-- Configure code analysis -->
     <AnalysisLevel>latest-recommended</AnalysisLevel>
@@ -34,6 +35,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.8" />
     <PackageReference Include="Polly.Core" Version="8.6.3" />
     <PackageReference Include="Polly.Extensions" Version="8.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
 </Project>

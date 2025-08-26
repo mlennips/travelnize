@@ -73,7 +73,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TripSegments",
+                name: "TravelSegments",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -84,9 +84,9 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TripSegments", x => x.Id);
+                    table.PrimaryKey("PK_TravelSegments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TripSegments_Trips_TripId",
+                        name: "FK_TravelSegments_Trips_TripId",
                         column: x => x.TripId,
                         principalTable: "Trips",
                         principalColumn: "Id",
@@ -139,9 +139,9 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Destinations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Destinations_TripSegments_TravelSegmentId",
+                        name: "FK_Destinations_TravelSegments_TravelSegmentId",
                         column: x => x.TravelSegmentId,
-                        principalTable: "TripSegments",
+                        principalTable: "TravelSegments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -195,8 +195,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                 column: "TripId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TripSegments_TripId",
-                table: "TripSegments",
+                name: "IX_TravelSegments_TripId",
+                table: "TravelSegments",
                 column: "TripId");
         }
 
@@ -219,7 +219,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                 name: "Transportations");
 
             migrationBuilder.DropTable(
-                name: "TripSegments");
+                name: "TravelSegments");
 
             migrationBuilder.DropTable(
                 name: "Trips");
