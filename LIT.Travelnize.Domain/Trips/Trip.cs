@@ -19,12 +19,12 @@ namespace LIT.Travelnize.Domain.Trips
         public IReadOnlyCollection<Participant> Participants { get => _participants.AsReadOnly(); init => _participants = value.ToList(); }
         public IReadOnlyCollection<Transportation> Transportations { get => _transportations.AsReadOnly(); init => _transportations = value.ToList(); }
 
-        public static Trip Create(Guid userId, string name, string description, DateRange travelPeriod, string userName, Email userEmail)
+        public static Trip Create(IUser user, string name, string description, DateRange travelPeriod)
         {
             var trip = new Trip()
             {
                 Id = Guid.NewGuid(),
-                UserId = userId,
+                UserId = user.Id,
                 Name = name,
                 Description = description,
                 TravelPeriod = travelPeriod,
@@ -32,7 +32,7 @@ namespace LIT.Travelnize.Domain.Trips
                 Participants = [],
                 Transportations = []
             };
-            trip.AddParticipant(userId, userName, userEmail);
+            trip.AddParticipant(user.Id, user.Name, user.Email);
 
             return trip;
         }
@@ -42,7 +42,6 @@ namespace LIT.Travelnize.Domain.Trips
             TravelPeriod = new DateRange(startDate, endDate);
             return Result.Success();
         }
-
 
         public Result<TravelSegment> AddTravelSegment(DateTime startDate, DateTime endDate, string description)
         {

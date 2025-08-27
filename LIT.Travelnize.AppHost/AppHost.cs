@@ -3,7 +3,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 var database = builder.AddPostgres("database")
     .WithPgAdmin()
     .WithDataVolume();
-
 var databaseTravelnize = database.AddDatabase("travelnize");
 var databaseIdentity = database.AddDatabase("identity");
 

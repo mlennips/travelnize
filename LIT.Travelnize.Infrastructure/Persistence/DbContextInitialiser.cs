@@ -73,7 +73,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             {
                 UserName = "administrator@localhost",
                 Email = "administrator@localhost",
-                Id = Guid.NewGuid().ToString()
+                Id = Guid.NewGuid().ToString()                
             };
 
             if (userManager.Users.All(u => u.UserName != administrator.UserName))

@@ -41,13 +41,6 @@ namespace LIT.Travelnize.API.Endpoints
                 // For JWT, logout is typically handled on the client side by deleting the token.
                 return Results.Ok();
             }).RequireAuthorization();
-            
-
-            api.MapPost("/refresh-token", () =>
-            {
-                // Implement token refresh logic if using refresh tokens.
-                return Results.Ok();
-            }).RequireAuthorization(); ;
 
             api.MapPost("/forgot-password", () =>
             {

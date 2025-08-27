@@ -6,6 +6,7 @@ namespace LIT.Travelnize.Domain.Trips
     public class Destination : IEntity
     {
         private readonly List<Accommodation> _accommodations = [];
+        private readonly List<Activity> _activities = [];
 
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
@@ -17,6 +18,7 @@ namespace LIT.Travelnize.Domain.Trips
         public ExternalUrl? ImageUrl { get; private set; }
         public ExternalUrl? Website { get; private set; }
         public IReadOnlyCollection<Accommodation> Accommodations { get => _accommodations.AsReadOnly(); init => _accommodations = value.ToList(); }
+        public IReadOnlyCollection<Activity> Activities { get => _activities.AsReadOnly(); init => _activities = value.ToList(); }
 
         internal static Destination Create(Guid tripId, Guid travelSegmentId, string name, string description,
             DateRange dateRange, Location location, ExternalUrl? imageUrl = null, ExternalUrl? url = null)
@@ -32,7 +34,8 @@ namespace LIT.Travelnize.Domain.Trips
                 Location = location,
                 ImageUrl = imageUrl,
                 Website = url,
-                Accommodations = []
+                Accommodations = [],
+                Activities = []
             };
         }
 

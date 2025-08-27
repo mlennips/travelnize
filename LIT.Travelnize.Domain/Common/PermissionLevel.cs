@@ -20,7 +20,7 @@ namespace LIT.Travelnize.Domain.Common
         public static PermissionLevel User { get; } = new PermissionLevel("User");
         public static PermissionLevel Admin { get; } = new PermissionLevel("Admin");
 
-        public static IEnumerable<string> AllLevels => [Guest.Value, Guest.Value, Admin.Value];
+        public static IEnumerable<string> AllLevels => ["Guest", "User", "Admin"];
         public static implicit operator string(PermissionLevel level) => level.Value;
         public static implicit operator PermissionLevel(string value) => new(value);
     }

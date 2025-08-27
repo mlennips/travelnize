@@ -1,10 +1,14 @@
-﻿using LIT.Travelnize.Infrastructure.Persistence;
+﻿using LIT.Travelnize.Domain.Base;
+using LIT.Travelnize.Infrastructure.Identity;
+using LIT.Travelnize.Infrastructure.Messaging;
+using LIT.Travelnize.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace LIT.Travelnize.Infrastructure
@@ -13,15 +17,19 @@ namespace LIT.Travelnize.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfigurationManager configuration)
         {
+            services.AddMediatR();
             services.AddDatabase(configuration);
             services.AddIdentity(configuration);
+            services.AddRepository();
+            services.AddUnitOfWork();
+            services.AddSwaggerGen();
             return services;
         }
 
         private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = GetDatabaseConnectionString(configuration);
-            
+
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
             services.AddScoped<DbContextInitialiser>();
 
@@ -37,6 +45,8 @@ namespace LIT.Travelnize.Infrastructure
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<ICurrentUser, CurrentUser>();
 
             services.AddAuthentication(options =>
             {
@@ -58,6 +68,58 @@ namespace LIT.Travelnize.Infrastructure
             });
 
             return services;
+        }
+
+        private static void AddRepository(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IReadOnlyRepository<>), typeof(EFReadOnlyRepository<>));
+        }
+
+        private static void AddUnitOfWork(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
+        private static void AddMediatR(this IServiceCollection services)
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => x.ManifestModule.Name?.StartsWith("LIT.", StringComparison.OrdinalIgnoreCase) ?? false).ToArray();
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblies(assemblies);
+                cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+            });
+        }
+
+        private static void AddSwaggerGen(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
         }
 
         private static string GetDatabaseConnectionString(IConfiguration configuration)
