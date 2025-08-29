@@ -1,5 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Infrastructure.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {
@@ -12,14 +12,18 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             return await currentUser.GetUserAsync();
         }
 
+        public async Task<T?> GetByIdAsync<T>(Guid id) where T : class, IAggregateRoot
+        {
+            return await appDbContext.Set<T>().FindAsync(id);
+        }
+
         public async Task AddAsync<T>(T item) where T : class, IAggregateRoot
         {
             await appDbContext.Set<T>().AddAsync(item);
         }
-
-        public async Task<T?> GetByIdAsync<T>(Guid id) where T : class, IAggregateRoot
+        public Task UpdateAsync<T>(T item) where T : class, IAggregateRoot
         {
-            return await appDbContext.Set<T>().FindAsync(id);
+            return Task.CompletedTask;
         }
 
         public Task RemoveAsync<T>(T item) where T : class, IAggregateRoot

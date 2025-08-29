@@ -9,17 +9,17 @@ namespace LIT.Travelnize.UseCases.Trips
     {
         public record GetTripQuery(Guid TripId) : IQuery<GetTripDTO>;
 
-        public record GetTripDTO(Guid Id, string Name, string Description, DateRange TravelPeriod);
+        public record GetTripDTO(Guid Id, Guid UserId, string Name, string Description, DateRange TravelPeriod);
 
         public class GetTripQueryHandler(IReadOnlyRepository<Trip> tripRepository) : IQueryHandler<GetTripQuery, GetTripDTO>
         {
             public async Task<Result<GetTripDTO>> Handle(GetTripQuery request, CancellationToken cancellationToken)
             {
-                var t1 = await tripRepository.GetByIdAsync(request.TripId);
+                var trip = await tripRepository.GetByIdAsync(request.TripId);
                 
-                return t1 is null
+                return trip is null
                     ? new ErrorDetail("Trip.NotFound", "Trip not found")
-                    : new GetTripDTO(t1.Id, t1.Name, t1.Description, t1.TravelPeriod);
+                    : new GetTripDTO(trip.Id, trip.UserId, trip.Name, trip.Description, trip.TravelPeriod);
             }
         }
     }

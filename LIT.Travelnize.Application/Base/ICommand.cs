@@ -3,13 +3,13 @@ using MediatR;
 
 namespace LIT.Travelnize.UseCases.Base
 {
-    public interface ICommand<T> : Domain.Base.ICommand, IRequest<Result<T>>
+    public interface ICommand<T> : Domain.Base.ICommandBase, IRequest<Result<T>>
         where T : notnull
     {
 
     }
 
-    public interface ICommand : Domain.Base.ICommand, IRequest<Result>
+    public interface ICommand : Domain.Base.ICommandBase, IRequest<Result>
     {
 
     }

@@ -9,11 +9,28 @@ namespace LIT.Travelnize.API.Utils
             where TResult : notnull
         {
             Result<TResult> response = await mediator.Send(request!);
-            return response is Result result
-                ? result.IsSuccess
-                    ? result.Value is TResult value ? onSuccess(value) : throw new InvalidOperationException("Wrong value type.")
-                    : onFailure(result.Error)
-                : throw new InvalidOperationException("Wrong response type.");
+            if (response is Result result)
+            {
+                if (result.IsSuccess)
+                {
+                    if (result.Value is TResult value)
+                    {
+                        return onSuccess(value);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Wrong value type.");
+                    }
+                }
+                else
+                {
+                    return onFailure(result.Error);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Wrong response type.");
+            }
         }
 
         public static async Task<IResult> SendAndMatchAsync(this IMediator mediator, IBaseRequest request, Func<IResult>? onSuccess = null, Func<ErrorDetail, IResult>? onFailure = null)
@@ -21,9 +38,22 @@ namespace LIT.Travelnize.API.Utils
             onSuccess ??= () => Results.Ok();
             onFailure ??= Results.BadRequest;
             var response = await mediator.Send(request!);
-            return response is Result result
-                ? result.IsSuccess ? onSuccess() : onFailure(result.Error)
-                : throw new InvalidOperationException("Wrong response type.");
+
+            if (response is Result result)
+            {
+                if (result.IsSuccess)
+                {
+                    return onSuccess();
+                }
+                else
+                {
+                    return onFailure(result.Error);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Wrong response type.");
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {
@@ -18,7 +17,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
     }
 
     public class DbContextInitialiser(
-        ILogger<DbContextInitialiser> logger,
         AppDbContext appContext,
         AppIdentityDbContext appIdentityContext,
         UserManager<IdentityUser> userManager,
@@ -34,13 +32,14 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 await appIdentityContext.Database.EnsureDeletedAsync(); // early development
                 await appIdentityContext.Database.EnsureCreatedAsync();
 
+#pragma warning disable S125 // Sections of code should not be commented out
                 //await appContext.Database.MigrateAsync();
                 //await appIdentityContext.Database.MigrateAsync();
+#pragma warning restore S125 // Sections of code should not be commented out
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while initialising the database.");
-                throw;
+                throw new InvalidOperationException("Failed to initialze the database.", ex);
             }
         }
 
@@ -53,8 +52,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while seeding the database.");
-                throw;
+                throw new InvalidOperationException("Failed to seed the database.", ex);
             }
         }
 

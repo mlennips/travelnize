@@ -4,7 +4,7 @@
     {
         public T Value { get; init; }
 
-        public SingleValueObject(T value)
+        protected SingleValueObject(T value)
         {
             if (value is null)
             {

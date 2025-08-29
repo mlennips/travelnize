@@ -7,7 +7,7 @@ namespace LIT.Travelnize.Domain.Base
     {
         public abstract Guid Id { get; init; }
 
-        protected virtual Result Delete()
+        public virtual Result Delete()
         {
             return Result.Success();
         }

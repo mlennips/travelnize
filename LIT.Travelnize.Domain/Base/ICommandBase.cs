@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Base
 {
-    public interface ICommand : IRequest
+    public interface ICommandBase : IRequest
     {
 
     }

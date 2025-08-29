@@ -35,11 +35,11 @@ namespace LIT.Travelnize.Domain.Trips
         {
             if (Destinations.Any(d => d.Id == destination.Id))
             {
-                return TripsErrors.DestinationAlreadyExistsInSegment;
+                return TripErrors.DestinationAlreadyExistsInSegment;
             }
             if (DateRange.Overlaps(destination.DateRange))
             {
-                return TripsErrors.DestinationDateRangeOutOfSegmentRange;
+                return TripErrors.DestinationDateRangeOutOfSegmentRange;
             }
             _destinations.Add(destination);
             return Result.Success();
@@ -50,7 +50,7 @@ namespace LIT.Travelnize.Domain.Trips
             var destination = Destinations.FirstOrDefault(d => d.Id == destinationId);
             if (destination == null)
             {
-                return TripsErrors.DestinationNotFound;
+                return TripErrors.DestinationNotFound;
             }
             _destinations.Remove(destination);
             return Result.Success();

@@ -12,7 +12,7 @@ namespace LIT.Travelnize.API.Endpoints
         public static void RegisterAuthEndpoints(this IEndpointRouteBuilder routes)
         {
             RouteGroupBuilder api = routes.MapGroup("/auth")
-                .WithTags(["Auth"]);
+                .WithTags("Auth");
 
             api.MapPost("/register", async (UserManager<IdentityUser> userManager, RegisterModel model) =>
             {

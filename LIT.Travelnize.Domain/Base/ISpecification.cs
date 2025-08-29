@@ -6,7 +6,6 @@ namespace LIT.Travelnize.Domain.Base
         where TEntity : class, IEntity
     {
         Expression<Func<TEntity, bool>> Criteria { get; }
-        //List<Expression<Func<TEntity, object>>> Includes { get; } // ToDo noch nötig?
         IQueryable<TEntity> FinalProcessing(IQueryable<TEntity> filteredQueryable);
     }
 }

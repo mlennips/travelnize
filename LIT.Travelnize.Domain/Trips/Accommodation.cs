@@ -35,7 +35,7 @@ namespace LIT.Travelnize.Domain.Trips
         {
             if (CheckIn >= CheckOut)
             {
-                return TripsErrors.InvalidAccommodationDates;
+                return TripErrors.InvalidAccommodationDates;
             }
 
             Name = name;

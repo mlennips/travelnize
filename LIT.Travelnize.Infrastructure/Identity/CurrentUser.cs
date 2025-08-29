@@ -8,6 +8,9 @@ namespace LIT.Travelnize.Infrastructure.Identity
     public class CurrentUser : ICurrentUser
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private IUser? _user;
+
+        public string Name { get; init; }
 
         public CurrentUser(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager)
         {
@@ -16,14 +19,16 @@ namespace LIT.Travelnize.Infrastructure.Identity
             _userManager = userManager;
         }
 
-        public string Name { get; init; }
-
         public async Task<IUser> GetUserAsync()
         {
-            var user = await _userManager.FindByNameAsync(Name);
-            return user == null
-                ? throw new InvalidOperationException($"User with name {Name} not found.")
-                : new User(Guid.Parse(user.Id), user.UserName!, new Email(user.Email!));
+            if (_user == null)
+            {
+                var identityUser = await _userManager.FindByNameAsync(Name);
+                _user = identityUser == null
+                    ? throw new InvalidOperationException($"User with name {Name} not found.")
+                    : new User(Guid.Parse(identityUser.Id), identityUser.UserName!, new Email(identityUser.Email!));
+            }
+            return _user;
         }
 
         private sealed class User(Guid id, string name, Email email) : IUser

@@ -49,6 +49,11 @@
             return new();
         }
 
+        public static Result<TValue> Success<TValue>(TValue value)
+        {
+            return new(value);
+        }
+
         public static Result Failure(ErrorDetail error)
         {
             return new(error);
@@ -60,19 +65,9 @@
                 errors.Select(e => e.Code)), string.Join(";", errors.Select(e => e.Description))));
         }
 
-        public static Result<TValue> Success<TValue>(TValue value)
-        {
-            return new(value);
-        }
-
         public static VoidResult Void()
         {
             return new();
-        }
-
-        public static ErrorDetail Success(object create)
-        {
-            throw new NotImplementedException();
         }
 
         public static implicit operator Result(ErrorDetail error)

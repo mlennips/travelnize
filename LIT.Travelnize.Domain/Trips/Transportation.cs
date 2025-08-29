@@ -46,7 +46,7 @@ namespace LIT.Travelnize.Domain.Trips
         {
             if (departureDate >= arrivalDate)
             {
-                return TripsErrors.InvalidTransportationDates;
+                return TripErrors.InvalidTransportationDates;
             }
             Name = name;
             Description = description;
