@@ -12,7 +12,7 @@ namespace LIT.Travelnize.Domain.Trips
 
         public string Description { get; private set; } = default!;
         public DateRange DateRange { get; private set; } = default!;
-        public IReadOnlyCollection<Destination> Destinations { get => _destinations.AsReadOnly() ; init => _destinations = value.ToList(); }
+        public IEnumerable<Destination> Destinations => _destinations.AsReadOnly();
 
         internal static TravelSegment Create(Guid tripId, string description, DateRange dateRange)
         {
@@ -21,14 +21,13 @@ namespace LIT.Travelnize.Domain.Trips
                 Id = Guid.NewGuid(),
                 TripId = tripId,
                 Description = description,
-                DateRange = dateRange,
-                Destinations = []
+                DateRange = dateRange
             };
         }
 
-        internal void Update(DateTime startDate, DateTime endDate, string description)
+        internal void Update(DateRange dateRange, string description)
         {
-            DateRange = new DateRange(startDate, endDate);
+            DateRange = dateRange;
             Description = description;
         }
 

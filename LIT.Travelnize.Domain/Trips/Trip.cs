@@ -15,9 +15,10 @@ namespace LIT.Travelnize.Domain.Trips
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
         public DateRange TravelPeriod { get; private set; } = default!;
-        public IReadOnlyCollection<TravelSegment> TravelSegments { get => _travelSegments.AsReadOnly(); init => _travelSegments = value.ToList(); }
-        public IReadOnlyCollection<Participant> Participants { get => _participants.AsReadOnly(); init => _participants = value.ToList(); }
-        public IReadOnlyCollection<Transportation> Transportations { get => _transportations.AsReadOnly(); init => _transportations = value.ToList(); }
+
+        public IEnumerable<TravelSegment> TravelSegments => _travelSegments.AsReadOnly();
+        public IEnumerable<Participant> Participants => _participants.AsReadOnly();
+        public IEnumerable<Transportation> Transportations => _transportations.AsReadOnly();
 
         public static Trip Create(IUser user, string name, string description, DateRange travelPeriod)
         {
@@ -27,57 +28,62 @@ namespace LIT.Travelnize.Domain.Trips
                 UserId = user.Id,
                 Name = name,
                 Description = description,
-                TravelPeriod = travelPeriod,
-                TravelSegments = [],
-                Participants = [],
-                Transportations = []
+                TravelPeriod = travelPeriod
             };
             trip.AddParticipant(user.Id, user.Name, user.Email);
 
             return trip;
         }
 
-        public Result Update(DateTime startDate, DateTime endDate)
+        public Result Update(DateRange travelPeriod)
         {
-            TravelPeriod = new DateRange(startDate, endDate);
+            TravelPeriod = travelPeriod;
             return Result.Success();
         }
 
-        public Result<TravelSegment> AddTravelSegment(DateTime startDate, DateTime endDate, string description)
+        public Result<TravelSegment> AddTravelSegment(DateRange dateRange, string description)
         {
-            var newSegment = TravelSegment.Create(Id, description, new DateRange(startDate, endDate));
+            var newSegment = TravelSegment.Create(Id, description, dateRange);
             _travelSegments.Add(newSegment);
+            // Raise TravelSegmentAdded event (if using event sourcing)
+            // RaiseEvent(new TravelSegmentAdded(newSegment.Id, Id));
+
             return newSegment;
         }
 
         public Result RemoveTravelSegment(Guid segmentId)
         {
-            var segment = TravelSegments.FirstOrDefault(s => s.Id == segmentId);
+            var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
             {
                 return TripsErrors.TravelSegmentNotFound;
             }
 
             _travelSegments.Remove(segment);
+            // Raise TravelSegmentRemoved event (if using event sourcing)
+            // RaiseEvent(new TravelSegmentRemoved(segmentId));
+
             return Result.Success();
         }
 
-        public Result UpdateTravelSegment(Guid segmentId, DateTime startDate, DateTime endDate, string description)
+        public Result UpdateTravelSegment(Guid segmentId, DateRange dateRange, string description)
         {
-            var segment = TravelSegments.FirstOrDefault(s => s.Id == segmentId);
+            var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
             {
                 return TripsErrors.TravelSegmentNotFound;
             }
 
-            segment.Update(startDate, endDate, description);
+            segment.Update(dateRange, description);
+            // Raise TravelSegmentUpdated event (if using event sourcing)
+            // RaiseEvent(new TravelSegmentUpdated(segmentId));
+
             return Result.Success();
         }
 
-
         public Result<Destination> AddDestinationToTravelSegment(Guid segmentId, string name, string description, Location location)
         {
-            var segment = TravelSegments.FirstOrDefault(s => s.Id == segmentId);
+            var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
             {
                 return TripsErrors.TravelSegmentNotFound;
@@ -85,12 +91,15 @@ namespace LIT.Travelnize.Domain.Trips
 
             var destination = Destination.Create(Id, segmentId, name, description, segment.DateRange, location);
             segment.AddDestination(destination);
+            // Raise DestinationAdded event (if using event sourcing)
+            // RaiseEvent(new DestinationAdded(destination.Id, segmentId));
+
             return destination;
         }
 
         public Result RemoveDestinationFromTravelSegment(Guid segmentId, Guid destinationId)
         {
-            var segment = TravelSegments.FirstOrDefault(s => s.Id == segmentId);
+            var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
             {
                 return TripsErrors.TravelSegmentNotFound;
@@ -101,12 +110,15 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripsErrors.DestinationNotFound;
             }
             segment.RemoveDestination(destinationId);
+            // Raise DestinationRemoved event (if using event sourcing)
+            // RaiseEvent(new DestinationRemoved(destinationId));
+
             return Result.Success();
         }
 
         public Result UpdateDestinationInTravelSegment(Guid segmentId, Guid destinationId, string name, string description, Location location)
         {
-            var segment = TravelSegments.FirstOrDefault(s => s.Id == segmentId);
+            var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
             {
                 return TripsErrors.TravelSegmentNotFound;
@@ -117,14 +129,19 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripsErrors.DestinationNotFound;
             }
             destination.Update(name, description, location);
+            // Raise DestinationUpdated event (if using event sourcing)
+            // RaiseEvent(new DestinationUpdated(destinationId));
+
             return Result.Success();
         }
-
 
         public Result<Participant> AddParticipant(Guid userId, string name, Email email)
         {
             var participant = Participant.CreateAsUser(Id, userId, name, email);
             _participants.Add(participant);
+            // Raise ParticipantAdded event (if using event sourcing)
+            // RaiseEvent(new ParticipantAdded(participant.Id, Id));
+
             return participant;
         }
 
@@ -132,61 +149,72 @@ namespace LIT.Travelnize.Domain.Trips
         {
             var participant = Participant.CreateAsGuest(Id, name, email);
             _participants.Add(participant);
+            // Raise ParticipantAdded event (if using event sourcing)
+            // RaiseEvent(new ParticipantAdded(participant.Id, Id));
+
             return participant;
         }
 
         public Result RemoveParticipant(Guid participantId)
         {
-            var participant = Participants.FirstOrDefault(p => p.Id == participantId);
+            var participant = _participants.FirstOrDefault(p => p.Id == participantId);
             if (participant == null)
             {
                 return TripsErrors.ParticipantNotFound;
             }
 
             _participants.Remove(participant);
+            // Raise ParticipantRemoved event (if using event sourcing)
+            // RaiseEvent(new ParticipantRemoved(participantId));
+
             return Result.Success();
         }
 
         public Result UpdateParticipant(Guid participantId, string name, Email email)
         {
-            var participant = Participants.FirstOrDefault(p => p.Id == participantId);
+            var participant = _participants.FirstOrDefault(p => p.Id == participantId);
             if (participant == null)
             {
                 return TripsErrors.ParticipantNotFound;
             }
 
             participant.Update(name, email);
+            // Raise ParticipantUpdated event (if using event sourcing)
+            // RaiseEvent(new ParticipantUpdated(participantId));
+
             return Result.Success();
         }
 
         public Result ChangeParticipantPermission(Guid participantId, PermissionLevel newPermissionLevel)
         {
-            var participant = Participants.FirstOrDefault(p => p.Id == participantId);
+            var participant = _participants.FirstOrDefault(p => p.Id == participantId);
             if (participant == null)
             {
                 return TripsErrors.ParticipantNotFound;
             }
             participant.ChangePermissionLevel(newPermissionLevel);
-            if (!Participants.Any(p => p.PermissionLevel == PermissionLevel.Admin))
+            if (!_participants.Any(p => p.PermissionLevel == PermissionLevel.Organisator))
             {
-                return TripsErrors.AtLeastOneAdminRequired;
+                return TripsErrors.AtLeastOneOrganisatorRequired;
             }
             return Result.Success();
         }
 
-
         public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink,
-            TransportationType type, List<Participant>? passengers = null)
+            TransportationType type)
         {
             if (departureDate >= arrivalDate)
             {
                 return TripsErrors.InvalidTransportationDates;
             }
             var transportation = Transportation.Create(Id, name, description, identifier, departure, arrival,
-                departureDate, arrivalDate, routeLink, type, passengers);
+                departureDate, arrivalDate, routeLink, type);
 
             _transportations.Add(transportation);
+            // Raise TransportationAdded event (if using event sourcing)
+            // RaiseEvent(new TransportationAdded(transportation.Id, Id));
+
             return transportation;
         }
     }

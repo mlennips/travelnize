@@ -14,9 +14,10 @@ namespace LIT.Travelnize.UseCases.Trips
             public async Task<Result<Guid>> Handle(CreateTripCommand request, CancellationToken cancellationToken)
             {
                 var user = await uow.GetUserAsync();
-                var customer = Trip.Create(user, request.Name, request.Description, new DateRange(request.TravelStart, request.TravelEnd));
-                await uow.AddAsync(customer);
-                return customer.Id;
+                var trip = Trip.Create(user, request.Name, request.Description, new DateRange(request.TravelStart, request.TravelEnd));
+                trip.ChangeParticipantPermission(user.Id, PermissionLevel.Organisator);
+                await uow.AddAsync(trip);
+                return trip.Id;
             }
         }
     }

@@ -4,7 +4,7 @@ namespace LIT.Travelnize.Domain.Trips
 {
     public static class TripsErrors
     {
-        public static readonly ErrorDetail AtLeastOneAdminRequired = new("Trip.AtLeastOneAdminRequired", "At least one admin required.");
+        public static readonly ErrorDetail AtLeastOneOrganisatorRequired = new("Trip.AtLeastOneOrganisatorRequired", "At least one organisator required.");
         public static readonly ErrorDetail TravelSegmentNotFound = new("TravelSegment.NotFound", "Travel segment not found.");
         public static readonly ErrorDetail DestinationNotFound = new("Destination.NotFound", "Destination not found.");
         public static readonly ErrorDetail ParticipantNotFound = new("Participant.NotFound", "Participant not found.");

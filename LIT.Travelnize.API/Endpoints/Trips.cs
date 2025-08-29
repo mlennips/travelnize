@@ -1,6 +1,7 @@
 ﻿using LIT.Travelnize.API.Utils;
 using MediatR;
 using static LIT.Travelnize.UseCases.Trips.CreateTrip;
+using static LIT.Travelnize.UseCases.Trips.GetTrip;
 
 namespace LIT.Travelnize.API.Endpoints
 {
@@ -23,11 +24,11 @@ namespace LIT.Travelnize.API.Endpoints
             //        onFailure: Results.BadRequest))
             //    .Produces<ListTripDTO[]>(StatusCodes.Status200OK);
 
-            //api.MapGet("/{tripId}", async (IMediator mediator, Guid tripId) =>
-            //    await mediator.SendAndMatchAsync(new GetTripQuery(tripId),
-            //        onSuccess: Results.Ok,
-            //        onFailure: Results.BadRequest))
-            //    .Produces<GetTripDTO>(StatusCodes.Status200OK);
+            api.MapGet("/{tripId}", async (IMediator mediator, Guid tripId) =>
+                await mediator.SendAndMatchAsync(new GetTripQuery(tripId),
+                    onSuccess: Results.Ok,
+                    onFailure: Results.BadRequest))
+                .Produces<GetTripDTO>(StatusCodes.Status200OK);
 
             //api.MapPut("/{tripId}", async (IMediator mediator, Guid tripId, UpdateTripCommand command) =>
             //    await mediator.SendAndMatchAsync(command,

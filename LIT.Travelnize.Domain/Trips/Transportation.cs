@@ -5,6 +5,8 @@ namespace LIT.Travelnize.Domain.Trips
 {
     public class Transportation : IEntity
     {
+        private List<Participant> _passengers = [];
+
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
 
@@ -17,11 +19,10 @@ namespace LIT.Travelnize.Domain.Trips
         public DateTime ArrivalDate { get; private set; }
         public ExternalUrl RouteLink { get; private set; } = default!;
         public TransportationType Type { get; private set; } = default!;
-        public IReadOnlyCollection<Participant> Passengers { get; private set; } = [];
+        public IEnumerable<Participant> Passengers => _passengers.AsReadOnly();
 
         internal static Transportation Create(Guid tripId, string name, string description, string identifier, Location departure, 
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink, 
-            TransportationType type, List<Participant>? passengers = null)
+            Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink, TransportationType type)
         {
             return new Transportation()
             {
@@ -35,14 +36,13 @@ namespace LIT.Travelnize.Domain.Trips
                 DepartureDate = departureDate,
                 ArrivalDate = arrivalDate,
                 RouteLink = routeLink,
-                Type = type,
-                Passengers = passengers ?? []
+                Type = type
             };
         }
 
         internal Result Update(string name, string description, string identifier, Location departure, 
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink, 
-            TransportationType type, Participant[]? passengers = null)
+            TransportationType type, Participant[] passengers)
         {
             if (departureDate >= arrivalDate)
             {
@@ -57,7 +57,7 @@ namespace LIT.Travelnize.Domain.Trips
             ArrivalDate = arrivalDate;
             RouteLink = routeLink;
             Type = type;
-            Passengers = passengers ?? [];
+            _passengers = passengers.ToList();
             return Result.Success();
         }
     }
