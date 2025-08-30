@@ -1,7 +1,7 @@
-﻿using LIT.Travelnize.Domain.Common;
+﻿using LIT.Travelnize.Shared.Common;
 using MediatR;
 
-namespace LIT.Travelnize.UseCases.Base
+namespace LIT.Travelnize.Shared.Base
 {
     public interface IQuery<T> : IRequest<Result<T>>
     {

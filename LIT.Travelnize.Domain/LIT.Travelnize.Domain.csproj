@@ -23,4 +23,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LIT.Travelnize.Shared\LIT.Travelnize.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using LIT.Travelnize.Shared.Auth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,7 +14,7 @@ namespace LIT.Travelnize.API.Endpoints
             RouteGroupBuilder api = routes.MapGroup("/auth")
                 .WithTags("Auth");
 
-            api.MapPost("/register", async (UserManager<IdentityUser> userManager, RegisterModel model) =>
+            api.MapPost("/register", async (UserManager<IdentityUser> userManager, RegisterCommand model) =>
             {
                 var user = new IdentityUser { UserName = model.Email, Email = model.Email };
                 var result = await userManager.CreateAsync(user, model.Password);
@@ -25,13 +25,14 @@ namespace LIT.Travelnize.API.Endpoints
                 return Results.BadRequest(result.Errors);
             });
 
-            api.MapPost("/login", async (UserManager<IdentityUser> userManager, IConfiguration configuration, LoginModel model) =>
+            api.MapPost("/login", async (UserManager<IdentityUser> userManager, IConfiguration configuration, LoginCommand model) =>
             {
                 var user = await userManager.FindByEmailAsync(model.Email);
                 if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var token = GenerateJwtToken(user, configuration);
-                    return Results.Ok(new { token });
+                    var userId = Guid.Parse(user.Id);
+                    return Results.Ok(new LoginDto(token, userId));
                 }
                 return Results.Unauthorized();
             });
@@ -48,7 +49,6 @@ namespace LIT.Travelnize.API.Endpoints
                 return Results.Ok();
             });
         }
-
 
         private static string GenerateJwtToken(IdentityUser user, IConfiguration configuration)
         {
@@ -70,43 +70,6 @@ namespace LIT.Travelnize.API.Endpoints
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public record LoginModel
-        {
-            public LoginModel(string email, string password)
-            {
-                Email = email;
-                Password = password;
-            }
-
-            [Required(ErrorMessage = "Email ist erforderlich.")]
-            [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse.")]
-            public string Email { get; set; }
-
-            [Required(ErrorMessage = "Passwort ist erforderlich.")]
-            public string Password { get; set; }
-        }
-
-        public record RegisterModel
-        {
-            public RegisterModel(string email, string password, string confirmPassword)
-            {
-                Email = email;
-                Password = password;
-                ConfirmPassword = confirmPassword;
-            }
-
-            [Required(ErrorMessage = "Email ist erforderlich.")]
-            [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse.")]
-            public string Email { get; set; }
-
-            [Required(ErrorMessage = "Passwort ist erforderlich.")]
-            [StringLength(100, ErrorMessage = "Das Passwort muss mindestens {2} und maximal {1} Zeichen lang sein.", MinimumLength = 8)]
-            public string Password { get; set; }
-
-            [Compare("Password", ErrorMessage = "Das Passwort und die Bestätigung stimmen nicht überein.")]
-            public string ConfirmPassword { get; set; }
         }
     }
 }

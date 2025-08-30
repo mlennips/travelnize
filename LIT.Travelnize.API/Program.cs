@@ -12,17 +12,27 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<RouteOptions>(options => options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));
 
+builder.AddServiceDefaults();
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.AddServiceDefaults();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddDomainServices();
 builder.Services.AddUseCasesServices();
 
+builder.Services.AddCors(policy =>
+{
+    policy.AddPolicy("CorsPolicy", opt => opt
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
 app.MapDefaultEndpoints();
+app.RegisterHomeEndpoints();
 app.RegisterAuthEndpoints();
 app.RegisterUsersEndpoints();
 app.UseAuthentication();

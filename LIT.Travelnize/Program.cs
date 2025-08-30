@@ -1,18 +1,25 @@
 using LIT.Travelnize;
+using LIT.Travelnize.Utils.Api;
+using LIT.Travelnize.Utils.Auth;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
-
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-builder.Services.AddOidcAuthentication(options =>
+internal class Program
 {
-    // Configure your authentication provider options here.
-    // For more information, see https://aka.ms/blazor-standalone-auth
-    builder.Configuration.Bind("Local", options.ProviderOptions);
-});
+    private static async Task Main(string[] args)
+    {
+        var builder = WebAssemblyHostBuilder.CreateDefault(args);
+        builder.RootComponents.Add<App>("#app");
+        builder.RootComponents.Add<HeadOutlet>("head::after");
 
-await builder.Build().RunAsync();
+        var backendBaseUrl = builder.Configuration["Backend:BaseUrl"]!;
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(backendBaseUrl) });
+
+        builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+        builder.Services.AddAuthorizationCore();
+        builder.Services.AddScoped<ApiClient>();
+
+        await builder.Build().RunAsync();
+    }
+}

@@ -1,4 +1,4 @@
-﻿[*.cs]
-
-# CA1848: LoggerMessage-Delegaten verwenden
-dotnet_diagnostic.CA1848.severity = none
+﻿[ "*.cs" ] # CA1848: LoggerMessage-Delegaten verwenden 
+  dotnet_diagnostic.CA1848.severity = none
+[ "*.cs" ] # CA1716: Bezeichner sollten nicht mit Schlüsselwörtern übereinstimmen 
+  dotnet_diagnostic.CA1716.severity = none

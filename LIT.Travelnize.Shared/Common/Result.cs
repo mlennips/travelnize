@@ -1,4 +1,4 @@
-﻿namespace LIT.Travelnize.Domain.Common
+﻿namespace LIT.Travelnize.Shared.Common
 {
     public sealed class Result<TValue> : Result
     {
