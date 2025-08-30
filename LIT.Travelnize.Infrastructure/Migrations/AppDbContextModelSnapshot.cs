@@ -85,6 +85,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DestinationId");
+
                     b.ToTable("Activities");
                 });
 
@@ -264,6 +266,12 @@ namespace LIT.Travelnize.Infrastructure.Migrations
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Activity", b =>
                 {
+                    b.HasOne("LIT.Travelnize.Domain.Trips.Destination", null)
+                        .WithMany("Activities")
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("LIT.Travelnize.Domain.Common.Location", "Location", b1 =>
                         {
                             b1.Property<Guid>("ActivityId")
@@ -644,6 +652,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Destination", b =>
                 {
                     b.Navigation("Accommodations");
+
+                    b.Navigation("Activities");
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Transportation", b =>

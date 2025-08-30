@@ -1,11 +1,11 @@
-﻿using LIT.Travelnize.Domain.Common;
-
-namespace LIT.Travelnize.Domain.Base
+﻿namespace LIT.Travelnize.Domain.Base
 {
     public interface IUser
     {
         public Guid Id { get; }
-        public string Name { get; }
-        public Email Email { get; }
+        public string? UserName { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string? Email { get; }
     }
 }

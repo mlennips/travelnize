@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using LIT.Travelnize.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,9 +19,9 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
     public class DbContextInitialiser(
         AppDbContext appContext,
-        AppIdentityDbContext appIdentityContext,
-        UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+        IdentityDbContext appIdentityContext,
+        UserManager<User> userManager,
+        RoleManager<IdentityRole<Guid>> roleManager)
     {
         public async Task InitialiseAsync()
         {
@@ -59,7 +60,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         public async Task TrySeedIdentityAsync()
         {
             // Default roles
-            var administratorRole = new IdentityRole("Administrator");
+            var administratorRole = new IdentityRole<Guid>("Administrator");
 
             if (roleManager.Roles.All(r => r.Name != administratorRole.Name))
             {
@@ -67,11 +68,13 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             }
 
             // Default users
-            var administrator = new IdentityUser
+            var administrator = new User
             {
                 UserName = "administrator@localhost",
                 Email = "administrator@localhost",
-                Id = Guid.NewGuid().ToString()                
+                Id = Guid.NewGuid(),
+                FirstName = "Admin",
+                LastName = "Istrator"
             };
 
             if (userManager.Users.All(u => u.UserName != administrator.UserName))

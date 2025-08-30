@@ -57,15 +57,12 @@
     [Inject] NavigationManager Navigation { get; set; } = default!;
     [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
 
-    private LoginCommand loginModel = new("", "");
-    private RegisterCommand registerModel = new("", "", "");
+    private LoginCommand loginModel = new();
+    private RegisterCommand registerModel = new();
 
     private async Task HandleLogin()
     {
-        // Hier die Login-Logik einfügen, z.B. HTTP-Request an Backend senden und JWT speichern
         var isAuthSuccess = await ApiClient.LoginAsync(loginModel);
-        // Beispiel: await AuthService.LoginAsync(loginModel);
-        // Nach erfolgreichem Login ggf. Seite neu laden oder weiterleiten
         if (isAuthSuccess)
         {
             Navigation.NavigateTo("/");

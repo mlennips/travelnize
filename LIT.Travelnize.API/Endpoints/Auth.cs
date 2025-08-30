@@ -1,4 +1,5 @@
-﻿using LIT.Travelnize.Shared.Auth;
+﻿using LIT.Travelnize.Infrastructure.Identity;
+using LIT.Travelnize.Shared.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,9 +15,9 @@ namespace LIT.Travelnize.API.Endpoints
             RouteGroupBuilder api = routes.MapGroup("/auth")
                 .WithTags("Auth");
 
-            api.MapPost("/register", async (UserManager<IdentityUser> userManager, RegisterCommand model) =>
+            api.MapPost("/register", async (UserManager<User> userManager, RegisterCommand model) =>
             {
-                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                var user = new User { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -25,14 +26,14 @@ namespace LIT.Travelnize.API.Endpoints
                 return Results.BadRequest(result.Errors);
             });
 
-            api.MapPost("/login", async (UserManager<IdentityUser> userManager, IConfiguration configuration, LoginCommand model) =>
+            api.MapPost("/login", async (UserManager<User> userManager, IConfiguration configuration, LoginCommand model) =>
             {
                 var user = await userManager.FindByEmailAsync(model.Email);
+                user ??= await userManager.FindByNameAsync(model.Email);
                 if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var token = GenerateJwtToken(user, configuration);
-                    var userId = Guid.Parse(user.Id);
-                    return Results.Ok(new LoginDto(token, userId, user.UserName ?? "?"));
+                    return Results.Ok(new LoginDto(token, user.Id, user.UserName!, user.FirstName, user.LastName));
                 }
                 return Results.Unauthorized();
             });
@@ -50,7 +51,7 @@ namespace LIT.Travelnize.API.Endpoints
             });
         }
 
-        private static string GenerateJwtToken(IdentityUser user, IConfiguration configuration)
+        private static string GenerateJwtToken(IdentityUser<Guid> user, IConfiguration configuration)
         {
             var claims = new[]
             {

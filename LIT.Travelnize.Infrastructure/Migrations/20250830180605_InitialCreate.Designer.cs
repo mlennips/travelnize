@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LIT.Travelnize.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250826150507_InitialCreate")]
+    [Migration("20250830180605_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -87,6 +87,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DestinationId");
 
                     b.ToTable("Activities");
                 });
@@ -267,6 +269,12 @@ namespace LIT.Travelnize.Infrastructure.Migrations
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Activity", b =>
                 {
+                    b.HasOne("LIT.Travelnize.Domain.Trips.Destination", null)
+                        .WithMany("Activities")
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("LIT.Travelnize.Domain.Common.Location", "Location", b1 =>
                         {
                             b1.Property<Guid>("ActivityId")
@@ -647,6 +655,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Destination", b =>
                 {
                     b.Navigation("Accommodations");
+
+                    b.Navigation("Activities");
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Transportation", b =>

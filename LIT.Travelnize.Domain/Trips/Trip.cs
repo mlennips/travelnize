@@ -27,7 +27,7 @@
                 Description = description,
                 TravelPeriod = travelPeriod
             };
-            trip.AddParticipant(user.Id, user.Name, user.Email);
+            trip.AddParticipant(user.Id, user.UserName!, new Email(user.Email!));
 
             return trip;
         }

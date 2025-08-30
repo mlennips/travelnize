@@ -30,7 +30,8 @@ namespace LIT.Travelnize.Utils.Api
                 {
                     if (authenticationStateProvider is JwtAuthenticationStateProvider jwtAuthenticationStateProvider)
                     {
-                        await jwtAuthenticationStateProvider.SetIdentityAsync(result.Token, result.UserId, result.Name);
+                        await jwtAuthenticationStateProvider.SetIdentityAsync(result.Token, result.UserId, result.UserName);
+                        //toDo save only token and refresh
                         return true;
                     }
                     else

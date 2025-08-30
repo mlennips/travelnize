@@ -2,15 +2,10 @@
 {
     public record RegisterCommand
     {
-        public RegisterCommand(string email, string password, string confirmPassword)
-        {
-            Email = email;
-            Password = password;
-            ConfirmPassword = confirmPassword;
-        }
-
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
+        public string Email { get; set; } = default!;
+        public string Password { get; set; } = default!;
+        public string ConfirmPassword { get; set; } = default!;
+        public string FirstName { get; set; } = default!;
+        public string LastName { get; set; } = default!;
     }
 }

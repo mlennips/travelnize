@@ -40,10 +40,10 @@ namespace LIT.Travelnize.Infrastructure
         {
             string connectionString = GetIdentityConnectionString(configuration);
 
-            services.AddDbContext<AppIdentityDbContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppIdentityDbContext>()
+            services.AddIdentity<User, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<ICurrentUser, CurrentUser>();

@@ -12,26 +12,6 @@ namespace LIT.Travelnize.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Activities",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TripId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TravelSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DestinationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Time = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    Location_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    Location_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Activities", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Trips",
                 columns: table => new
                 {
@@ -169,9 +149,40 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Activities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TripId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TravelSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DestinationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    Location_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Location_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Activities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Activities_Destinations_DestinationId",
+                        column: x => x.DestinationId,
+                        principalTable: "Destinations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Accommodations_DestinationId",
                 table: "Accommodations",
+                column: "DestinationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_DestinationId",
+                table: "Activities",
                 column: "DestinationId");
 
             migrationBuilder.CreateIndex(
