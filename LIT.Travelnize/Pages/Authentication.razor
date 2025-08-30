@@ -1,6 +1,102 @@
 ﻿@page "/authentication/{action}"
+@page "/authentication"
+
+@using LIT.Travelnize.Shared.Auth
+@using LIT.Travelnize.Utils.Api
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject ApiClient ApiClient
+
+<AuthorizeView>
+    <Authorized Context="authContext">
+        <h3>Logout</h3>
+        <p>Du bist angemeldet als @authContext.User.Identity?.Name</p>
+        <button @onclick="Logout">Abmelden</button>
+    </Authorized>
+    <NotAuthorized Context="notAuthContext">
+        <h3>Login</h3>
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" Context="loginFormContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div>
+                <label for="login-email">E-Mail:</label>
+                <InputText id="login-email" @bind-Value="loginModel.Email" />
+            </div>
+            <div>
+                <label for="login-password">Passwort:</label>
+                <InputText id="login-password" type="password" @bind-Value="loginModel.Password" />
+            </div>
+            <button type="submit">Anmelden</button>
+        </EditForm>
+
+        <h3>Register</h3>
+        <EditForm Model="@registerModel" OnValidSubmit="HandleRegister" Context="registerFormContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div>
+                <label for="register-email">E-Mail:</label>
+                <InputText id="register-email" @bind-Value="registerModel.Email" />
+            </div>
+            <div>
+                <label for="register-password">Passwort:</label>
+                <InputText id="register-password" type="password" @bind-Value="registerModel.Password" />
+            </div>
+            <div>
+                <label for="register-confirm">Passwort bestätigen:</label>
+                <InputText id="register-confirm" type="password" @bind-Value="registerModel.ConfirmPassword" />
+            </div>
+            <button type="submit">Registrieren</button>
+        </EditForm>
+    </NotAuthorized>
+</AuthorizeView>
+
+<h1>@Action</h1>
+
+@code {
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+    [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
+
+    private LoginCommand loginModel = new("", "");
+    private RegisterCommand registerModel = new("", "", "");
+
+    private async Task HandleLogin()
+    {
+        // Hier die Login-Logik einfügen, z.B. HTTP-Request an Backend senden und JWT speichern
+        var isAuthSuccess = await ApiClient.LoginAsync(loginModel);
+        // Beispiel: await AuthService.LoginAsync(loginModel);
+        // Nach erfolgreichem Login ggf. Seite neu laden oder weiterleiten
+        if (isAuthSuccess)
+        {
+            Navigation.NavigateTo("/");
+        };
+    }
+
+    private async Task HandleRegister()
+    {
+        // Hier die Register-Logik einfügen, z.B. HTTP-Request an Backend senden
+        // Beispiel: await AuthService.RegisterAsync(registerModel);
+        // Nach erfolgreicher Registrierung ggf. Seite neu laden oder weiterleiten
+        Navigation.NavigateTo("/");
+    }
+
+    private async Task Logout()
+    {
+        // Hier Logout-Logik einfügen, z.B. Token entfernen und Authentifizierungsstatus aktualisieren
+        // Beispiel: await ((JwtAuthenticationStateProvider)AuthProvider).LogoutAsync();
+        Navigation.NavigateTo("/");
+    }
+
+    private void OnLoginSuccess()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void OnRegisterSuccess()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
 
 @code{
     [Parameter] public string? Action { get; set; }

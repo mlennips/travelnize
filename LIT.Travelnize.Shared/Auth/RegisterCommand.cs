@@ -9,8 +9,8 @@
             ConfirmPassword = confirmPassword;
         }
 
-        public string Email { get; }
-        public string Password { get; }
-        public string ConfirmPassword { get; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace LIT.Travelnize.API.Endpoints
                 {
                     var token = GenerateJwtToken(user, configuration);
                     var userId = Guid.Parse(user.Id);
-                    return Results.Ok(new LoginDto(token, userId));
+                    return Results.Ok(new LoginDto(token, userId, user.UserName ?? "?"));
                 }
                 return Results.Unauthorized();
             });

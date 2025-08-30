@@ -1,10 +1,12 @@
 ﻿using LIT.Travelnize.Shared.Auth;
 using LIT.Travelnize.Shared.Trips;
+using LIT.Travelnize.Utils.Auth;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 
 namespace LIT.Travelnize.Utils.Api
 {
-    public class ApiClient(HttpClient httpClient)
+    public class ApiClient(HttpClient httpClient, AuthenticationStateProvider authenticationStateProvider)
     {
         public async Task<string> GetWelcomeAsync()
         {
@@ -18,15 +20,27 @@ namespace LIT.Travelnize.Utils.Api
             return await httpClient.PostAsJsonAsync("/auth/register", command);
         }
 
-        public async Task<string?> LoginAsync(LoginCommand command)
+        public async Task<bool> LoginAsync(LoginCommand command)
         {
             var response = await httpClient.PostAsJsonAsync("/auth/login", command);
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<LoginDto>();
-                return result?.Token;
+                if(result != null)
+                {
+                    if (authenticationStateProvider is JwtAuthenticationStateProvider jwtAuthenticationStateProvider)
+                    {
+                        await jwtAuthenticationStateProvider.SetIdentityAsync(result.Token, result.UserId, result.Name);
+                        return true;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("AuthenticationStateProvider is not of type JwtAuthenticationStateProvider");
+                    }
+                }
+                return true;
             }
-            return null;
+            return false;
         }
 
         public async Task<HttpResponseMessage> LogoutAsync()
