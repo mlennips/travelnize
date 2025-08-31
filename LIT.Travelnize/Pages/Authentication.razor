@@ -7,7 +7,7 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
 
-@inject ApiClient ApiClient
+@inject AuthApiClient AuthApiClient
 
 <AuthorizeView>
     <Authorized Context="authContext">
@@ -47,6 +47,15 @@
                 <label for="register-confirm">Passwort bestätigen:</label>
                 <InputText id="register-confirm" type="password" @bind-Value="registerModel.ConfirmPassword" />
             </div>
+            <div>
+                <label for="register-firstname">Vorname</label>
+                <InputText id="register-firstname" @bind-Value="registerModel.FirstName" />
+            </div>
+            <div>
+                <label for="register-lastname">Nachname</label>
+                <InputText id="register-lastname" @bind-Value="registerModel.LastName" />
+            </div>
+
             <button type="submit">Registrieren</button>
         </EditForm>
     </NotAuthorized>
@@ -72,25 +81,21 @@
 
     private async Task HandleRegister()
     {
-        // Hier die Register-Logik einfügen, z.B. HTTP-Request an Backend senden
-        // Beispiel: await AuthService.RegisterAsync(registerModel);
-        // Nach erfolgreicher Registrierung ggf. Seite neu laden oder weiterleiten
-        Navigation.NavigateTo("/");
+        var response = await AuthApiClient.RegisterAsync(registerModel);
+        if (response != null && response.IsSuccessStatusCode)
+        {
+            loginModel = new LoginCommand
+            {
+                EmailOrUserName = registerModel.Email,
+                Password = registerModel.Password
+            };
+            await HandleLogin();
+        }
     }
 
     private async Task Logout()
     {
         await ((JwtAuthenticationStateProvider)AuthProvider).LogoutAsync();
-        Navigation.NavigateTo("/");
-    }
-
-    private void OnLoginSuccess()
-    {
-        Navigation.NavigateTo("/");
-    }
-
-    private void OnRegisterSuccess()
-    {
         Navigation.NavigateTo("/");
     }
 }

@@ -1,6 +1,4 @@
 ﻿using LIT.Travelnize.Shared.Auth;
-using LIT.Travelnize.Utils.Auth;
-using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 
 namespace LIT.Travelnize.Utils.Api
