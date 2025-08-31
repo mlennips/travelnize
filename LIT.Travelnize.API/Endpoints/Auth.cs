@@ -28,9 +28,20 @@ namespace LIT.Travelnize.API.Endpoints
 
             api.MapPost("/login", async (UserManager<User> userManager, IConfiguration configuration, LoginCommand model) =>
             {
-                var user = await userManager.FindByEmailAsync(model.Email);
-                user ??= await userManager.FindByNameAsync(model.Email);
+                var user = await userManager.FindByEmailAsync(model.EmailOrUserName);
+                user ??= await userManager.FindByNameAsync(model.EmailOrUserName);
                 if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    var token = GenerateJwtToken(user, configuration);
+                    return Results.Ok(new LoginDto(token, user.Id, user.UserName!, user.FirstName, user.LastName));
+                }
+                return Results.Unauthorized();
+            });
+
+            api.MapPost("/refresh", async (UserManager<User> userManager, IConfiguration configuration, RefreshCommand model) =>
+            {
+                var user = await userManager.FindByIdAsync(model.UserId.ToString());
+                if (user != null && IsTokenValid(model.Token, configuration))
                 {
                     var token = GenerateJwtToken(user, configuration);
                     return Results.Ok(new LoginDto(token, user.Id, user.UserName!, user.FirstName, user.LastName));
@@ -70,7 +81,34 @@ namespace LIT.Travelnize.API.Endpoints
                 expires: expiry,
                 signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler() .WriteToken(token);
+        }
+
+        private static bool IsTokenValid(string token, IConfiguration configuration)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!);
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = configuration["Jwt:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                return validatedToken.ValidTo > DateTime.UtcNow;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

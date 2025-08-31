@@ -3,6 +3,7 @@
 
 @using LIT.Travelnize.Shared.Auth
 @using LIT.Travelnize.Utils.Api
+@using LIT.Travelnize.Utils.Auth
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -21,7 +22,7 @@
             <ValidationSummary />
             <div>
                 <label for="login-email">E-Mail:</label>
-                <InputText id="login-email" @bind-Value="loginModel.Email" />
+                <InputText id="login-email" @bind-Value="loginModel.EmailOrUserName" />
             </div>
             <div>
                 <label for="login-password">Passwort:</label>
@@ -62,7 +63,7 @@
 
     private async Task HandleLogin()
     {
-        var isAuthSuccess = await ApiClient.LoginAsync(loginModel);
+        var isAuthSuccess = await ((JwtAuthenticationStateProvider)AuthProvider).LoginAsync(loginModel.EmailOrUserName, loginModel.Password);
         if (isAuthSuccess)
         {
             Navigation.NavigateTo("/");
@@ -79,8 +80,7 @@
 
     private async Task Logout()
     {
-        // Hier Logout-Logik einfügen, z.B. Token entfernen und Authentifizierungsstatus aktualisieren
-        // Beispiel: await ((JwtAuthenticationStateProvider)AuthProvider).LogoutAsync();
+        await ((JwtAuthenticationStateProvider)AuthProvider).LogoutAsync();
         Navigation.NavigateTo("/");
     }
 
