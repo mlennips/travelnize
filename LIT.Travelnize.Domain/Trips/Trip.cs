@@ -83,9 +83,9 @@
             }
 
             var destination = Destination.Create(Id, segmentId, name, description, segment.DateRange, location);
-            segment.AddDestination(destination);
+            var result = segment.AddDestination(destination);
 
-            return destination;
+            return result.IsSuccess ? destination : result.Error;
         }
 
         public Result RemoveDestinationFromTravelSegment(Guid segmentId, Guid destinationId)

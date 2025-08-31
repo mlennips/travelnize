@@ -37,10 +37,6 @@ namespace LIT.Travelnize.Domain.Trips
             {
                 return TripErrors.DestinationAlreadyExistsInSegment;
             }
-            if (DateRange.Overlaps(destination.DateRange))
-            {
-                return TripErrors.DestinationDateRangeOutOfSegmentRange;
-            }
             _destinations.Add(destination);
             return Result.Success();
         }
