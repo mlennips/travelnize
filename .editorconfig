@@ -2,3 +2,11 @@
   dotnet_diagnostic.CA1848.severity = none
 [ "*.cs" ] # CA1716: Bezeichner sollten nicht mit Schlüsselwörtern übereinstimmen 
   dotnet_diagnostic.CA1716.severity = none
+
+[*.{cs,vb}]
+
+# IDE0305: Initialisierung der Sammlung vereinfachen
+dotnet_style_prefer_collection_expression = never
+
+[*.{cs,vb}]
+dotnet_diagnostic.MSTEST0001.severity = none
