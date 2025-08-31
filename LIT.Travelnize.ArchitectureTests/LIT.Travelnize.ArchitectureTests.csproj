@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -12,12 +12,17 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="MSTest" Version="3.6.4" />
+    <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LIT.Travelnize.API\LIT.Travelnize.API.csproj" />
+    <ProjectReference Include="..\LIT.Travelnize.Application\LIT.Travelnize.UseCases.csproj" />
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
+    <ProjectReference Include="..\LIT.Travelnize.Infrastructure\LIT.Travelnize.Infrastructure.csproj" />
+    <ProjectReference Include="..\LIT.Travelnize.Shared\LIT.Travelnize.Shared.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>

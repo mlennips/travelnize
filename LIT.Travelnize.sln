@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.Shared", "LI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.DomainTests", "LIT.Travelnize.DomainTests\LIT.Travelnize.DomainTests.csproj", "{BDEBC5D9-DA05-4A30-8CF6-9492B41A774E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.ArchitectureTests", "LIT.Travelnize.ArchitectureTests\LIT.Travelnize.ArchitectureTests.csproj", "{477C7713-7BAA-441B-9A0D-166E60CC4E96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{BDEBC5D9-DA05-4A30-8CF6-9492B41A774E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDEBC5D9-DA05-4A30-8CF6-9492B41A774E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDEBC5D9-DA05-4A30-8CF6-9492B41A774E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{477C7713-7BAA-441B-9A0D-166E60CC4E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{477C7713-7BAA-441B-9A0D-166E60CC4E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{477C7713-7BAA-441B-9A0D-166E60CC4E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{477C7713-7BAA-441B-9A0D-166E60CC4E96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{8E23038B-4375-CD65-D5E0-F05F9700747F} = {E7FB9B22-3001-49C8-99DD-89304BB3E400}
 		{C7542CCD-BFF4-4C81-A3E2-FD483C9B62E6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{BDEBC5D9-DA05-4A30-8CF6-9492B41A774E} = {1C6D2BDE-F96B-4E71-BAA2-85ABEC3A625F}
+		{477C7713-7BAA-441B-9A0D-166E60CC4E96} = {1C6D2BDE-F96B-4E71-BAA2-85ABEC3A625F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2BA4EB19-4CB1-4FDC-8A3D-AFB714111571}
