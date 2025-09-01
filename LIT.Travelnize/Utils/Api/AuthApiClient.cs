@@ -42,9 +42,9 @@ namespace LIT.Travelnize.Utils.Api
             return await httpClient.PostAsync("/auth/logout", null);
         }
 
-        public async Task<HttpResponseMessage> ForgotPasswordAsync()
+        public async Task<HttpResponseMessage> ForgotPasswordAsync(ForgotPasswordCommand command)
         {
-            return await httpClient.PostAsync("/auth/forgot-password", null);
+            return await httpClient.PostAsJsonAsync("/auth/forgot-password", command);
         }
     }
 }

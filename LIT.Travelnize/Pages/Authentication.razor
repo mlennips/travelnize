@@ -13,65 +13,81 @@
 
 <AuthorizeView>
     <Authorized Context="authContext">
-        <MudContainer MaxWidth="MaxWidth.Small" Class="mx-1 mt-6">
-            <MudPaper Elevation="2" Class="p-6">
-                <h3>Logout</h3>
-                <p>Du bist angemeldet als @authContext.User.Identity?.Name</p>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Logout())">Abmelden</MudButton>
-            </MudPaper>
+        <MudContainer Fixed Class="my-6">
+            <MudTabs>
+                <MudTabPanel Text="Abmelden">
+                    <MudText Class="my-4">
+                        Du bist angemeldet als @authContext.User.Identity?.Name
+                    </MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Logout())">Abmelden</MudButton>
+                </MudTabPanel>
+            </MudTabs>
         </MudContainer>
     </Authorized>
     <NotAuthorized Context="notAuthContext">
-        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2">
-            <MudPaper Elevation="1" Class="pa-2">
-                <MudTabs>
-                    <MudTabPanel Text="Login">
-                        <MudForm @ref="loginMudForm">
-                            <MudGrid Spacing="4">
-                                <MudItem xs="12">
-                                    <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudTextField @bind-Value="LoginModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="SubmitLoginAsync">Anmelden</MudButton>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudText Color="Color.Error">@loginError</MudText>
-                                </MudItem>
-                            </MudGrid>
-                        </MudForm>
-                    </MudTabPanel>
-                    <MudTabPanel Text="Registrieren">
-                        <MudForm @ref="registerMudForm">
-                            <MudGrid Spacing="4">
-                                <MudItem xs="12">
-                                    <MudTextField @bind-Value="RegisterModel.Email" Label="E-Mail" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudTextField @bind-Value="RegisterModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="Passwort bestätigen" InputType="InputType.Password" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="RegisterModel.FirstName" Label="Vorname" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12" sm="6">
-                                    <MudTextField @bind-Value="RegisterModel.LastName" Label="Nachname" FullWidth="true" Required="true" />
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="SubmitRegisterAsync">Registrieren</MudButton>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudText Color="Color.Error">@registerError</MudText>
-                                </MudItem>
-                            </MudGrid>
-                        </MudForm>
-                    </MudTabPanel>
-                </MudTabs>
-            </MudPaper>
+        <MudContainer Fixed Class="my-6">
+            <MudTabs>
+                <MudTabPanel Text="Login">
+                    <MudForm @ref="loginMudForm" Class="my-4">
+                        <MudGrid Spacing="4">
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="LoginModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitLoginAsync">Anmelden</MudButton>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudText Color="Color.Error">@loginError</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudTabPanel>
+                <MudTabPanel Text="Registrieren">
+                    <MudForm @ref="registerMudForm" Class="my-4">
+                        <MudGrid Spacing="4">
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="RegisterModel.Email" Label="E-Mail" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="RegisterModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="Passwort bestätigen" InputType="InputType.Password" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="RegisterModel.FirstName" Label="Vorname" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="RegisterModel.LastName" Label="Nachname" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitRegisterAsync">Registrieren</MudButton>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudText Color="Color.Error">@registerError</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudTabPanel>
+                <MudTabPanel Text="Passwort vergessen">
+                    <MudForm @ref="forgotPasswordMudForm" Class="my-4">
+                        <MudGrid Spacing="4">
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="ForgotPasswordModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForgotPasswordAsync">Neues Passwort anfordern</MudButton>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudText Color="Color.Error">@forgotPasswordError</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudTabPanel>
+            </MudTabs>
         </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
@@ -81,12 +97,15 @@
     [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
 
     private MudForm? loginMudForm;
+    private MudForm? forgotPasswordMudForm;
     private MudForm? registerMudForm;
     private string? loginError;
+    private string? forgotPasswordError;
     private string? registerError;
 
     private LoginCommand LoginModel { get; set; } = new();
     private RegisterCommand RegisterModel { get; set; } = new();
+    private ForgotPasswordCommand ForgotPasswordModel { get; set; } = new();
 
     private async Task SubmitLoginAsync()
     {
@@ -113,6 +132,30 @@
         }
     }
 
+    private async Task SubmitForgotPasswordAsync()
+    {
+        forgotPasswordError = null;
+        if (forgotPasswordMudForm is not null)
+        {
+            await forgotPasswordMudForm.Validate();
+            if (forgotPasswordMudForm.IsValid)
+            {
+                var response = await AuthApiClient.ForgotPasswordAsync(ForgotPasswordModel);
+                if (response.IsSuccessStatusCode)
+                {
+                    Navigation.NavigateTo("/authentication/login");
+                }
+                else
+                {
+                    loginError = "Passwort zurücksetzen fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+                }
+            }
+            else
+            {
+                loginError = "Bitte fülle alle Felder korrekt aus.";
+            }
+        }
+    }
     private async Task SubmitRegisterAsync()
     {
         registerError = null;

@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 @* Required *@
-<MudThemeProvider />
+<MudThemeProvider Theme="@MyCustomTheme" @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
 
 @* Needed for dialogs *@
@@ -27,11 +27,64 @@
         @Body
     </MudMainContent>
 </MudLayout>
+
 @code {
     bool _drawerOpen = true;
+    private bool _isDarkMode = false;
+    private MudThemeProvider _mudThemeProvider = default!;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = _mudThemeProvider.IsDarkMode;
+            await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemDarkModeChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private MudTheme MyCustomTheme = new MudTheme()
+    {
+        PaletteLight = new MudBlazor.PaletteLight
+        {
+            AppbarBackground = new MudBlazor.Utilities.MudColor("#003D59"),
+            Primary = new MudBlazor.Utilities.MudColor("#003D59"),
+            Secondary = new MudBlazor.Utilities.MudColor("#013243"),
+            Tertiary = new MudBlazor.Utilities.MudColor("#007BA7"),
+            Info = new MudBlazor.Utilities.MudColor("#CF71AF"),
+            Success = new MudBlazor.Utilities.MudColor("#3CD070"),
+            Warning = new MudBlazor.Utilities.MudColor("#FFCC00"),
+            Error = new MudBlazor.Utilities.MudColor("#FF0000"),
+            Dark = new MudBlazor.Utilities.MudColor("#010B13"),
+        },
+        PaletteDark = new MudBlazor.PaletteDark
+        {
+            AppbarBackground = new MudBlazor.Utilities.MudColor("#1DACD6"),
+            Primary = new MudBlazor.Utilities.MudColor("#1DACD6"),
+            Secondary = new MudBlazor.Utilities.MudColor("#48D1CC"),
+            Tertiary = new MudBlazor.Utilities.MudColor("#007BA7"),
+            Info = new MudBlazor.Utilities.MudColor("#884977"),
+            Success = new MudBlazor.Utilities.MudColor("#26734A"),
+            Warning = new MudBlazor.Utilities.MudColor("#B38B00"),
+            Error = new MudBlazor.Utilities.MudColor("#990000"),
+            Dark = new MudBlazor.Utilities.MudColor("#000000"),
+        },
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "220px",
+            DrawerWidthRight = "220px"
+        }
+    };
 }
