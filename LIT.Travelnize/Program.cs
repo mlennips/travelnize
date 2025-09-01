@@ -5,6 +5,7 @@ using LIT.Travelnize.Utils.Helpers;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 
 internal class Program
 {
@@ -23,6 +24,7 @@ internal class Program
         builder.Services.AddScoped<AuthApiClient>();
         builder.Services.AddScoped<TripsApiClient>();
         builder.Services.AddScoped<LocalStorage>();
+        builder.Services.AddMudServices();
 
         await builder.Build().RunAsync();
     }

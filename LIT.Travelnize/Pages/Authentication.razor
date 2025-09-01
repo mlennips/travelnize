@@ -1,95 +1,145 @@
 ﻿@page "/authentication/{action}"
 @page "/authentication"
+@using System.ComponentModel.DataAnnotations
 
 @using LIT.Travelnize.Shared.Auth
 @using LIT.Travelnize.Utils.Api
 @using LIT.Travelnize.Utils.Auth
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
 
 @inject AuthApiClient AuthApiClient
 
 <AuthorizeView>
     <Authorized Context="authContext">
-        <h3>Logout</h3>
-        <p>Du bist angemeldet als @authContext.User.Identity?.Name</p>
-        <button @onclick="Logout">Abmelden</button>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="mx-1 mt-6">
+            <MudPaper Elevation="2" Class="p-6">
+                <h3>Logout</h3>
+                <p>Du bist angemeldet als @authContext.User.Identity?.Name</p>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Logout())">Abmelden</MudButton>
+            </MudPaper>
+        </MudContainer>
     </Authorized>
     <NotAuthorized Context="notAuthContext">
-        <h3>Login</h3>
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" Context="loginFormContext">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div>
-                <label for="login-email">E-Mail:</label>
-                <InputText id="login-email" @bind-Value="loginModel.EmailOrUserName" />
-            </div>
-            <div>
-                <label for="login-password">Passwort:</label>
-                <InputText id="login-password" type="password" @bind-Value="loginModel.Password" />
-            </div>
-            <button type="submit">Anmelden</button>
-        </EditForm>
-
-        <h3>Register</h3>
-        <EditForm Model="@registerModel" OnValidSubmit="HandleRegister" Context="registerFormContext">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div>
-                <label for="register-email">E-Mail:</label>
-                <InputText id="register-email" @bind-Value="registerModel.Email" />
-            </div>
-            <div>
-                <label for="register-password">Passwort:</label>
-                <InputText id="register-password" type="password" @bind-Value="registerModel.Password" />
-            </div>
-            <div>
-                <label for="register-confirm">Passwort bestätigen:</label>
-                <InputText id="register-confirm" type="password" @bind-Value="registerModel.ConfirmPassword" />
-            </div>
-            <div>
-                <label for="register-firstname">Vorname</label>
-                <InputText id="register-firstname" @bind-Value="registerModel.FirstName" />
-            </div>
-            <div>
-                <label for="register-lastname">Nachname</label>
-                <InputText id="register-lastname" @bind-Value="registerModel.LastName" />
-            </div>
-
-            <button type="submit">Registrieren</button>
-        </EditForm>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-2">
+            <MudPaper Elevation="1" Class="pa-2">
+                <MudTabs>
+                    <MudTabPanel Text="Login">
+                        <MudForm @ref="loginMudForm">
+                            <MudGrid Spacing="4">
+                                <MudItem xs="12">
+                                    <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudTextField @bind-Value="LoginModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="SubmitLoginAsync">Anmelden</MudButton>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudText Color="Color.Error">@loginError</MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudForm>
+                    </MudTabPanel>
+                    <MudTabPanel Text="Registrieren">
+                        <MudForm @ref="registerMudForm">
+                            <MudGrid Spacing="4">
+                                <MudItem xs="12">
+                                    <MudTextField @bind-Value="RegisterModel.Email" Label="E-Mail" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudTextField @bind-Value="RegisterModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="Passwort bestätigen" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="RegisterModel.FirstName" Label="Vorname" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="RegisterModel.LastName" Label="Nachname" FullWidth="true" Required="true" />
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="SubmitRegisterAsync">Registrieren</MudButton>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudText Color="Color.Error">@registerError</MudText>
+                                </MudItem>
+                            </MudGrid>
+                        </MudForm>
+                    </MudTabPanel>
+                </MudTabs>
+            </MudPaper>
+        </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
-
-<h1>@Action</h1>
 
 @code {
     [Inject] NavigationManager Navigation { get; set; } = default!;
     [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
 
-    private LoginCommand loginModel = new();
-    private RegisterCommand registerModel = new();
+    private MudForm? loginMudForm;
+    private MudForm? registerMudForm;
+    private string? loginError;
+    private string? registerError;
 
-    private async Task HandleLogin()
+    private LoginCommand LoginModel { get; set; } = new();
+    private RegisterCommand RegisterModel { get; set; } = new();
+
+    private async Task SubmitLoginAsync()
     {
-        var isAuthSuccess = await ((JwtAuthenticationStateProvider)AuthProvider).LoginAsync(loginModel.EmailOrUserName, loginModel.Password);
-        if (isAuthSuccess)
+        loginError = null;
+        if (loginMudForm is not null)
         {
-            Navigation.NavigateTo("/");
-        };
+            await loginMudForm.Validate();
+            if (loginMudForm.IsValid)
+            {
+                var isAuthSuccess = await ((JwtAuthenticationStateProvider)AuthProvider).LoginAsync(LoginModel.EmailOrUserName, LoginModel.Password);
+                if (isAuthSuccess)
+                {
+                    Navigation.NavigateTo("/");
+                }
+                else
+                {
+                    loginError = "Login fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+                }
+            }
+            else
+            {
+                loginError = "Bitte fülle alle Felder korrekt aus.";
+            }
+        }
     }
 
-    private async Task HandleRegister()
+    private async Task SubmitRegisterAsync()
     {
-        var response = await AuthApiClient.RegisterAsync(registerModel);
-        if (response != null && response.IsSuccessStatusCode)
+        registerError = null;
+        if (registerMudForm is not null)
         {
-            loginModel = new LoginCommand
+            await registerMudForm.Validate();
+            if (registerMudForm.IsValid)
             {
-                EmailOrUserName = registerModel.Email,
-                Password = registerModel.Password
-            };
-            await HandleLogin();
+                var response = await AuthApiClient.RegisterAsync(RegisterModel!);
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    LoginModel = new LoginCommand
+                    {
+                        EmailOrUserName = RegisterModel!.Email,
+                        Password = RegisterModel.Password
+                    };
+                    await SubmitLoginAsync();
+                }
+                else
+                {
+                    registerError = "Registrierung fehlgeschlagen. Bitte versuche es erneut.";
+                }
+            }
+            else
+            {
+                registerError = "Bitte fülle alle Felder korrekt aus.";
+            }
         }
     }
 
@@ -98,8 +148,6 @@
         await ((JwtAuthenticationStateProvider)AuthProvider).LogoutAsync();
         Navigation.NavigateTo("/");
     }
-}
 
-@code{
     [Parameter] public string? Action { get; set; }
 }

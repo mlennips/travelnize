@@ -1,34 +1,28 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Travelnize</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿<MudNavMenu Bordered Class="bg-light bg-opacity-50 text-bg-light" Margin="Margin.None">
+    <!-- Hauptnavigation -->
+    <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Willkommen</MudNavLink>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-    </nav>
-</div>
 
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+    <!-- Trips -->   
+    <AuthorizeView>
+        <Authorized>
+            <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Aktuelle Reise</MudText>
+            <MudNavLink Match="NavLinkMatch.All" Href="trips/1" Icon="@Icons.Material.Filled.Hiking">Meine Reise 1</MudNavLink>
+            <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Anstehende Reisen</MudText>
+            <MudNavLink Match="NavLinkMatch.All" Href="trips/2" Icon="@Icons.Material.Filled.Hiking">Meine Reise 2</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="trips/3" Icon="@Icons.Material.Filled.Hiking">Meine Reise 3</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+    <!-- Authentifizierung und Profil -->
+    <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Konto</MudText>
+    <AuthorizeView>
+        <NotAuthorized>
+            <MudNavLink Match="NavLinkMatch.All" Href="authentication/login" Icon="@Icons.Material.Filled.Login">Anmelden</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="authentication/register" Icon="@Icons.Material.Filled.PersonAdd">Registrieren</MudNavLink>
+        </NotAuthorized>
+        <Authorized>
+            <MudNavLink Match="NavLinkMatch.All" Href="profile" Icon="@Icons.Material.Filled.Person">Mein Profil</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="authentication/logout" Icon="@Icons.Material.Filled.Logout">Abmelden</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+</MudNavMenu>
