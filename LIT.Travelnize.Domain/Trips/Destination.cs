@@ -48,5 +48,11 @@ namespace LIT.Travelnize.Domain.Trips
             Location = location;
             return Result.Success();
         }
+
+        internal Result AddAccommodation(Accommodation accommodation)
+        {
+            _accommodations.Add(accommodation);
+            return Result.Success();
+        }
     }
 }

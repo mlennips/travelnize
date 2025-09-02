@@ -32,7 +32,18 @@ namespace LIT.Travelnize.Domain.Trips
         ];
 
         public static AccommodationType Default => new();
+        public static AccommodationType Hotel => new("Hotel");
+        public static AccommodationType Hostel => new("Hostel");
+        public static AccommodationType Apartment => new("Apartment");
+        public static AccommodationType Guesthouse => new("Guesthouse");
+        public static AccommodationType Resort => new("Resort");
+        public static AccommodationType BedAndBreakfast => new("Bed and Breakfast");
+        public static AccommodationType Villa => new("Villa");
+        public static AccommodationType Cottage => new("Cottage");
+        public static AccommodationType Motel => new("Motel");
+        public static AccommodationType Camping => new("Camping");
+        public static AccommodationType CruiseShip => new("Cruise Ship");
+        public static AccommodationType Caravan => new("Caravan");
+        public static AccommodationType Other => new("Other");
     }
-
-
 }

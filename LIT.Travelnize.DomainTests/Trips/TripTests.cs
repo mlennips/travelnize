@@ -178,7 +178,7 @@ namespace LIT.Travelnize.DomainTests.Trips
             // Arrange
 
             // Act
-            var result = _trip.AddParticipant("Gast", _email);
+            var result = _trip.AddParticipantAsGuest("Gast", _email);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
@@ -189,7 +189,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void RemoveParticipant_ShouldRemoveParticipant()
         {
             // Arrange
-            var participant = _trip.AddParticipant("Gast", _email).Value!;
+            var participant = _trip.AddParticipantAsGuest("Gast", _email).Value!;
 
             // Act
             var result = _trip.RemoveParticipant(participant.Id);
@@ -203,7 +203,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void UpdateParticipant_ShouldUpdateParticipant()
         {
             // Arrange
-            var participant = _trip.AddParticipant("Gast", _email).Value!;
+            var participant = _trip.AddParticipantAsGuest("Gast", _email).Value!;
 
             // Act
             var result = _trip.UpdateParticipant(participant.Id, "Neuer Name", _email);

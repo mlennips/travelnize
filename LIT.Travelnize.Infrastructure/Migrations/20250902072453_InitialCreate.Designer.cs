@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LIT.Travelnize.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250830180605_InitialCreate")]
+    [Migration("20250902072453_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

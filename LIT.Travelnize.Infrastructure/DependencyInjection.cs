@@ -30,6 +30,11 @@ namespace LIT.Travelnize.Infrastructure
         {
             var connectionString = GetDatabaseConnectionString(configuration);
 
+            if (CheckIsDev())
+            {
+                connectionString += ";Include Error Detail=true;";
+            }
+
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
             services.AddScoped<DbContextInitialiser>();
 
@@ -126,7 +131,7 @@ namespace LIT.Travelnize.Infrastructure
         {
             string? connectionString;
 
-            if (EF.IsDesignTime) // workaround for EF migrations
+            if (CheckIsDesignTime()) // workaround for EF migrations
             {
                 connectionString = "Host=localhost;Port=54944;Username=postgres;Password=j!(wQ72kUy8*6Cewge+arM;Database=travelnize";
             }
@@ -141,7 +146,7 @@ namespace LIT.Travelnize.Infrastructure
         {
             string? connectionString;
 
-            if (EF.IsDesignTime) // workaround for EF migrations
+            if (CheckIsDesignTime()) // workaround for EF migrations
             {
                 connectionString = "Host=localhost;Port=54944;Username=postgres;Password=j!(wQ72kUy8*6Cewge+arM;Database=identity";
             }
@@ -150,6 +155,20 @@ namespace LIT.Travelnize.Infrastructure
                 connectionString = configuration.GetConnectionString("identity");
             }
             return connectionString ?? throw new InvalidOperationException("Connection string 'travelnize' not found.");
+        }
+
+
+
+        private static bool CheckIsDev()
+        {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var isDev = string.Equals(environment, "Development", StringComparison.OrdinalIgnoreCase);
+            return isDev;
+        }
+
+        private static bool CheckIsDesignTime()
+        {
+            return EF.IsDesignTime;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-
-namespace LIT.Travelnize.Domain.Common
+﻿namespace LIT.Travelnize.Domain.Common
 {
     public record Email : SingleValueObject<string>
     {

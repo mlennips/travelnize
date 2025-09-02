@@ -1,4 +1,32 @@
-﻿<MudNavMenu Bordered Margin="Margin.None">
+﻿@using LIT.Travelnize.Shared.Trips
+@using LIT.Travelnize.Utils.Api
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject TripsApiClient TripsApiClient
+
+
+@code {
+    private ListTripsDto[] userTrips = [];
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = user.Claims.FirstOrDefault(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+            if (userIdClaim != null)
+            {
+                var userId = userIdClaim.Value;
+                userTrips = await TripsApiClient.GetTripsAsync(Guid.Parse(userId)) ?? [];
+            }
+        }
+        isLoading = false;
+    }
+}
+
+<MudNavMenu Bordered Margin="Margin.None">
     <!-- Hauptnavigation -->
     <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Willkommen</MudNavLink>
 
@@ -7,12 +35,30 @@
         <Authorized>
             <MudNavLink Match="NavLinkMatch.All" Href="trips/1" Icon="@Icons.Material.Filled.Hiking">Reisen</MudNavLink>
             <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Aktuelle Reise</MudText>
-            <MudNavLink Match="NavLinkMatch.All" Href="trips/1" Icon="@Icons.Material.Filled.DoubleArrow">Meine Reise 1</MudNavLink>
-            <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Anstehende Reisen</MudText>
-            <MudNavLink Match="NavLinkMatch.All" Href="trips/2" Icon="@Icons.Material.Filled.CalendarMonth">Meine Reise 2</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Href="trips/3" Icon="@Icons.Material.Filled.CalendarMonth">Meine Reise 3</MudNavLink>
+            @if (isLoading)
+            {
+                <MudText Typo="Typo.body2" Class="px-4 py-2">Lade Reisen...</MudText>
+            }
+            else if (userTrips.Count() == 0)
+            {
+                <MudText Typo="Typo.body2" Class="px-4 py-2">Keine Reisen gefunden.</MudText>
+            }
+            else
+            {
+                var currentTrip = userTrips?.FirstOrDefault();
+                if (currentTrip != null)
+                {
+                    <MudNavLink Match="NavLinkMatch.All" Href=@($"trips/{currentTrip.Id}") Icon="@Icons.Material.Filled.DoubleArrow">@currentTrip.Name</MudNavLink>
+                }
+                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Anstehende Reisen</MudText>
+                foreach (var trip in userTrips!.Skip(1))
+                {
+                    <MudNavLink Match="NavLinkMatch.All" Href=@($"trips/{trip.Id}") Icon="@Icons.Material.Filled.CalendarMonth">@trip.Name</MudNavLink>
+                }
+            }
         </Authorized>
     </AuthorizeView>
+
     <!-- Authentifizierung und Profil -->
     <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Konto</MudText>
     <AuthorizeView>

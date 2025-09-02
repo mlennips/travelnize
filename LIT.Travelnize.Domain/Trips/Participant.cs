@@ -1,7 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Common;
-
-namespace LIT.Travelnize.Domain.Trips
+﻿namespace LIT.Travelnize.Domain.Trips
 {
     public class Participant : IEntity
     {
@@ -11,7 +8,7 @@ namespace LIT.Travelnize.Domain.Trips
 
         public string Name { get; private set; } = default!;
         public Email? Email { get; private set; }
-        public PermissionLevel PermissionLevel { get; private set; } = default!;
+        public PermissionLevel PermissionLevel { get; private set; } = PermissionLevel.Guest;
 
         internal static Participant CreateAsUser(Guid tripId, Guid userId, string name, Email? email)
         {

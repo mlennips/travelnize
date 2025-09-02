@@ -27,7 +27,8 @@
                 Description = description,
                 TravelPeriod = travelPeriod
             };
-            trip.AddParticipant(user.Id, user.UserName!, new Email(user.Email!));
+            var participant = trip.AddParticipant(user.Id, user.UserName!, new Email(user.Email!)).Value!;
+            trip.ChangeParticipantPermission(participant.Id, PermissionLevel.Organisator);
 
             return trip;
         }
@@ -82,7 +83,8 @@
                 return TripErrors.TravelSegmentNotFound;
             }
 
-            var destination = Destination.Create(Id, segmentId, name, description, segment.DateRange, location);
+            var destination = Destination.Create(Id, segmentId, name, description,
+                new DateRange(segment.DateRange.Start, segment.DateRange.End), location);
             var result = segment.AddDestination(destination);
 
             return result.IsSuccess ? destination : result.Error;
@@ -130,7 +132,7 @@
             return participant;
         }
 
-        public Result<Participant> AddParticipant(string name, Email email)
+        public Result<Participant> AddParticipantAsGuest(string name, Email email)
         {
             var participant = Participant.CreateAsGuest(Id, name, email);
             _participants.Add(participant);
@@ -171,6 +173,10 @@
             {
                 return TripErrors.ParticipantNotFound;
             }
+            if (participant.UserId == null)
+            {
+                return TripErrors.CannotChangePermissionOfGuestParticipant;
+            }
             participant.ChangePermissionLevel(newPermissionLevel);
             if (!_participants.Any(p => p.PermissionLevel == PermissionLevel.Organisator))
             {
@@ -193,6 +199,23 @@
             _transportations.Add(transportation);
 
             return transportation;
+        }
+
+        public Result<Accommodation> AddAccommodationToDestination(Guid destinationId, string name, AccommodationType accommodationType,
+            Address address, DateTime checkIn, DateTime checkOut)
+        {
+            var destination = _travelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);   
+            if (destination == null)
+            {
+                return TripErrors.DestinationNotFound;
+            }
+
+            var accommodation = Accommodation.Create(Id, destinationId, name, accommodationType, 
+                address, checkIn, checkOut);
+
+            var result = destination.AddAccommodation(accommodation);
+
+            return result.IsSuccess ? accommodation : result.Error;
         }
     }
 }

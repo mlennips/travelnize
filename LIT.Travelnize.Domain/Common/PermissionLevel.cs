@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-
-namespace LIT.Travelnize.Domain.Common
+﻿namespace LIT.Travelnize.Domain.Common
 {
     public record PermissionLevel : SingleValueObject<string>
     {
@@ -16,9 +14,9 @@ namespace LIT.Travelnize.Domain.Common
             return AllLevels.Contains(level);
         }
 
-        public static PermissionLevel Guest { get; } = new PermissionLevel("Guest");
-        public static PermissionLevel User { get; } = new PermissionLevel("User");
-        public static PermissionLevel Organisator { get; } = new PermissionLevel("Organisator");
+        public static PermissionLevel Guest => new("Guest");
+        public static PermissionLevel User => new("User");
+        public static PermissionLevel Organisator => new("Organisator");
 
         public static IEnumerable<string> AllLevels => ["Guest", "User", "Organisator"];
         public static implicit operator string(PermissionLevel level) => level.Value;

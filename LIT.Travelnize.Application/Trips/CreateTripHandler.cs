@@ -11,7 +11,6 @@ namespace LIT.Travelnize.UseCases.Trips
         {
             var user = await uow.GetUserAsync();
             var trip = Trip.Create(user, request.Name, request.Description, new DateRange(request.TravelStart, request.TravelEnd));
-            trip.ChangeParticipantPermission(user.Id, PermissionLevel.Organisator);
             await uow.AddAsync(trip);
             return trip.Id;
         }
