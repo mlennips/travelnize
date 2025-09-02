@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace LIT.Travelnize.Utils.Helpers
+namespace LIT.Travelnize.Helpers
 {
     public static class ObfuscationHelper
     {

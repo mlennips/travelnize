@@ -1,7 +1,7 @@
 ﻿using LIT.Travelnize.Shared.Auth;
 using System.Net.Http.Json;
 
-namespace LIT.Travelnize.Utils.Api
+namespace LIT.Travelnize.Services.Api
 {
     public class AuthApiClient(HttpClient httpClient)
     {

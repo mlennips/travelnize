@@ -1,12 +1,15 @@
+using LIT.Travelnize.Interfaces;
+using LIT.Travelnize.Services.Api;
 using LIT.Travelnize.Shared.Auth;
-using LIT.Travelnize.Utils.Api;
-using LIT.Travelnize.Utils.Helpers;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
-namespace LIT.Travelnize.Utils.Auth
+namespace LIT.Travelnize.Services.Auth
 {
-    public class JwtAuthenticationStateProvider(LocalStorage localStorage, AuthApiClient authApiClient) : AuthenticationStateProvider
+    public class JwtAuthenticationStateProvider(
+        LocalStorageService localStorage, 
+        AuthApiClient authApiClient,
+        IAccessTokenService accessTokenService) : AuthenticationStateProvider, IAuthService
     {
         private const string JwtKey = "jwt";
         private const string AuthKey = "auth";
@@ -39,9 +42,25 @@ namespace LIT.Travelnize.Utils.Auth
         {
             _identity = null;
             _authData = null;
+            await accessTokenService.RemoveTokenAsync();
             await localStorage.RemoveValueAsync(AuthKey);
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return true;
+        }
+
+        public async Task<IAuthUser?> GetCurrentUserAsync()
+        {
+            var isAuth = await CheckIsAuthenticatedAsync();
+            if (!isAuth)
+            {
+                return null;
+            }
+            return _authData;
+        }
+
+        public async Task<bool> CheckIsAuthenticatedAsync()
+        {
+            return (await GetAuthenticationStateAsync()).User.Identity?.IsAuthenticated ?? false;
         }
 
         private async Task<bool> RefreshTokenAsync()
@@ -64,6 +83,7 @@ namespace LIT.Travelnize.Utils.Auth
         {
             _identity = CreateClaimsIdentity(token, userId, userName, firstName, lastName);
             _authData = new AuthData(token, userId, userName, firstName, lastName);
+            await accessTokenService.SetTokenAsync(token);
             await localStorage.SetValueAsync(AuthKey, _authData, true);
         }
 
@@ -79,6 +99,6 @@ namespace LIT.Travelnize.Utils.Auth
             ], JwtKey);
         }
 
-        private record AuthData(string Token, Guid UserId, string UserName, string FirstName, string LastName);
+        private record AuthData(string Token, Guid UserId, string UserName, string FirstName, string LastName) : IAuthUser;
     }
 }

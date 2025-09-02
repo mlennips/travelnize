@@ -1,4 +1,4 @@
-﻿namespace LIT.Travelnize.Utils.Api
+﻿namespace LIT.Travelnize.Services.Api
 {
     public class ApiClient(HttpClient httpClient)
     {

@@ -1,7 +1,8 @@
-﻿@using LIT.Travelnize.Shared.Trips
-@using LIT.Travelnize.Utils.Api
-@inject AuthenticationStateProvider AuthenticationStateProvider
+﻿@using LIT.Travelnize.Interfaces
+@using LIT.Travelnize.Services.Api
+@using LIT.Travelnize.Shared.Trips
 @inject TripsApiClient TripsApiClient
+@inject IAuthService AuthService;
 
 
 @code {
@@ -10,17 +11,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+        var user = await AuthService.GetCurrentUserAsync();
 
-        if (user.Identity?.IsAuthenticated == true)
+        if (user != null)
         {
-            var userIdClaim = user.Claims.FirstOrDefault(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-            if (userIdClaim != null)
-            {
-                var userId = userIdClaim.Value;
-                userTrips = await TripsApiClient.GetTripsAsync(Guid.Parse(userId)) ?? [];
-            }
+            userTrips = await TripsApiClient.GetTripsAsync(user.UserId) ?? [];
         }
         isLoading = false;
     }

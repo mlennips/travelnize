@@ -1,9 +1,10 @@
-﻿using Microsoft.JSInterop;
+﻿using LIT.Travelnize.Helpers;
+using Microsoft.JSInterop;
 using System.Text.Json;
 
-namespace LIT.Travelnize.Utils.Helpers
+namespace LIT.Travelnize.Services
 {
-    public class LocalStorage(IJSRuntime jsRuntime)
+    public class LocalStorageService(IJSRuntime jsRuntime)
     {
         public async Task SetValueAsync<T>(string key, T value, bool obfuscate = false)
         {

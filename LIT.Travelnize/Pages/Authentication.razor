@@ -1,12 +1,12 @@
 ﻿@page "/authentication/{action}"
 @page "/authentication"
 @using System.ComponentModel.DataAnnotations
-
+@using LIT.Travelnize.Interfaces
+@using LIT.Travelnize.Services.Api
+@using LIT.Travelnize.Services.Auth
 @using LIT.Travelnize.Shared.Auth
-@using LIT.Travelnize.Utils.Api
-@using LIT.Travelnize.Utils.Auth
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using MudBlazor
 
 @inject AuthApiClient AuthApiClient
@@ -94,7 +94,7 @@
 
 @code {
     [Inject] NavigationManager Navigation { get; set; } = default!;
-    [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
+    [Inject] IAuthService AuthService { get; set; } = default!;
 
     private MudForm? loginMudForm;
     private MudForm? forgotPasswordMudForm;
@@ -115,7 +115,7 @@
             await loginMudForm.Validate();
             if (loginMudForm.IsValid)
             {
-                var isAuthSuccess = await ((JwtAuthenticationStateProvider)AuthProvider).LoginAsync(LoginModel.EmailOrUserName, LoginModel.Password);
+                var isAuthSuccess = await AuthService.LoginAsync(LoginModel.EmailOrUserName, LoginModel.Password);
                 if (isAuthSuccess)
                 {
                     Navigation.NavigateTo("/");
@@ -188,7 +188,7 @@
 
     private async Task Logout()
     {
-        await ((JwtAuthenticationStateProvider)AuthProvider).LogoutAsync();
+        await AuthService.LogoutAsync();
         Navigation.NavigateTo("/");
     }
 

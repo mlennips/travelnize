@@ -28,10 +28,9 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         public async Task<TResult[]> FindByAsync<TResult>(ISpecification<T> specification, Func<T, TResult> map)
         {
             var allItemsQueryable = appDbContext.Set<T>().AsQueryable();
-            var filteredItemsQueryable = Specifications.SpecificationEvaluator.ApplySpecification(allItemsQueryable, specification);            
-            var mappedItemsQueryable = filteredItemsQueryable.Select(map).AsQueryable();
-            var result = await mappedItemsQueryable.ToArrayAsync();
-            return result;
+            var filteredItems = await Specifications.SpecificationEvaluator.ApplySpecification(allItemsQueryable, specification).ToListAsync();
+            var mappedItems = filteredItems.Select(map).ToArray();
+            return mappedItems;
         }
     }
 }
