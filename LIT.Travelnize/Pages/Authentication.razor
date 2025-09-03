@@ -118,7 +118,7 @@
                 var isAuthSuccess = await AuthService.LoginAsync(LoginModel.EmailOrUserName, LoginModel.Password);
                 if (isAuthSuccess)
                 {
-                    Navigation.NavigateTo("/");
+                    Navigation.NavigateTo("/", true); // forceLoad workaround for auth state issue in navMenu
                 }
                 else
                 {
@@ -188,8 +188,8 @@
 
     private async Task Logout()
     {
-        await AuthService.LogoutAsync();
-        Navigation.NavigateTo("/");
+        if (await AuthService.LogoutAsync())
+            Navigation.NavigateTo("/", true); // forceLoad workaround for auth state issue in navMenu
     }
 
     [Parameter] public string? Action { get; set; }

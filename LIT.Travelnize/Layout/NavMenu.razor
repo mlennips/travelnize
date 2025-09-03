@@ -1,66 +1,82 @@
 ﻿@using LIT.Travelnize.Domain.Trips.Queries
+@using Fluxor
+@using LIT.Travelnize.Domain.Trips.ValueObjects
 @using LIT.Travelnize.Interfaces
-@using LIT.Travelnize.Services.Api
-@inject TripsApiClient TripsApiClient
-@inject IAuthService AuthService;
+@using LIT.Travelnize.Store.Trips
+@inject IState<TripState> TripState
+@inject IDispatcher Dispatcher
+@inject IAuthService AuthService
+@inject IStore Store
 
 @code {
-    private ListTripsDto[] userTrips = [];
-    private bool isLoading = true;
-
     protected override async Task OnInitializedAsync()
     {
-        var user = await AuthService.GetCurrentUserAsync();
+        await base.OnInitializedAsync();
+        await Store.InitializeAsync();
+        await LoadTripsAsync();
 
+        Dispatcher.ActionDispatched += (obj, args) =>
+        {
+            if (args.Action is ListTripsResultAction)
+            {
+                StateHasChanged();
+            }
+        };
+    }
+
+    private async Task LoadTripsAsync()
+    {
+        var user = await AuthService.GetCurrentUserAsync();
         if (user != null)
         {
-            userTrips = await TripsApiClient.GetTripsAsync(user.UserId) ?? [];
+            Dispatcher.Dispatch(new ListTripsAction(new ListTripsQuery(user.UserId)));
         }
-        isLoading = false;
     }
+
+    private IEnumerable<ListTripsDto> OngoingTrips =>
+        TripState.Value.Trips?.Where(t => t.Status == TripStatus.Ongoing) ?? Enumerable.Empty<ListTripsDto>();
+
+    private IEnumerable<ListTripsDto> UpcomingTrips =>
+        TripState.Value.Trips?.Where(t => t.Status == TripStatus.Upcoming) ?? Enumerable.Empty<ListTripsDto>();
 }
 
 <MudNavMenu Bordered Margin="Margin.None">
     <!-- Hauptnavigation -->
     <MudNavLink Match="NavLinkMatch.All" Href="" Icon="@Icons.Material.Filled.Home">Willkommen</MudNavLink>
 
-    <!-- Trips -->   
-    <AuthorizeView>
-        <Authorized>
-            <MudNavLink Match="NavLinkMatch.All" Href="trips/1" Icon="@Icons.Material.Filled.Hiking">Reisen</MudNavLink>
-            <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Aktuelle Reise</MudText>
-            @if (isLoading)
-            {
-                <MudText Typo="Typo.body2" Class="px-4 py-2">Lade Reisen...</MudText>
-            }
-            else if (userTrips.Count() == 0)
-            {
-                <MudText Typo="Typo.body2" Class="px-4 py-2">Keine Reisen gefunden.</MudText>
-            }
-            else
-            {
-                var currentTrip = userTrips?.FirstOrDefault();
-                if (currentTrip != null)
-                {
-                    <MudNavLink Match="NavLinkMatch.All" Href=@($"trips/{currentTrip.Id}") Icon="@Icons.Material.Filled.DoubleArrow">@currentTrip.Name</MudNavLink>
-                }
-                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Anstehende Reisen</MudText>
-                foreach (var trip in userTrips!.Skip(1))
-                {
-                    <MudNavLink Match="NavLinkMatch.All" Href=@($"trips/{trip.Id}") Icon="@Icons.Material.Filled.CalendarMonth">@trip.Name</MudNavLink>
-                }
-            }
-        </Authorized>
-    </AuthorizeView>
-
     <!-- Authentifizierung und Profil -->
-    <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Konto</MudText>
     <AuthorizeView>
         <NotAuthorized>
+            <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Konto</MudText>
             <MudNavLink Match="NavLinkMatch.All" Href="authentication/login" Icon="@Icons.Material.Filled.Login">Anmelden</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Href="authentication/register" Icon="@Icons.Material.Filled.PersonAdd">Registrieren</MudNavLink>
         </NotAuthorized>
         <Authorized>
+            <!-- Ongoing Trips -->
+            @if (TripState.Value.IsLoading)
+            {
+                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Lade Reisen...</MudText>
+            }
+            else if (OngoingTrips.Any())
+            {
+                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Laufende Reisen</MudText>
+                @foreach (var trip in OngoingTrips)
+                {
+                    <MudNavLink Href="@($"/trip/{trip.Id}")" Icon="@Icons.Material.Filled.FlightTakeoff">@trip.Name</MudNavLink>
+                }
+            }
+
+            <!-- Upcoming Trips -->
+            @if (!TripState.Value.IsLoading && UpcomingTrips.Any())
+            {
+                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
+                @foreach (var trip in UpcomingTrips)
+                {
+                    <MudNavLink Href="@($"/trip/{trip.Id}")" Icon="@Icons.Material.Filled.Event">@trip.Name</MudNavLink>
+                }
+            }
+
+            <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Konto</MudText>
             <MudNavLink Match="NavLinkMatch.All" Href="profile" Icon="@Icons.Material.Filled.Person">Mein Profil</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Href="authentication/logout" Icon="@Icons.Material.Filled.Logout">Abmelden</MudNavLink>
         </Authorized>
