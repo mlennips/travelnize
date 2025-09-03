@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
-    <ProjectReference Include="..\LIT.Travelnize.Shared\LIT.Travelnize.Shared.csproj" />
   </ItemGroup>
 
 </Project>

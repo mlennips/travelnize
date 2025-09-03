@@ -21,7 +21,6 @@
     <ProjectReference Include="..\LIT.Travelnize.Application\LIT.Travelnize.UseCases.csproj" />
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
     <ProjectReference Include="..\LIT.Travelnize.Infrastructure\LIT.Travelnize.Infrastructure.csproj" />
-    <ProjectReference Include="..\LIT.Travelnize.Shared\LIT.Travelnize.Shared.csproj" />
     <ProjectReference Include="..\LIT.Travelnize\LIT.Travelnize.csproj" />
   </ItemGroup>
   

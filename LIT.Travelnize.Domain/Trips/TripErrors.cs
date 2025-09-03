@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Common;
-
-namespace LIT.Travelnize.Domain.Trips
+﻿namespace LIT.Travelnize.Domain.Trips
 {
     public static class TripErrors
     {

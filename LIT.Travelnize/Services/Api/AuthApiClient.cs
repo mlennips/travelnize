@@ -1,4 +1,4 @@
-﻿using LIT.Travelnize.Shared.Auth;
+﻿using LIT.Travelnize.Domain.Auth;
 using System.Net.Http.Json;
 
 namespace LIT.Travelnize.Services.Api

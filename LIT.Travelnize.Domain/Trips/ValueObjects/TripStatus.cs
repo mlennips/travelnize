@@ -1,4 +1,4 @@
-namespace LIT.Travelnize.Domain.Trips
+namespace LIT.Travelnize.Domain.Trips.ValueObjects
 {
     public record TripStatus : SingleValueObject<string>
     {
@@ -15,15 +15,15 @@ namespace LIT.Travelnize.Domain.Trips
         public static TripStatus Past => new("Past");
         public static TripStatus Pending => new("Pending");
 
-        public static TripStatus Create(DateRange? dateRange) => dateRange switch
+        public static TripStatus Create(DateTime? start, DateTime? end)
         {
-            null => Pending,
-            _ when dateRange.Start > DateTime.UtcNow => Upcoming,
-            _ when dateRange.Start <= DateTime.UtcNow && dateRange.End >= DateTime.UtcNow => Ongoing,
-            _ when dateRange.End < DateTime.UtcNow => Past,
-            _ => throw new InvalidOperationException("Invalid date range")
-        };
-
-
+            return start switch
+            {
+                null => Pending,
+                _ when end == null || end > DateTime.UtcNow => start > DateTime.UtcNow ? Upcoming : Ongoing,
+                _ when end <= DateTime.UtcNow => Past,
+                _ => throw new InvalidOperationException("Invalid trip dates.")
+            };
+        }
     }
 }

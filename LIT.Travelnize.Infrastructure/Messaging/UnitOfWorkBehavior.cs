@@ -1,6 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Shared.Base;
-using LIT.Travelnize.Shared.Common;
+using LIT.Travelnize.Domain.Common;
 using MediatR;
 
 namespace LIT.Travelnize.Infrastructure.Messaging

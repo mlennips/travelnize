@@ -1,6 +1,7 @@
 ﻿using LIT.Travelnize.Domain.Base;
+using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
-using LIT.Travelnize.Shared.Trips;
+using LIT.Travelnize.Domain.Trips.Queries;
 
 namespace LIT.Travelnize.UseCases.Trips
 {
@@ -16,6 +17,6 @@ namespace LIT.Travelnize.UseCases.Trips
         }
 
         private static GetTripDto Map(Trip trip) =>
-            new(trip.Id, trip.Name, trip.Description, trip.Slot.DateRange?.Start, trip.Slot.DateRange?.End);
+            new(trip.Id, trip.Name, trip.Description, trip.Slot.Start, trip.Slot.End);
     }
 }

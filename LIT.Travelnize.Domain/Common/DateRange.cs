@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-
-namespace LIT.Travelnize.Domain.Common
+﻿namespace LIT.Travelnize.Domain.Common
 {
     public record DateRange : ValueObject
     {
@@ -22,11 +20,6 @@ namespace LIT.Travelnize.Domain.Common
             End == null
                 ? $"{Start.ToShortDateString()} - ..."
                 : $"{Start.ToShortDateString()} - {End.Value.ToShortDateString()}";
-
-        public bool Overlaps(DateRange other)
-        {
-            return Start < other.End && End > other.Start;
-        }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

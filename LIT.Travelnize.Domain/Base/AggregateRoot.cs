@@ -1,7 +1,4 @@
-﻿
-using LIT.Travelnize.Domain.Common;
-
-namespace LIT.Travelnize.Domain.Base
+﻿namespace LIT.Travelnize.Domain.Base
 {
     public abstract class AggregateRoot : IAggregateRoot
     {

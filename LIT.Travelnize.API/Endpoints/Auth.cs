@@ -1,5 +1,5 @@
-﻿using LIT.Travelnize.Infrastructure.Identity;
-using LIT.Travelnize.Shared.Auth;
+﻿using LIT.Travelnize.Domain.Auth;
+using LIT.Travelnize.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

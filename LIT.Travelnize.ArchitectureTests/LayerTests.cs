@@ -1,3 +1,4 @@
+using LIT.Travelnize.Domain.Auth;
 using NetArchTest.Rules;
 using System.Reflection;
 
@@ -10,7 +11,7 @@ namespace LIT.Travelnize.ArchitectureTests
         private static readonly Assembly UseCasesAssembly = typeof(UseCases.DependencyInjection).Assembly;
         private static readonly Assembly InfrastructureAssembly = typeof(Infrastructure.DependencyInjection).Assembly;
         private static readonly Assembly ApiAssembly = typeof(API.Utils.ApiServiceExtensions).Assembly;
-        private static readonly Assembly SharedAssembly = typeof(Shared.Auth.LoginDto).Assembly;
+        private static readonly Assembly SharedAssembly = typeof(LoginDto).Assembly;
         private static readonly Assembly UIAssembly = typeof(Travelnize._Imports).Assembly;
 
         [TestMethod]

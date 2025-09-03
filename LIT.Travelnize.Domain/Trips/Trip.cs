@@ -1,4 +1,6 @@
-﻿namespace LIT.Travelnize.Domain.Trips
+﻿using LIT.Travelnize.Domain.Trips.ValueObjects;
+
+namespace LIT.Travelnize.Domain.Trips
 {
     public class Trip : AggregateRoot
     {
@@ -12,7 +14,7 @@
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
         public PlanningSlot Slot { get; private set; } = default!;
-        public TripStatus Status => TripStatus.Create(Slot.DateRange);
+        public TripStatus Status => TripStatus.Create(Slot.Start, Slot.End);
 
         public IEnumerable<TravelSegment> TravelSegments => _travelSegments.AsReadOnly();
         public IEnumerable<Participant> Participants => _participants.AsReadOnly();
@@ -86,7 +88,7 @@
 
             var order = _travelSegments.Select(x => x.Slot.Order).LastOrDefault() + 1;
             var destination = Destination.Create(Id, segmentId, name, description,
-                new PlanningSlot(order, segment.Slot.DateRange), location);
+                PlanningSlot.Create(order, segment.Slot.Start, segment.Slot.End), location);
             var result = segment.AddDestination(destination);
 
             return result.IsSuccess ? destination : result.Error;

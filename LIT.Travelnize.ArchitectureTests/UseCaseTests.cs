@@ -1,4 +1,5 @@
-﻿using LIT.Travelnize.Shared.Base;
+﻿using LIT.Travelnize.Domain.Auth;
+using LIT.Travelnize.Domain.Base;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetArchTest.Rules;
 using System.Reflection;
@@ -10,7 +11,7 @@ namespace LIT.Travelnize.ArchitectureTests
     {
         private static readonly Assembly DomainAssembly = typeof(Domain.Common.Address).Assembly;
         private static readonly Assembly UseCasesAssembly = typeof(UseCases.DependencyInjection).Assembly;
-        private static readonly Assembly SharedAssembly = typeof(Shared.Auth.LoginDto).Assembly;
+        private static readonly Assembly SharedAssembly = typeof(LoginDto).Assembly;
 
         [TestMethod]
         public void Handlers_ShouldHaveDependenciesToDomainAssembly()

@@ -1,4 +1,4 @@
-﻿using LIT.Travelnize.Shared.Common;
+﻿using LIT.Travelnize.Domain.Common;
 using MediatR;
 
 namespace LIT.Travelnize.API.Utils

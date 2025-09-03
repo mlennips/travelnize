@@ -1,4 +1,4 @@
-﻿namespace LIT.Travelnize.Domain.Trips
+﻿namespace LIT.Travelnize.Domain.Trips.ValueObjects
 {
     public record TransportationType : SingleValueObject<string>
     {

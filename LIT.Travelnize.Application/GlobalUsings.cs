@@ -1,2 +1,2 @@
-﻿global using LIT.Travelnize.Shared.Base;
-global using LIT.Travelnize.Shared.Common;
+﻿global using LIT.Travelnize.Domain.Base;
+global using LIT.Travelnize.Domain.Common;

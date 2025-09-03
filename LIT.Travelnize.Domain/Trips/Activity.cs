@@ -1,5 +1,4 @@
 ﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Domain.Trips
 {

@@ -1,9 +1,8 @@
-﻿@using LIT.Travelnize.Interfaces
+﻿@using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Interfaces
 @using LIT.Travelnize.Services.Api
-@using LIT.Travelnize.Shared.Trips
 @inject TripsApiClient TripsApiClient
 @inject IAuthService AuthService;
-
 
 @code {
     private ListTripsDto[] userTrips = [];

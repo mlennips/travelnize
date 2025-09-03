@@ -1,4 +1,4 @@
-﻿namespace LIT.Travelnize.Shared.Auth
+﻿namespace LIT.Travelnize.Domain.Auth
 {
     public record RegisterCommand
     {

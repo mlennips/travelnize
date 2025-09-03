@@ -1,6 +1,6 @@
 ﻿using LIT.Travelnize.Domain.Base;
 
-namespace LIT.Travelnize.Domain.Trips
+namespace LIT.Travelnize.Domain.Trips.ValueObjects
 {
     public record AccommodationType : SingleValueObject<string>
     {

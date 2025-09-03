@@ -1,4 +1,6 @@
-﻿namespace LIT.Travelnize.Domain.Trips
+﻿using LIT.Travelnize.Domain.Trips.ValueObjects;
+
+namespace LIT.Travelnize.Domain.Trips
 {
     public class TravelSegment : IEntity
     {

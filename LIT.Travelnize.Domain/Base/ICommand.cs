@@ -1,7 +1,6 @@
-﻿using LIT.Travelnize.Shared.Common;
-using MediatR;
+﻿using MediatR;
 
-namespace LIT.Travelnize.Shared.Base
+namespace LIT.Travelnize.Domain.Base
 {
     public interface ICommand<T> : ICommandBase, IRequest<Result<T>>
         where T : notnull

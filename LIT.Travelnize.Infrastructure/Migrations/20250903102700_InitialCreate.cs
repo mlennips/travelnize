@@ -19,8 +19,9 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    TravelPeriod_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TravelPeriod_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Slot_Order = table.Column<int>(type: "integer", nullable: false),
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -59,8 +60,9 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    DateRange_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DateRange_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Slot_Order = table.Column<int>(type: "integer", nullable: false),
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -110,8 +112,9 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     TravelSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    DateRange_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DateRange_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Slot_Order = table.Column<int>(type: "integer", nullable: false),
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ImageUrl_Value = table.Column<string>(type: "text", nullable: true),
                     Website_Value = table.Column<string>(type: "text", nullable: true)
                 },
@@ -135,8 +138,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     TravelSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Type_Value = table.Column<string>(type: "text", nullable: false),
-                    CheckIn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CheckOut = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CheckIn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CheckOut = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DestinationId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
@@ -159,7 +162,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     DestinationId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Time = table.Column<TimeSpan>(type: "interval", nullable: true),
                     Location_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
                     Location_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false)

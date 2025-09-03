@@ -1,5 +1,4 @@
-using LIT.Travelnize.Services.Api;
-using LIT.Travelnize.Shared.Trips;
+using LIT.Travelnize.Domain.Trips.Queries;
 using TimeWarp.State;
 
 namespace LIT.Travelnize.Features.Trips

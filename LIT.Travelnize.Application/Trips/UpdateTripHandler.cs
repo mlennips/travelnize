@@ -1,7 +1,8 @@
 ﻿using LIT.Travelnize.Domain.Base;
 using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
-using LIT.Travelnize.Shared.Trips;
+using LIT.Travelnize.Domain.Trips.Commands;
+using LIT.Travelnize.Domain.Trips.ValueObjects;
 
 namespace LIT.Travelnize.UseCases.Trips
 {

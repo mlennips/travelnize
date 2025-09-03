@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LIT.Travelnize.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250903084001_InitialCreate")]
+    [Migration("20250903102700_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,10 +31,10 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CheckIn")
+                    b.Property<DateTime?>("CheckIn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("CheckOut")
+                    b.Property<DateTime?>("CheckOut")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("DestinationId")
@@ -63,7 +63,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -243,7 +243,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("AccommodationId");
                         });
 
-                    b.OwnsOne("LIT.Travelnize.Domain.Trips.AccommodationType", "Type", b1 =>
+                    b.OwnsOne("LIT.Travelnize.Domain.Trips.ValueObjects.AccommodationType", "Type", b1 =>
                         {
                             b1.Property<Guid>("AccommodationId")
                                 .HasColumnType("uuid");
@@ -338,25 +338,6 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("LIT.Travelnize.Domain.Common.DateRange", "DateRange", b1 =>
-                        {
-                            b1.Property<Guid>("DestinationId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("End")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("Start")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.HasKey("DestinationId");
-
-                            b1.ToTable("Destinations");
-
-                            b1.WithOwner()
-                                .HasForeignKey("DestinationId");
-                        });
-
                     b.OwnsOne("LIT.Travelnize.Domain.Common.ExternalUrl", "ImageUrl", b1 =>
                         {
                             b1.Property<Guid>("DestinationId")
@@ -403,6 +384,28 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .IsRequired();
                         });
 
+                    b.OwnsOne("LIT.Travelnize.Domain.Trips.ValueObjects.PlanningSlot", "Slot", b1 =>
+                        {
+                            b1.Property<Guid>("DestinationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime?>("End")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<int>("Order")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime?>("Start")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.HasKey("DestinationId");
+
+                            b1.ToTable("Destinations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DestinationId");
+                        });
+
                     b.OwnsOne("LIT.Travelnize.Domain.Common.ExternalUrl", "Website", b1 =>
                         {
                             b1.Property<Guid>("DestinationId")
@@ -420,12 +423,12 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("DestinationId");
                         });
 
-                    b.Navigation("DateRange")
-                        .IsRequired();
-
                     b.Navigation("ImageUrl");
 
                     b.Navigation("Location")
+                        .IsRequired();
+
+                    b.Navigation("Slot")
                         .IsRequired();
 
                     b.Navigation("Website");
@@ -566,7 +569,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("TransportationId");
                         });
 
-                    b.OwnsOne("LIT.Travelnize.Domain.Trips.TransportationType", "Type", b1 =>
+                    b.OwnsOne("LIT.Travelnize.Domain.Trips.ValueObjects.TransportationType", "Type", b1 =>
                         {
                             b1.Property<Guid>("TransportationId")
                                 .HasColumnType("uuid");
@@ -604,15 +607,18 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("LIT.Travelnize.Domain.Common.DateRange", "DateRange", b1 =>
+                    b.OwnsOne("LIT.Travelnize.Domain.Trips.ValueObjects.PlanningSlot", "Slot", b1 =>
                         {
                             b1.Property<Guid>("TravelSegmentId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<DateTime>("End")
+                            b1.Property<DateTime?>("End")
                                 .HasColumnType("timestamp with time zone");
 
-                            b1.Property<DateTime>("Start")
+                            b1.Property<int>("Order")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime?>("Start")
                                 .HasColumnType("timestamp with time zone");
 
                             b1.HasKey("TravelSegmentId");
@@ -623,21 +629,24 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("TravelSegmentId");
                         });
 
-                    b.Navigation("DateRange")
+                    b.Navigation("Slot")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Trip", b =>
                 {
-                    b.OwnsOne("LIT.Travelnize.Domain.Common.DateRange", "TravelPeriod", b1 =>
+                    b.OwnsOne("LIT.Travelnize.Domain.Trips.ValueObjects.PlanningSlot", "Slot", b1 =>
                         {
                             b1.Property<Guid>("TripId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<DateTime>("End")
+                            b1.Property<DateTime?>("End")
                                 .HasColumnType("timestamp with time zone");
 
-                            b1.Property<DateTime>("Start")
+                            b1.Property<int>("Order")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime?>("Start")
                                 .HasColumnType("timestamp with time zone");
 
                             b1.HasKey("TripId");
@@ -648,7 +657,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("TripId");
                         });
 
-                    b.Navigation("TravelPeriod");
+                    b.Navigation("Slot")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Destination", b =>

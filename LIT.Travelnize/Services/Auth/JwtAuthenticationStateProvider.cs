@@ -1,6 +1,6 @@
+using LIT.Travelnize.Domain.Auth;
 using LIT.Travelnize.Interfaces;
 using LIT.Travelnize.Services.Api;
-using LIT.Travelnize.Shared.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
