@@ -52,6 +52,7 @@
             <MudNavLink Match="NavLinkMatch.All" Href="authentication/register" Icon="@Icons.Material.Filled.PersonAdd">Registrieren</MudNavLink>
         </NotAuthorized>
         <Authorized>
+            <MudNavLink Match="NavLinkMatch.All" Href="trips" Icon="@Icons.Material.Filled.Backpack">Reisen</MudNavLink>
             <!-- Ongoing Trips -->
             @if (TripState.Value.IsLoading)
             {
@@ -62,7 +63,7 @@
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Laufende Reisen</MudText>
                 @foreach (var trip in OngoingTrips)
                 {
-                    <MudNavLink Href="@($"/trip/{trip.Id}")" Icon="@Icons.Material.Filled.FlightTakeoff">@trip.Name</MudNavLink>
+                    <MudNavLink Href="@($"/trip/{trip.Id}")" Icon="@Icons.Material.Filled.DoubleArrow">@trip.Name</MudNavLink>
                 }
             }
 
@@ -72,7 +73,7 @@
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
                 @foreach (var trip in UpcomingTrips)
                 {
-                    <MudNavLink Href="@($"/trip/{trip.Id}")" Icon="@Icons.Material.Filled.Event">@trip.Name</MudNavLink>
+                    <MudNavLink Href="@($"/trip/{trip.Id}")" Icon="@Icons.Material.Filled.PendingActions">@trip.Name</MudNavLink>
                 }
             }
 
