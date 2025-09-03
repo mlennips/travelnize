@@ -645,8 +645,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("TripId");
                         });
 
-                    b.Navigation("TravelPeriod")
-                        .IsRequired();
+                    b.Navigation("TravelPeriod");
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Destination", b =>

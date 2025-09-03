@@ -11,7 +11,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             public void Configure(EntityTypeBuilder<Destination> builder)
             {
                 builder.HasKey(x => x.Id);
-                builder.OwnsOne(x => x.DateRange);
+                builder.OwnsOne(x => x.Slot);
                 builder.OwnsOne(x => x.Location, l =>
                 {
                     l.OwnsOne(x => x.Address);

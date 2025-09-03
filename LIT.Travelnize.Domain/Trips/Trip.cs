@@ -11,13 +11,14 @@
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
-        public DateRange TravelPeriod { get; private set; } = default!;
+        public PlanningSlot Slot { get; private set; } = default!;
+        public TripStatus Status => TripStatus.Create(Slot.DateRange);
 
         public IEnumerable<TravelSegment> TravelSegments => _travelSegments.AsReadOnly();
         public IEnumerable<Participant> Participants => _participants.AsReadOnly();
         public IEnumerable<Transportation> Transportations => _transportations.AsReadOnly();
 
-        public static Trip Create(IUser user, string name, string description, DateRange travelPeriod)
+        public static Trip Create(IUser user, string name, string description, PlanningSlot slot)
         {
             var trip = new Trip()
             {
@@ -25,7 +26,7 @@
                 UserId = user.Id,
                 Name = name,
                 Description = description,
-                TravelPeriod = travelPeriod
+                Slot = slot
             };
             var participant = trip.AddParticipant(user.Id, user.UserName!, new Email(user.Email!)).Value!;
             trip.ChangeParticipantPermission(participant.Id, PermissionLevel.Organisator);
@@ -33,17 +34,17 @@
             return trip;
         }
 
-        public Result Update(string name, string description, DateRange travelPeriod)
+        public Result Update(string name, string description, PlanningSlot slot)
         {
             Name = name;
             Description = description;
-            TravelPeriod = travelPeriod;
+            Slot = slot;
             return Result.Success();
         }
 
-        public Result<TravelSegment> AddTravelSegment(DateRange dateRange, string description)
+        public Result<TravelSegment> AddTravelSegment(PlanningSlot slot, string description)
         {
-            var newSegment = TravelSegment.Create(Id, description, dateRange);
+            var newSegment = TravelSegment.Create(Id, description, slot);
             _travelSegments.Add(newSegment);
 
             return newSegment;
@@ -62,7 +63,7 @@
             return Result.Success();
         }
 
-        public Result UpdateTravelSegment(Guid segmentId, DateRange dateRange, string description)
+        public Result UpdateTravelSegment(Guid segmentId, PlanningSlot slot, string description)
         {
             var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
@@ -70,7 +71,7 @@
                 return TripErrors.TravelSegmentNotFound;
             }
 
-            segment.Update(dateRange, description);
+            segment.Update(slot, description);
 
             return Result.Success();
         }
@@ -83,8 +84,9 @@
                 return TripErrors.TravelSegmentNotFound;
             }
 
+            var order = _travelSegments.Select(x => x.Slot.Order).LastOrDefault() + 1;
             var destination = Destination.Create(Id, segmentId, name, description,
-                new DateRange(segment.DateRange.Start, segment.DateRange.End), location);
+                new PlanningSlot(order, segment.Slot.DateRange), location);
             var result = segment.AddDestination(destination);
 
             return result.IsSuccess ? destination : result.Error;
@@ -202,7 +204,7 @@
         }
 
         public Result<Accommodation> AddAccommodationToDestination(Guid destinationId, string name, AccommodationType accommodationType,
-            Address address, DateTime checkIn, DateTime checkOut)
+            Address address, DateTime? checkIn, DateTime? checkOut)
         {
             var destination = _travelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);   
             if (destination == null)

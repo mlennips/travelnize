@@ -1,5 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace LIT.Travelnize.Domain.Trips.Specifications
 {
@@ -9,6 +8,6 @@ namespace LIT.Travelnize.Domain.Trips.Specifications
 
         public IQueryable<Trip> FinalProcessing(IQueryable<Trip> filteredQueryable) 
             => filteredQueryable
-                .OrderByDescending(x => x.TravelPeriod.Start);
+                .OrderByDescending(x => x.Slot.Order);
     }
 }

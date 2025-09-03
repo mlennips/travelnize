@@ -14,7 +14,7 @@ namespace LIT.Travelnize.Domain.Trips
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
-        public DateRange DateRange { get; private set; } = default!;
+        public PlanningSlot Slot { get; private set; } = default!;
         public Location Location { get; private set; } = default!;
         public ExternalUrl? ImageUrl { get; private set; }
         public ExternalUrl? Website { get; private set; }
@@ -23,7 +23,7 @@ namespace LIT.Travelnize.Domain.Trips
         public IEnumerable<Activity> Activities { get => _activities.AsReadOnly(); init => _activities = value.ToList(); }
 
         internal static Destination Create(Guid tripId, Guid travelSegmentId, string name, string description,
-            DateRange dateRange, Location location, ExternalUrl? imageUrl = null, ExternalUrl? url = null)
+            PlanningSlot slot, Location location, ExternalUrl? imageUrl = null, ExternalUrl? url = null)
         {
             return new Destination()
             {
@@ -32,7 +32,7 @@ namespace LIT.Travelnize.Domain.Trips
                 TravelSegmentId = travelSegmentId,
                 Name = name,
                 Description = description,
-                DateRange = dateRange,
+                Slot = slot,
                 Location = location,
                 ImageUrl = imageUrl,
                 Website = url,

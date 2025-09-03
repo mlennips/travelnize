@@ -112,13 +112,13 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip1Async()
         {
-            var tripDateRange = new DateRange(DateTime.UtcNow, DateTime.UtcNow.AddDays(7));
+            var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow, DateTime.UtcNow.AddDays(7));
             var user = await userManager.FindByEmailAsync("administrator@localhost");
             var trip = Trip.Create(user!, "My first trip", "This is my first trip.",
-                tripDateRange);
+                tripSlot);
 
             var travelSegment = trip.AddTravelSegment(
-                new DateRange(tripDateRange.Start, tripDateRange.End),
+                PlanningSlot.Create(0, tripSlot.DateRange!.Start, tripSlot.DateRange?.End),
                 "Main travel segment").Value!;
 
             var destination = trip.AddDestinationToTravelSegment(travelSegment.Id, "Paris", "City of Light", Location.Empty).Value!;
@@ -127,7 +127,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddParticipantAsGuest("Guest 2", new Email("guest2@travelnize.de"));
 
             trip.AddAccommodationToDestination(destination.Id, "Hotel Paris", AccommodationType.Hotel,
-                Address.Empty, tripDateRange.Start, tripDateRange.End);
+                Address.Empty, tripSlot.DateRange!.Start, tripSlot.DateRange!.End);
 
             appContext.Trips.Add(trip);
 
@@ -136,17 +136,17 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip2Async()
         {
-            var tripDateRange = new DateRange(DateTime.UtcNow.AddDays(7), DateTime.UtcNow.AddDays(21));
+            var tripSlot = new PlanningSlot(0, new DateRange(DateTime.UtcNow.AddDays(7), DateTime.UtcNow.AddDays(21)));
             var user = await userManager.FindByEmailAsync("administrator@localhost");
             var trip = Trip.Create(user!, "My 2nd trip", "This is my 2nd trip.",
-                tripDateRange);
+                tripSlot);
 
             var travelSegment1 = trip.AddTravelSegment(
-                new DateRange(tripDateRange.Start, tripDateRange.Start.AddDays(7)),
+                PlanningSlot.Create(0, tripSlot.DateRange!.Start, tripSlot.DateRange?.Start.AddDays(7)),
                 "Part 1").Value!;
 
             var travelSegment2 = trip.AddTravelSegment(
-                new DateRange(travelSegment1.DateRange.End, travelSegment1.DateRange.End.AddDays(7)),
+                PlanningSlot.Create(0, travelSegment1.Slot.DateRange!.End!.Value, travelSegment1.Slot.DateRange!.End!.Value.AddDays(7)),
                 "Part 2").Value!;
 
             var destination1_1 = trip.AddDestinationToTravelSegment(travelSegment1.Id, "Paris", "City of Light", Location.Empty).Value!;
@@ -159,11 +159,11 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddParticipantAsGuest("Guest 4", new Email("guest4@travelnize.de"));
 
             trip.AddAccommodationToDestination(destination1_1.Id, "Hotel Paris", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.DateRange.Start, travelSegment1.DateRange.Start.AddDays(4));
+                Address.Empty, travelSegment1.Slot.DateRange.Start, travelSegment1.Slot.DateRange!.Start.AddDays(4));
             trip.AddAccommodationToDestination(destination1_2.Id, "Hotel London", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.DateRange.Start.AddDays(4), travelSegment1.DateRange.Start.AddDays(3));
+                Address.Empty, travelSegment1.Slot.DateRange.Start.AddDays(4), travelSegment1.Slot.DateRange!.Start.AddDays(3));
             trip.AddAccommodationToDestination(destination2_1.Id, "Hotel New York", AccommodationType.Hotel,
-                Address.Empty, travelSegment2.DateRange.Start, travelSegment2.DateRange.End);
+                Address.Empty, travelSegment2.Slot.DateRange!.Start, travelSegment2.Slot.DateRange!.End);
 
             appContext.Trips.Add(trip);
 

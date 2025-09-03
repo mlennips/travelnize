@@ -5,11 +5,11 @@ namespace LIT.Travelnize.Domain.Common
     public record DateRange : ValueObject
     {
         public DateTime Start { get; init; }
-        public DateTime End { get; init; }
+        public DateTime? End { get; init; }
 
-        public DateRange(DateTime start, DateTime end)
+        public DateRange(DateTime start, DateTime? end)
         {
-            if (end <= start)
+            if (end <= start && end != null)
             {
                 throw new ArgumentException("End date must be after start date.");
             }
@@ -17,6 +17,11 @@ namespace LIT.Travelnize.Domain.Common
             Start = start;
             End = end;
         }
+
+        public override string ToString() =>
+            End == null
+                ? $"{Start.ToShortDateString()} - ..."
+                : $"{Start.ToShortDateString()} - {End.Value.ToShortDateString()}";
 
         public bool Overlaps(DateRange other)
         {
@@ -26,7 +31,7 @@ namespace LIT.Travelnize.Domain.Common
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Start;
-            yield return End;
+            if (End != null) yield return End;
         }
     }
 }

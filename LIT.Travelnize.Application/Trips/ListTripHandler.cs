@@ -17,6 +17,6 @@ namespace LIT.Travelnize.UseCases.Trips
         }
 
         private static ListTripsDto Map(Trip trip) =>
-            new(trip.Id, trip.Name, trip.Description, trip.TravelPeriod.Start, trip.TravelPeriod.End);
+            new(trip.Id, trip.Name, trip.Description, trip.Slot.DateRange?.Start, trip.Slot.DateRange?.End);
     }
 }

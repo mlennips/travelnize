@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LIT.Travelnize.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250902072453_InitialCreate")]
+    [Migration("20250903084001_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -648,8 +648,7 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                                 .HasForeignKey("TripId");
                         });
 
-                    b.Navigation("TravelPeriod")
-                        .IsRequired();
+                    b.Navigation("TravelPeriod");
                 });
 
             modelBuilder.Entity("LIT.Travelnize.Domain.Trips.Destination", b =>

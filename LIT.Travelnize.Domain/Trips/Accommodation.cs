@@ -1,7 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Common;
-
-namespace LIT.Travelnize.Domain.Trips
+﻿namespace LIT.Travelnize.Domain.Trips
 {
     public class Accommodation : IEntity
     {
@@ -12,11 +9,11 @@ namespace LIT.Travelnize.Domain.Trips
         public string Name { get; private set; } = default!;
         public AccommodationType Type { get; private set; } = default!;
         public Address Address { get; private set; } = default!;
-        public DateTime CheckIn { get; private set; }
-        public DateTime CheckOut { get; private set; }
+        public DateTime? CheckIn { get; private set; }
+        public DateTime? CheckOut { get; private set; }
 
         internal static Accommodation Create(Guid tripId, Guid travelSegmentId, string name, AccommodationType type, 
-            Address address, DateTime checkIn, DateTime checkOut)
+            Address address, DateTime? checkIn, DateTime? checkOut)
         {
             return new Accommodation()
             {

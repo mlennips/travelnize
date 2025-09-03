@@ -12,7 +12,7 @@ namespace LIT.Travelnize.Domain.Trips
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
-        public DateTime Date { get; private set; }
+        public DateTime? Date { get; private set; }
         public TimeSpan? Time { get; private set; }
         public Location Location { get; private set; } = default!;
 

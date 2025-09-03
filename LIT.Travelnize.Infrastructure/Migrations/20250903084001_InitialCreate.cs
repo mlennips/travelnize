@@ -19,8 +19,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    TravelPeriod_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TravelPeriod_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    TravelPeriod_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TravelPeriod_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

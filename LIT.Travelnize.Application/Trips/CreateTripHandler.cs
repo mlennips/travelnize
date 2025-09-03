@@ -1,5 +1,4 @@
 ﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Shared.Trips;
 
@@ -10,7 +9,8 @@ namespace LIT.Travelnize.UseCases.Trips
         public async Task<Result<Guid>> Handle(CreateTripCommand request, CancellationToken cancellationToken)
         {
             var user = await uow.GetUserAsync();
-            var trip = Trip.Create(user, request.Name, request.Description, new DateRange(request.TravelStart, request.TravelEnd));
+            var slot = PlanningSlot.Create(0, request.TravelStart, request.TravelEnd);
+            var trip = Trip.Create(user, request.Name, request.Description, slot);
             await uow.AddAsync(trip);
             return trip.Id;
         }

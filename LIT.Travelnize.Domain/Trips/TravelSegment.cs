@@ -8,23 +8,23 @@
         public Guid TripId { get; init; }
 
         public string Description { get; private set; } = default!;
-        public DateRange DateRange { get; private set; } = default!;
+        public PlanningSlot Slot { get; private set; } = default!;
         public IEnumerable<Destination> Destinations => _destinations.AsReadOnly();
 
-        internal static TravelSegment Create(Guid tripId, string description, DateRange dateRange)
+        internal static TravelSegment Create(Guid tripId, string description, PlanningSlot slot)
         {
             return new TravelSegment()
             {
                 Id = Guid.NewGuid(),
                 TripId = tripId,
                 Description = description,
-                DateRange = dateRange
+                Slot = slot
             };
         }
 
-        internal void Update(DateRange dateRange, string description)
+        internal void Update(PlanningSlot slot, string description)
         {
-            DateRange = dateRange;
+            Slot = slot;
             Description = description;
         }
 

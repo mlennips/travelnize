@@ -9,7 +9,7 @@ namespace LIT.Travelnize.DomainTests.Trips
     {
         private IUser _user = default!;
         private Trip _trip = default!;
-        private DateRange _tripDateRange = default!;
+        private PlanningSlot _tripSlot = default!;
         private Location _location = default!;
         private Email _email = default!;
 
@@ -17,10 +17,10 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void Initialize()
         {
             _user = new TestUser(Guid.NewGuid(), "TestUser", "Max", "Mustermann", "test@example.com");
-            _tripDateRange = new DateRange(DateTime.Today, DateTime.Today.AddDays(14));
+            _tripSlot = PlanningSlot.Create(0, DateTime.Today, DateTime.Today.AddDays(14));
             _location = new Location(new Address("Musterstraße", "", "Musterstraße", "1", "12345", "Berlin", "Deutschland"), new Coordinates { Latitude = 52.52, Longitude = 13.405 });
             _email = new Email("test@example.com");
-            _trip = Trip.Create(_user, "Reise", "Beschreibung", _tripDateRange);
+            _trip = Trip.Create(_user, "Reise", "Beschreibung", _tripSlot);
         }
 
         [TestMethod]
@@ -28,10 +28,10 @@ namespace LIT.Travelnize.DomainTests.Trips
         {
             // Arrange
             var user = new TestUser(Guid.NewGuid(), "User2", "Max", "Mustermann", "user2@example.com");
-            var dateRange = new DateRange(DateTime.Today, DateTime.Today.AddDays(3));
+            var slot = PlanningSlot.Create(0, DateTime.Today, DateTime.Today.AddDays(3));
 
             // Act
-            var trip = Trip.Create(user, "Urlaub", "Test", dateRange);
+            var trip = Trip.Create(user, "Urlaub", "Test", slot);
 
             // Assert
             Assert.IsNotNull(trip);
@@ -45,16 +45,16 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void Update_ShouldChangeTripProperties()
         {
             // Arrange
-            var newRange = new DateRange(DateTime.Today.AddDays(1), DateTime.Today.AddDays(6));
+            var newSlot = PlanningSlot.Create(0, DateTime.Today.AddDays(1), DateTime.Today.AddDays(6));
 
             // Act
-            var result = _trip.Update("Neu", "NeuDesc", newRange);
+            var result = _trip.Update("Neu", "NeuDesc", newSlot);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual("Neu", _trip.Name);
             Assert.AreEqual("NeuDesc", _trip.Description);
-            Assert.AreEqual(newRange, _trip.TravelPeriod);
+            Assert.AreEqual(newSlot, _trip.Slot);
         }
 
         [TestMethod]
@@ -63,7 +63,7 @@ namespace LIT.Travelnize.DomainTests.Trips
             // Arrange
 
             // Act
-            var result = _trip.AddTravelSegment(_tripDateRange, "Segment");
+            var result = _trip.AddTravelSegment(_tripSlot, "Segment");
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
@@ -74,7 +74,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void RemoveTravelSegment_ShouldRemoveSegment()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripDateRange, "Segment").Value!;
+            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
 
             // Act
             var result = _trip.RemoveTravelSegment(segment.Id);
@@ -101,15 +101,15 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void UpdateTravelSegment_ShouldUpdateSegment()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripDateRange, "Segment").Value!;
-            var newRange = new DateRange(DateTime.Today.AddDays(2), DateTime.Today.AddDays(7));
+            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
+            var newSlot = PlanningSlot.Create(0, DateTime.Today.AddDays(2), DateTime.Today.AddDays(7));
 
             // Act
-            var result = _trip.UpdateTravelSegment(segment.Id, newRange, "Neu");
+            var result = _trip.UpdateTravelSegment(segment.Id, newSlot, "Neu");
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
-            Assert.AreEqual(newRange, segment.DateRange);
+            Assert.AreEqual(newSlot, segment.Slot);
             Assert.AreEqual("Neu", segment.Description);
         }
 
@@ -117,7 +117,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void AddDestinationToTravelSegment_ShouldAddDestination()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripDateRange, "Segment").Value!;
+            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
 
             // Act
             var result = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location);
@@ -131,7 +131,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void RemoveDestinationFromTravelSegment_ShouldRemoveDestination()
         {
             // Arrange
-            var segment= _trip.AddTravelSegment(_tripDateRange, "Segment").Value!;
+            var segment= _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
             var destination = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location).Value!;
 
             // Act
@@ -146,7 +146,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void UpdateDestinationInTravelSegment_ShouldUpdateDestination()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripDateRange, "Segment").Value!;
+            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
             var destination = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location).Value!;
 
             // Act

@@ -14,7 +14,8 @@ namespace LIT.Travelnize.UseCases.Trips
             {
                 return TripErrors.TripNotFound;
             }
-            var result = trip.Update(request.Name, request.Description, new DateRange(request.TravelStart, request.TravelEnd));
+            var result = trip.Update(request.Name, request.Description,
+                PlanningSlot.Create(0, request.TravelStart, request.TravelEnd));
             await uow.UpdateAsync(trip);
             return result;
         }

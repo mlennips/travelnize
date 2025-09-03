@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using TimeWarp.State;
 
 internal class Program
 {
@@ -33,6 +34,7 @@ internal class Program
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
         builder.Services.AddMudServices();
+        builder.Services.AddTimeWarpState();
 
         await builder.Build().RunAsync();
     }

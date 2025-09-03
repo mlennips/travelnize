@@ -11,7 +11,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             public void Configure(EntityTypeBuilder<TravelSegment> builder)
             {
                 builder.HasKey(x => x.Id);
-                builder.OwnsOne(x => x.DateRange);
+                builder.OwnsOne(x => x.Slot);
                 builder.HasMany(x => x.Destinations);
                 builder.Navigation(x => x.Destinations).AutoInclude();
             }
