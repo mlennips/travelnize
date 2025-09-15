@@ -38,6 +38,7 @@ internal class Program
         builder.Services.AddFluxor(options => options
           .UseRouting()
           .ScanAssemblies(typeof(Program).Assembly));
+
         
         await builder.Build().RunAsync();
     }

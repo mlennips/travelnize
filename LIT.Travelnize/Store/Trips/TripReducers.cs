@@ -5,10 +5,6 @@ namespace LIT.Travelnize.Store.Trips
     public static class TripReducers
     {
         [ReducerMethod]
-        public static TripState OnListTrips(TripState state, ListTripsAction action) =>
-            state with { IsLoading = true, ErrorMessage = null };
-
-        [ReducerMethod]
         public static TripState OnListTripsResult(TripState state, ListTripsResultAction action) =>
             state with { IsLoading = false, Trips = action.Trips, ErrorMessage = null };
 
@@ -45,5 +41,6 @@ namespace LIT.Travelnize.Store.Trips
         [ReducerMethod]
         public static TripState OnError(TripState state, TripErrorAction action) =>
             state with { IsLoading = false, ErrorMessage = action.ErrorMessage };
+
     }
 }

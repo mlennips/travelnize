@@ -15,6 +15,11 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
         public static TripStatus Past => new("Past");
         public static TripStatus Pending => new("Pending");
 
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
         public static TripStatus Create(DateTime? start, DateTime? end)
         {
             return start switch

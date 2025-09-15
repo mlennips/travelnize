@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Trips\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
   </ItemGroup>
 
