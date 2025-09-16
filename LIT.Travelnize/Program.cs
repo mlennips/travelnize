@@ -1,9 +1,9 @@
-using Fluxor;
 using LIT.Travelnize;
 using LIT.Travelnize.Interfaces;
 using LIT.Travelnize.Services;
 using LIT.Travelnize.Services.Api;
 using LIT.Travelnize.Services.Auth;
+using LIT.Travelnize.States;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -34,12 +34,8 @@ internal class Program
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
         builder.Services.AddMudServices();
+        builder.Services.AddSingleton<TripsState>();
 
-        builder.Services.AddFluxor(options => options
-          .UseRouting()
-          .ScanAssemblies(typeof(Program).Assembly));
-
-        
         await builder.Build().RunAsync();
     }
 }

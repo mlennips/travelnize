@@ -65,31 +65,41 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         {
             // Default roles
             var administratorRole = new IdentityRole<Guid>("Administrator");
+            var userRole = new IdentityRole<Guid>("User");
+            var guestRole = new IdentityRole<Guid>("Guest");
 
             if (roleManager.Roles.All(r => r.Name != administratorRole.Name))
             {
                 await roleManager.CreateAsync(administratorRole);
+            }
+            if (roleManager.Roles.All(r => r.Name != userRole.Name))
+            {
+                await roleManager.CreateAsync(userRole);
+            }
+            if (roleManager.Roles.All(r => r.Name != guestRole.Name))
+            {
+                await roleManager.CreateAsync(guestRole);
             }
 
             // Default users
 
             if (env == "Development")
             {
-                var administrator = new User
+                var demoUser = new User
                 {
-                    UserName = "administrator@localhost",
-                    Email = "administrator@localhost",
+                    UserName = "demo@localhost",
+                    Email = "demo@localhost",
                     Id = Guid.NewGuid(),
-                    FirstName = "Admin",
-                    LastName = "Istrator"
+                    FirstName = "Dee",
+                    LastName = "Moo"
                 };
 
-                if (userManager.Users.All(u => u.UserName != administrator.UserName))
+                if (userManager.Users.All(u => u.UserName != demoUser.UserName))
                 {
-                    await userManager.CreateAsync(administrator, "%Admin2025");
-                    if (!string.IsNullOrWhiteSpace(administratorRole.Name))
+                    await userManager.CreateAsync(demoUser, "Demo%2025");
+                    if (!string.IsNullOrWhiteSpace(userRole.Name))
                     {
-                        await userManager.AddToRolesAsync(administrator, [administratorRole.Name]);
+                        await userManager.AddToRolesAsync(demoUser, [userRole.Name]);
                     }
                 }
             }

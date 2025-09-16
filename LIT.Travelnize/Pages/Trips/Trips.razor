@@ -1,9 +1,7 @@
 ﻿@page "/trips"
-@using LIT.Travelnize.Store.Trips
 @using LIT.Travelnize.Domain.Trips.Queries
-@inject IDispatcher Dispatcher
-@inject IState<TripState> TripState
 @inject IAuthService AuthService
+@inject TripsState TripsState
 
 <PageTitle>Travelnize - Reisen</PageTitle>
 
@@ -24,7 +22,7 @@
         </MudItem>
         <MudItem xs="12">
                 <MudText Typo="Typo.h6" Class="mb-4">Deine Reisen</MudText>
-                <MudTable Items="TripState.Value.Trips" Hover="true" Loading="TripState.Value.IsLoading" Dense="true">
+                <MudTable Items="TripsState.Trips" Hover="true" Loading="TripsState.IsLoading" Dense="true">
                     <HeaderContent>
                         <MudTh>Name</MudTh>
                         <MudTh>Beschreibung</MudTh>
@@ -42,7 +40,7 @@
                         <MudTd>@context.Slot.End?.ToShortDateString()</MudTd>
                     </RowTemplate>
                 </MudTable>
-                @if (!TripState.Value.IsLoading && TripState.Value.Trips?.Count() == 0)
+                @if (!TripsState.IsLoading && TripsState.Trips?.Count() == 0)
                 {
                     <MudAlert Severity="Severity.Info" Elevation="0" Variant="Variant.Filled" Dense="true" Class="mt-4">
                         Es wurden noch keine Reisen angelegt.
@@ -59,7 +57,7 @@
         var user = await AuthService.GetCurrentUserAsync();
         if (user != null)
         {
-            Dispatcher.Dispatch(new ListTripsAction(new ListTripsQuery(user.UserId)));
+            await TripsState.LoadTripsAsync(user.UserId);
         }
     }
 }

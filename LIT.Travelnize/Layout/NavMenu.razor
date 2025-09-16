@@ -1,27 +1,14 @@
 ﻿@using LIT.Travelnize.Domain.Trips.Queries
-@using Fluxor
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @using LIT.Travelnize.Interfaces
-@using LIT.Travelnize.Store.Trips
-@inject IState<TripState> TripState
-@inject IDispatcher Dispatcher
 @inject IAuthService AuthService
-@inject IStore Store
+@inject TripsState TripsState
 
 @code {
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await Store.InitializeAsync();
         await LoadTripsAsync();
-
-        Dispatcher.ActionDispatched += (obj, args) =>
-        {
-            if (args.Action is ListTripsResultAction)
-            {
-                StateHasChanged();
-            }
-        };
     }
 
     private async Task LoadTripsAsync()
@@ -29,15 +16,15 @@
         var user = await AuthService.GetCurrentUserAsync();
         if (user != null)
         {
-            Dispatcher.Dispatch(new ListTripsAction(new ListTripsQuery(user.UserId)));
+            await TripsState.LoadTripsAsync(user.UserId);
         }
     }
 
     private IEnumerable<ListTripsDto> OngoingTrips =>
-        TripState.Value.Trips?.Where(t => t.Status == TripStatus.Ongoing) ?? Enumerable.Empty<ListTripsDto>();
+        TripsState.Trips?.Where(t => t.Status == TripStatus.Ongoing) ?? Enumerable.Empty<ListTripsDto>();
 
     private IEnumerable<ListTripsDto> UpcomingTrips =>
-        TripState.Value.Trips?.Where(t => t.Status == TripStatus.Upcoming) ?? Enumerable.Empty<ListTripsDto>();
+        TripsState.Trips?.Where(t => t.Status == TripStatus.Upcoming) ?? Enumerable.Empty<ListTripsDto>();
 }
 
 <MudNavMenu Bordered Margin="Margin.None">
@@ -54,7 +41,7 @@
         <Authorized>
             <MudNavLink Match="NavLinkMatch.All" Href="trips" Icon="@Icons.Material.Filled.Backpack">Reisen</MudNavLink>
             <!-- Ongoing Trips -->
-            @if (TripState.Value.IsLoading)
+            @if (TripsState.IsLoading)
             {
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Lade Reisen...</MudText>
             }
@@ -68,7 +55,7 @@
             }
 
             <!-- Upcoming Trips -->
-            @if (!TripState.Value.IsLoading && UpcomingTrips.Any())
+            @if (!TripsState.IsLoading && UpcomingTrips.Any())
             {
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
                 @foreach (var trip in UpcomingTrips)

@@ -1,9 +1,6 @@
 @page "/trips/{TripId:guid}"
-@using LIT.Travelnize.Store.Trips
 @using MudBlazor
-@inject IDispatcher Dispatcher
-@inject IState<TripState> TripState
-@inject IActionSubscriber ActionSubscriber
+@inject TripsState TripsState
 
 <PageTitle>Travelnize - Trip Details</PageTitle>
 
@@ -23,17 +20,17 @@
             </MudPaper>
         </MudItem>
         <MudItem xs="12">
-            @if (TripState.Value.IsLoading)
+            @if (TripsState.IsLoading)
             {
                 <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
             }
-            else if (TripState.Value.CurrentTrip != null)
+            else if (TripsState.SelectedTrip != null)
             {
                 <MudPaper Class="pa-4" Elevation="0" Outlined="true">
-                    <MudText Typo="Typo.h6">@TripState.Value.CurrentTrip.Name</MudText>
+                    <MudText Typo="Typo.h6">@TripsState.SelectedTrip.Name</MudText>
 @*                     <MudText Typo="Typo.body2">Start: @TripState.Value.CurrentTrip.StartDate?.ToShortDateString()</MudText>
                     <MudText Typo="Typo.body2">Ende: @TripState.Value.CurrentTrip.EndDate?.ToShortDateString()</MudText> *@
-                    <MudText Typo="Typo.body2">Beschreibung: @TripState.Value.CurrentTrip.Description</MudText>
+                    <MudText Typo="Typo.body2">Beschreibung: @TripsState.SelectedTrip.Description</MudText>
 @*                     <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-4" OnClick="@EditTrip">
                         Bearbeiten
                     </MudButton> *@
@@ -54,14 +51,14 @@
 
     protected override void OnInitialized()
     {
-        ActionSubscriber.SubscribeToAction<GetTripResultAction>(this, (action) => InvokeAsync(StateHasChanged));
+
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        if (TripState.Value.CurrentTrip?.Id != TripId)
+        if (TripsState.SelectedTrip?.Id != TripId)
         {
-            Dispatcher.Dispatch(new GetTripAction(new(TripId)));
+            await TripsState.LoadTripAsync(TripId);
         }
     }
 }
