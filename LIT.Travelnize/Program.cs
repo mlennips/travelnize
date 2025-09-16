@@ -17,14 +17,14 @@ internal class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<IAuthService, JwtAuthenticationStateProvider>();
+        builder.Services.AddScoped<AuthenticationStateProvider>((p) => (JwtAuthenticationStateProvider)p.GetRequiredService<IAuthService>());
+        builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
         builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 
         var backendBaseUrl = builder.Configuration["Backend:BaseUrl"]!;
         builder.Services.AddHttpClient<ApiClient>(string.Empty, client => { client.BaseAddress = new Uri(backendBaseUrl); });
         builder.Services.AddHttpClient<AuthApiClient>(string.Empty, client => { client.BaseAddress = new Uri(backendBaseUrl); });
-        builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
         builder.Services.AddHttpClient<TripsApiClient>(client =>
         {
             client.BaseAddress = new Uri(backendBaseUrl);

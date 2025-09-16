@@ -125,7 +125,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip1Async()
         {
             var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow, DateTime.UtcNow.AddDays(7));
-            var user = await userManager.FindByEmailAsync("administrator@localhost");
+            var user = await userManager.FindByEmailAsync("demo@localhost");
             var trip = Trip.Create(user!, "My first trip", "This is my first trip.",
                 tripSlot);
 
@@ -149,7 +149,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip2Async()
         {
             var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow.AddDays(7), DateTime.UtcNow.AddDays(21));
-            var user = await userManager.FindByEmailAsync("administrator@localhost");
+            var user = await userManager.FindByEmailAsync("demo@localhost");
             var trip = Trip.Create(user!, "My 2nd trip", "This is my 2nd trip.",
                 tripSlot);
 
@@ -185,7 +185,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip3Async()
         {
             var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow.AddDays(20), DateTime.UtcNow.AddDays(34));
-            var user = await userManager.FindByEmailAsync("administrator@localhost");
+            var user = await userManager.FindByEmailAsync("demo@localhost");
             var trip = Trip.Create(user!, "My 3nd trip", "This is my 3nd trip.",
                 tripSlot);
 

@@ -3,29 +3,7 @@
 @using LIT.Travelnize.Interfaces
 @inject IAuthService AuthService
 @inject TripsState TripsState
-
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        await LoadTripsAsync();
-    }
-
-    private async Task LoadTripsAsync()
-    {
-        var user = await AuthService.GetCurrentUserAsync();
-        if (user != null)
-        {
-            await TripsState.LoadTripsAsync(user.UserId);
-        }
-    }
-
-    private IEnumerable<ListTripsDto> OngoingTrips =>
-        TripsState.Trips?.Where(t => t.Status == TripStatus.Ongoing) ?? Enumerable.Empty<ListTripsDto>();
-
-    private IEnumerable<ListTripsDto> UpcomingTrips =>
-        TripsState.Trips?.Where(t => t.Status == TripStatus.Upcoming) ?? Enumerable.Empty<ListTripsDto>();
-}
+@inject AuthenticationStateProvider AuthProvider
 
 <MudNavMenu Bordered Margin="Margin.None">
     <!-- Hauptnavigation -->
@@ -45,20 +23,20 @@
             {
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Lade Reisen...</MudText>
             }
-            else if (OngoingTrips.Any())
+            else if (TripsState.OngoingTrips.Any())
             {
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Laufende Reisen</MudText>
-                @foreach (var trip in OngoingTrips)
+                @foreach (var trip in TripsState.OngoingTrips)
                 {
                     <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.DoubleArrow">@trip.Name</MudNavLink>
                 }
             }
 
             <!-- Upcoming Trips -->
-            @if (!TripsState.IsLoading && UpcomingTrips.Any())
+            @if (!TripsState.IsLoading && TripsState.UpcomingTrips.Any())
             {
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
-                @foreach (var trip in UpcomingTrips)
+                @foreach (var trip in TripsState.UpcomingTrips)
                 {
                     <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.PendingActions">@trip.Name</MudNavLink>
                 }
@@ -70,3 +48,51 @@
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadTripsAsync();
+        //TripsState.OnChange += () => TripsStateHasChanged();
+        AuthProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var authState = await task;
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            await LoadTripsAsync();
+        }
+        else
+        {
+            // Optional: TripsState zurücksetzen, wenn ausgeloggt
+            // TripsState.Trips = null;
+        }
+        StateHasChanged();
+    }
+
+    private void TripsStateHasChanged()
+    {
+        var t1 = TripsState.Trips?.Length;
+        StateHasChanged();
+    }
+
+    private async Task LoadTripsAsync()
+    {
+        var user = await AuthService.GetCurrentUserAsync();
+        if (user != null)
+        {
+            await TripsState.LoadTripsAsync(user.UserId);
+        }
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= () => TripsStateHasChanged();
+        AuthProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}

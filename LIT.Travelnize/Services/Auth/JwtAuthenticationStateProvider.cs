@@ -15,13 +15,13 @@ namespace LIT.Travelnize.Services.Auth
         private const string AuthKey = "auth";
         private ClaimsIdentity? _identity;
         private AuthData? _authData;
-        private bool canRefreshToken = true;
+        private bool _canRefreshToken = true;
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            if (_identity == null && canRefreshToken)
+            if (_identity == null && _canRefreshToken)
             {
-                canRefreshToken = false;
+                _canRefreshToken = false;
                 await RefreshTokenAsync();
             }
             var user = new ClaimsPrincipal(_identity ?? new ClaimsIdentity());
@@ -45,6 +45,7 @@ namespace LIT.Travelnize.Services.Auth
         {
             _identity = null;
             _authData = null;
+            _canRefreshToken = false;
             await accessTokenService.RemoveTokenAsync();
             await localStorage.RemoveValueAsync(AuthKey);
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());

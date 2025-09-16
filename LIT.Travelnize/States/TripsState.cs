@@ -7,6 +7,8 @@ namespace LIT.Travelnize.States
 {
     public class TripsState(TripsApiClient _tripsApiClient)
     {
+        private bool _needsRefresh = true;
+
         public event Action? OnChange;
 
         public bool IsLoading { get; set; }
@@ -45,6 +47,10 @@ namespace LIT.Travelnize.States
 
         public async Task LoadTripsAsync(Guid userId)
         {
+            if (!_needsRefresh && Trips != null)
+            {
+                return;
+            }
             IsLoading = true;
             NotifyStateChanged();
             Trips = await _tripsApiClient.GetTripsAsync(userId);
@@ -64,6 +70,7 @@ namespace LIT.Travelnize.States
         public async Task<Guid?> CreateTripAsync(CreateTripCommand command)
         {
             var tripId = await _tripsApiClient.CreateTripAsync(command);
+            _needsRefresh = true;
             // Optional: Nach dem Erstellen die Liste neu laden
             // await LoadTripsAsync(command.UserId);
             return tripId;
@@ -74,6 +81,7 @@ namespace LIT.Travelnize.States
             var result = await _tripsApiClient.UpdateTripAsync(tripId, command);
             if (result)
             {
+                _needsRefresh = true;
                 // Optional: Nach dem Update den Trip neu laden
                 await LoadTripAsync(tripId);
             }
@@ -85,6 +93,7 @@ namespace LIT.Travelnize.States
             var result = await _tripsApiClient.DeleteTripAsync(tripId);
             if (result)
             {
+                _needsRefresh = true;
                 // Optional: Nach dem Löschen die Liste neu laden
                 // Trips = Trips?.Where(t => t.Id != tripId).ToArray();
             }

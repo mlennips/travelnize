@@ -38,6 +38,10 @@
                             </MudItem>
                             <MudItem xs="12">
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitLoginAsync">Anmelden</MudButton>
+                                @if (IsDevEnvironment)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="FillDemoAndLogin">Demo</MudButton>
+                                }
                             </MudItem>
                             <MudItem xs="12">
                                 <MudText Color="Color.Error">@loginError</MudText>
@@ -107,6 +111,22 @@
     private RegisterCommand RegisterModel { get; set; } = new();
     private ForgotPasswordCommand ForgotPasswordModel { get; set; } = new();
 
+    private bool IsDevEnvironment =>
+#if DEBUG
+        true;
+#else
+        false;
+#endif
+
+    private async Task FillDemoAndLogin()
+    {
+        LoginModel.EmailOrUserName = "demo@localhost";
+        LoginModel.Password = "Demo%2025"; 
+        StateHasChanged(); // UI-Update anstoßen
+        await Task.Delay(1); // Einen Render-Zyklus abwarten
+        await SubmitLoginAsync();
+    }
+
     private async Task SubmitLoginAsync()
     {
         loginError = null;
@@ -118,7 +138,7 @@
                 var isAuthSuccess = await AuthService.LoginAsync(LoginModel.EmailOrUserName, LoginModel.Password);
                 if (isAuthSuccess)
                 {
-                    Navigation.NavigateTo("/", true); // forceLoad workaround for auth state issue in navMenu
+                    Navigation.NavigateTo("/");
                 }
                 else
                 {
@@ -189,7 +209,7 @@
     private async Task Logout()
     {
         if (await AuthService.LogoutAsync())
-            Navigation.NavigateTo("/", true); // forceLoad workaround for auth state issue in navMenu
+            Navigation.NavigateTo("/");
     }
 
     [Parameter] public string? Action { get; set; }
