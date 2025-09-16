@@ -40,10 +40,10 @@ namespace LIT.Travelnize.States
         }
 
         public IEnumerable<ListTripsDto> OngoingTrips =>
-            Trips?.Where(t => t.Status == TripStatus.Ongoing) ?? Enumerable.Empty<ListTripsDto>();
+            Trips?.Where(t => t.Status == TripStatus.Ongoing).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsDto>();
 
         public IEnumerable<ListTripsDto> UpcomingTrips =>
-            Trips?.Where(t => t.Status == TripStatus.Upcoming) ?? Enumerable.Empty<ListTripsDto>();
+            Trips?.Where(t => t.Status == TripStatus.Upcoming).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsDto>();
 
         public async Task LoadTripsAsync(Guid userId)
         {

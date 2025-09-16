@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.8" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
-    <PackageReference Include="MudBlazor" Version="8.11.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.9" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
+    <PackageReference Include="MudBlazor" Version="8.12.0" />
+    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="TimeWarp.State" Version="11.0.3" />
     <PackageReference Include="TimeWarp.State.Plus" Version="11.0.3" />
   </ItemGroup>

@@ -28,7 +28,7 @@
         <MudContainer Fixed Class="my-6">
             <MudTabs>
                 <MudTabPanel Text="Login">
-                    <MudForm @ref="loginMudForm" Class="my-4">
+                    <MudForm @ref="loginForm" Class="my-4">
                         <MudGrid Spacing="4">
                             <MudItem xs="12">
                                 <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
@@ -50,7 +50,7 @@
                     </MudForm>
                 </MudTabPanel>
                 <MudTabPanel Text="Registrieren">
-                    <MudForm @ref="registerMudForm" Class="my-4">
+                    <MudForm @ref="registerForm" Class="my-4">
                         <MudGrid Spacing="4">
                             <MudItem xs="12">
                                 <MudTextField @bind-Value="RegisterModel.Email" Label="E-Mail" FullWidth="true" Required="true" />
@@ -77,7 +77,7 @@
                     </MudForm>
                 </MudTabPanel>
                 <MudTabPanel Text="Passwort vergessen">
-                    <MudForm @ref="forgotPasswordMudForm" Class="my-4">
+                    <MudForm @ref="forgotPasswordForm" Class="my-4">
                         <MudGrid Spacing="4">
                             <MudItem xs="12">
                                 <MudTextField @bind-Value="ForgotPasswordModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
@@ -100,9 +100,11 @@
     [Inject] NavigationManager Navigation { get; set; } = default!;
     [Inject] IAuthService AuthService { get; set; } = default!;
 
-    private MudForm? loginMudForm;
-    private MudForm? forgotPasswordMudForm;
-    private MudForm? registerMudForm;
+    [Parameter] public string? Action { get; set; }
+
+    private MudForm? loginForm;
+    private MudForm? forgotPasswordForm;
+    private MudForm? registerForm;
     private string? loginError;
     private string? forgotPasswordError;
     private string? registerError;
@@ -130,10 +132,10 @@
     private async Task SubmitLoginAsync()
     {
         loginError = null;
-        if (loginMudForm is not null)
+        if (loginForm is not null)
         {
-            await loginMudForm.Validate();
-            if (loginMudForm.IsValid)
+            await loginForm.Validate();
+            if (loginForm.IsValid)
             {
                 var isAuthSuccess = await AuthService.LoginAsync(LoginModel.EmailOrUserName, LoginModel.Password);
                 if (isAuthSuccess)
@@ -155,10 +157,10 @@
     private async Task SubmitForgotPasswordAsync()
     {
         forgotPasswordError = null;
-        if (forgotPasswordMudForm is not null)
+        if (forgotPasswordForm is not null)
         {
-            await forgotPasswordMudForm.Validate();
-            if (forgotPasswordMudForm.IsValid)
+            await forgotPasswordForm.Validate();
+            if (forgotPasswordForm.IsValid)
             {
                 var response = await AuthApiClient.ForgotPasswordAsync(ForgotPasswordModel);
                 if (response.IsSuccessStatusCode)
@@ -179,10 +181,10 @@
     private async Task SubmitRegisterAsync()
     {
         registerError = null;
-        if (registerMudForm is not null)
+        if (registerForm is not null)
         {
-            await registerMudForm.Validate();
-            if (registerMudForm.IsValid)
+            await registerForm.Validate();
+            if (registerForm.IsValid)
             {
                 var response = await AuthApiClient.RegisterAsync(RegisterModel!);
                 if (response != null && response.IsSuccessStatusCode)
@@ -211,6 +213,4 @@
         if (await AuthService.LogoutAsync())
             Navigation.NavigateTo("/");
     }
-
-    [Parameter] public string? Action { get; set; }
 }

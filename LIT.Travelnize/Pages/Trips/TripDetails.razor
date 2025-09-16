@@ -2,7 +2,7 @@
 @using MudBlazor
 @inject TripsState TripsState
 
-<PageTitle>Travelnize - Trip Details</PageTitle>
+<PageTitle>Travelnize - @TripsState.SelectedTrip?.Name</PageTitle>
 
 <MudContainer Fixed Class="my-6">
     <MudGrid Spacing="6">

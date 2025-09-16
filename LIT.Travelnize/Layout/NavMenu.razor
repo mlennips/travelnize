@@ -54,10 +54,8 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await LoadTripsAsync();
-        //TripsState.OnChange += () => TripsStateHasChanged();
+        TripsState.OnChange += () => TripsStateHasChanged();
         AuthProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
-
     }
 
     private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
@@ -67,17 +65,11 @@
         {
             await LoadTripsAsync();
         }
-        else
-        {
-            // Optional: TripsState zurücksetzen, wenn ausgeloggt
-            // TripsState.Trips = null;
-        }
         StateHasChanged();
     }
 
     private void TripsStateHasChanged()
     {
-        var t1 = TripsState.Trips?.Length;
         StateHasChanged();
     }
 
