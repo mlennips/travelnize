@@ -1,5 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
-using LIT.Travelnize.Domain.Trips.Queries;
+using LIT.Travelnize.Domain.Trips.Dtos;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 using LIT.Travelnize.Services.Api;
 

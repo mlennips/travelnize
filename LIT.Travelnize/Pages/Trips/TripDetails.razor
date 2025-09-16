@@ -1,6 +1,9 @@
 @page "/trips/{TripId:guid}"
-@using MudBlazor
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.Queries
 @inject TripsState TripsState
+
+@*  ToDo Farben pro Stufe (Trip, Segment, Destination, Accommodation) *@
 
 <PageTitle>Travelnize - @TripsState.SelectedTrip?.Name</PageTitle>
 
@@ -12,7 +15,7 @@
                     <MudImage Src="icon-192.png" Alt="Travelnize"></MudImage>
                 </MudAvatar>
                 <div>
-                    <MudText Typo="Typo.h5" Class="fw-bold">Trip Details</MudText>
+                    <MudText Typo="Typo.h5" Class="fw-bold">@TripsState.SelectedTrip?.Name</MudText>
                     <MudText Typo="Typo.subtitle2" Class="fw-light">
                         Hier findest du alle Informationen zu deinem Trip.
                     </MudText>
@@ -26,15 +29,79 @@
             }
             else if (TripsState.SelectedTrip != null)
             {
-                <MudPaper Class="pa-4" Elevation="0" Outlined="true">
-                    <MudText Typo="Typo.h6">@TripsState.SelectedTrip.Name</MudText>
-@*                     <MudText Typo="Typo.body2">Start: @TripState.Value.CurrentTrip.StartDate?.ToShortDateString()</MudText>
-                    <MudText Typo="Typo.body2">Ende: @TripState.Value.CurrentTrip.EndDate?.ToShortDateString()</MudText> *@
-                    <MudText Typo="Typo.body2">Beschreibung: @TripsState.SelectedTrip.Description</MudText>
-@*                     <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-4" OnClick="@EditTrip">
-                        Bearbeiten
-                    </MudButton> *@
-                </MudPaper>
+                <MudGrid Spacing="4">
+                    <MudItem xs="12">
+                        <MudPaper Class="bg-light text-bg-light pa-4" Elevation="0" Outlined="true">
+                            <MudText>
+                                @TripsState.SelectedTrip?.Description
+                            </MudText>
+                            <MudText>Zeitraum: @TripsState.SelectedTrip.Slot.ToShortDateString()</MudText>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.caption">Teilnehmer</MudText>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudAvatarGroup Spacing="2">
+                            @foreach (var participant in TripsState.SelectedTrip.Participants.OrderBy(p => p.Name))
+                            {
+                                <MudAvatar title="@participant.Name">@participant.Initials</MudAvatar>
+                            }
+                        </MudAvatarGroup>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.caption">Reiseplan</MudText>
+                    </MudItem>
+
+                    @foreach (var travelSegment in TripsState.SelectedTrip.TravelSegments)
+                    {
+                        <MudItem xs="12">
+                            <MudPaper Elevation="0"
+                                      Class="bg-primary bg-opacity-75 text-bg-primary pa-4">
+                                <MudText Typo="Typo.body2" Class="mb-0">
+                                    @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
+                                </MudText>
+                            </MudPaper>
+                        </MudItem>
+
+                        @foreach (var destination in travelSegment.Destinations)
+                        {
+                            <MudItem xs="12" md="4">
+                                <MudPaper Elevation="0"
+                                          Style="min-height: 180px;"
+                                          Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center bg-light text-bg-light">
+                                    <MudText Typo="Typo.body2" Class="mb-1">
+                                        @travelSegment.Slot.ToShortDateString()
+                                    </MudText>
+                                    <MudText Typo="Typo.body2" Class="mb-0 fw-medium">@travelSegment.Description</MudText>
+                                </MudPaper>
+                            </MudItem>
+
+                            <MudItem xs="12" md="8">
+                                <MudPaper Elevation="0"
+                                          Class="mud-width-full">
+                                    <MudList T="AccommodationDto">
+                                        @foreach (var accommodation in destination.Accommodations)
+                                        {
+                                            <MudListItem>
+                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
+                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckIn?.ToLongDateString()</MudText>
+                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckOut?.ToLongDateString()</MudText>
+                                            </MudListItem>
+                                        }
+                                    </MudList>
+                                </MudPaper>
+                            </MudItem>
+                        }
+                    }
+
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.caption">Transport</MudText>
+                    </MudItem>
+
+                </MudGrid>
             }
             else
             {
@@ -48,11 +115,6 @@
 
 @code {
     [Parameter] public Guid TripId { get; set; }
-
-    protected override void OnInitialized()
-    {
-
-    }
 
     protected override async Task OnParametersSetAsync()
     {

@@ -18,27 +18,30 @@
         </NotAuthorized>
         <Authorized>
             <MudNavLink Match="NavLinkMatch.All" Href="trips" Icon="@Icons.Material.Filled.Backpack">Reisen</MudNavLink>
-            <!-- Ongoing Trips -->
-            @if (TripsState.IsLoading)
+
+            @if (TripsState.IsLoading && IsInitialLoad)
             {
                 <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Lade Reisen...</MudText>
             }
-            else if (TripsState.OngoingTrips.Any())
+            else
             {
-                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Laufende Reisen</MudText>
-                @foreach (var trip in TripsState.OngoingTrips)
+                <!-- Ongoing Trips -->
+                if (TripsState.OngoingTrips.Any())
                 {
-                    <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.DoubleArrow">@trip.Name</MudNavLink>
+                    <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Laufende Reisen</MudText>
+                    @foreach (var trip in TripsState.OngoingTrips)
+                    {
+                        <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.DoubleArrow">@trip.Name</MudNavLink>
+                    }
                 }
-            }
-
-            <!-- Upcoming Trips -->
-            @if (!TripsState.IsLoading && TripsState.UpcomingTrips.Any())
-            {
-                <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
-                @foreach (var trip in TripsState.UpcomingTrips)
+                <!-- Upcoming Trips -->
+                @if (TripsState.UpcomingTrips.Any())
                 {
-                    <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.PendingActions">@trip.Name</MudNavLink>
+                    <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
+                    @foreach (var trip in TripsState.UpcomingTrips)
+                    {
+                        <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.PendingActions">@trip.Name</MudNavLink>
+                    }
                 }
             }
 
@@ -51,6 +54,8 @@
 
 
 @code {
+    public bool IsInitialLoad = true;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -79,6 +84,7 @@
         if (user != null)
         {
             await TripsState.LoadTripsAsync(user.UserId);
+            IsInitialLoad = false;
         }
     }
 

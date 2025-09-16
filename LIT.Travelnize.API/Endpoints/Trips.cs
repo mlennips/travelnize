@@ -1,6 +1,7 @@
 ﻿using LIT.Travelnize.API.Utils;
 using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips.Commands;
+using LIT.Travelnize.Domain.Trips.Dtos;
 using LIT.Travelnize.Domain.Trips.Queries;
 using MediatR;
 

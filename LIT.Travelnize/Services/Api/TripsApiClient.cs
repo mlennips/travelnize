@@ -1,5 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
-using LIT.Travelnize.Domain.Trips.Queries;
+using LIT.Travelnize.Domain.Trips.Dtos;
 using System.Net.Http.Json;
 
 namespace LIT.Travelnize.Services.Api

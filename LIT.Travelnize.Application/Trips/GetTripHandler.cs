@@ -1,6 +1,5 @@
-﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Common;
-using LIT.Travelnize.Domain.Trips;
+﻿using LIT.Travelnize.Domain.Trips;
+using LIT.Travelnize.Domain.Trips.Dtos;
 using LIT.Travelnize.Domain.Trips.Queries;
 
 namespace LIT.Travelnize.UseCases.Trips
@@ -13,10 +12,7 @@ namespace LIT.Travelnize.UseCases.Trips
 
             return trip is null
                 ? TripErrors.TripNotFound
-                : Result.Success(Map(trip));
+                : Result.Success(GetTripDto.From(trip));
         }
-
-        private static GetTripDto Map(Trip trip) =>
-            new(trip.Id, trip.Name, trip.Description, trip.Slot.Start, trip.Slot.End);
     }
 }

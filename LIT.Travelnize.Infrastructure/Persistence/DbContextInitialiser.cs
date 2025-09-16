@@ -118,6 +118,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                     await AddDemoTrip1Async();
                     await AddDemoTrip2Async();
                     await AddDemoTrip3Async();
+                    await AddDemoTrip4Async();
                 }
             }
         }
@@ -184,34 +185,186 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip3Async()
         {
-            var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow.AddDays(20), DateTime.UtcNow.AddDays(34));
+            var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow.AddDays(20), DateTime.UtcNow.AddDays(46)); // 14+7+5=26 Tage
             var user = await userManager.FindByEmailAsync("demo@localhost");
-            var trip = Trip.Create(user!, "My 3nd trip", "This is my 3nd trip.",
-                tripSlot);
+            var trip = Trip.Create(
+                user!,
+                "Sommerurlaub Europa & USA",
+                "Sommerurlaub mit Sightseeing, Kultur und Entspannung in Paris, London, New York und Berlin.",
+                tripSlot
+            );
 
+            // TravelSegment 1: 14 Tage, 2 Destinationen je 7 Tage
             var travelSegment1 = trip.AddTravelSegment(
-                PlanningSlot.Create(0, tripSlot.Start, tripSlot.Start?.AddDays(7)),
-                "Part 1").Value!;
+                PlanningSlot.Create(0, tripSlot.Start, tripSlot.Start?.AddDays(14)),
+                "Kulturelle Highlights in Paris & London"
+            ).Value!;
 
+            var destination1_1 = trip.AddDestinationToTravelSegment(
+                travelSegment1.Id,
+                "Paris",
+                "Entdecke die romantische Stadt an der Seine mit Eiffelturm, Louvre und französischer Küche.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(7))
+            ).Value!;
+
+            var destination1_2 = trip.AddDestinationToTravelSegment(
+                travelSegment1.Id,
+                "London",
+                "Erlebe die britische Hauptstadt mit Big Ben, Buckingham Palace und traditionellen Pubs.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment1.Slot.Start?.AddDays(7), travelSegment1.Slot.End)
+            ).Value!;
+
+            // TravelSegment 2: 7 Tage, 1 Destination
             var travelSegment2 = trip.AddTravelSegment(
                 PlanningSlot.Create(0, travelSegment1.Slot.End!.Value, travelSegment1.Slot.End!.Value.AddDays(7)),
-                "Part 2").Value!;
+                "Städteabenteuer in New York"
+            ).Value!;
 
-            var destination1_1 = trip.AddDestinationToTravelSegment(travelSegment1.Id, "Paris", "City of Light", Location.Empty).Value!;
-            var destination1_2 = trip.AddDestinationToTravelSegment(travelSegment1.Id, "London", "Capital of UK", Location.Empty).Value!;
-            var destination2_1 = trip.AddDestinationToTravelSegment(travelSegment2.Id, "New York", "The Big Apple", Location.Empty).Value!;
+            var destination2_1 = trip.AddDestinationToTravelSegment(
+                travelSegment2.Id,
+                "New York",
+                "Erkunde die pulsierende Metropole mit Central Park, Times Square und beeindruckender Skyline.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment2.Slot.Start, travelSegment2.Slot.End)
+            ).Value!;
 
-            trip.AddParticipantAsGuest("Guest 1", new Email("guest1@travelnize.de"));
-            trip.AddParticipantAsGuest("Guest 2", new Email("guest2@travelnize.de"));
-            trip.AddParticipantAsGuest("Guest 3", new Email("guest3@travelnize.de"));
-            trip.AddParticipantAsGuest("Guest 4", new Email("guest4@travelnize.de"));
+            // TravelSegment 3: 5 Tage, 1 Destination
+            var travelSegment3 = trip.AddTravelSegment(
+                PlanningSlot.Create(0, travelSegment2.Slot.End!.Value, travelSegment2.Slot.End!.Value.AddDays(5)),
+                "Entspannung und Kultur in Berlin"
+            ).Value!;
 
-            trip.AddAccommodationToDestination(destination1_1.Id, "Hotel Paris", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4));
-            trip.AddAccommodationToDestination(destination1_2.Id, "Hotel London", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(4), travelSegment1.Slot.Start?.AddDays(3));
-            trip.AddAccommodationToDestination(destination2_1.Id, "Hotel New York", AccommodationType.Hotel,
+            var destination3_1 = trip.AddDestinationToTravelSegment(
+                travelSegment3.Id,
+                "Berlin",
+                "Genieße die entspannte Atmosphäre, besuche Museen und entdecke das Berliner Nachtleben.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment3.Slot.Start, travelSegment3.Slot.End)
+            ).Value!;
+
+            // 4 Participants
+            trip.AddParticipantAsGuest("Anna Müller", new Email("anna.mueller@travelnize.de"));
+            trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
+            trip.AddParticipantAsGuest("Lisa Schmidt", new Email("lisa.schmidt@travelnize.de"));
+            trip.AddParticipantAsGuest("Tom Becker", new Email("tom.becker@travelnize.de"));
+
+            // Accommodations für alle Zeiträume
+            trip.AddAccommodationToDestination(destination1_1.Id, "Hotel de Paris", AccommodationType.Hotel,
+                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(7));
+            trip.AddAccommodationToDestination(destination1_2.Id, "The Londoner", AccommodationType.Hotel,
+                Address.Empty, travelSegment1.Slot.Start?.AddDays(7), travelSegment1.Slot.End);
+
+            trip.AddAccommodationToDestination(destination2_1.Id, "NYC Central Hotel", AccommodationType.Hotel,
                 Address.Empty, travelSegment2.Slot.Start, travelSegment2.Slot.End);
+
+            trip.AddAccommodationToDestination(destination3_1.Id, "Berlin City Apartments", AccommodationType.Hotel,
+                Address.Empty, travelSegment3.Slot.Start, travelSegment3.Slot.End);
+
+            appContext.Trips.Add(trip);
+
+            await appContext.SaveChangesAsync();
+        }
+
+        private async Task AddDemoTrip4Async()
+        {
+            var tripSlot = PlanningSlot.Create(0, DateTime.UtcNow.AddDays(10), DateTime.UtcNow.AddDays(34)); // 24 Tage
+            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var trip = Trip.Create(
+                user!,
+                "Europa-Roadtrip",
+                "Ein Roadtrip durch Skandinavien, Westeuropa und Südeuropa mit atemberaubenden Landschaften, Kultur und kulinarischen Highlights.",
+                tripSlot
+            );
+
+            // TravelSegment 1: Skandinavien (8 Tage)
+            var travelSegment1 = trip.AddTravelSegment(
+                PlanningSlot.Create(0, tripSlot.Start, tripSlot.Start?.AddDays(8)),
+                "Skandinavien – Natur, Fjorde und nordische Städte"
+            ).Value!;
+
+            var destination1_1 = trip.AddDestinationToTravelSegment(
+                travelSegment1.Id,
+                "Kopenhagen",
+                "Erkunde die dänische Hauptstadt mit Nyhavn, Tivoli und moderner Architektur.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4))
+            ).Value!;
+
+            var destination1_2 = trip.AddDestinationToTravelSegment(
+                travelSegment1.Id,
+                "Stockholm",
+                "Entdecke die schwedische Metropole mit Altstadt, Schärengarten und königlichem Schloss.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment1.Slot.Start?.AddDays(4), travelSegment1.Slot.End)
+            ).Value!;
+
+            // TravelSegment 2: WestEuropa (8 Tage)
+            var travelSegment2 = trip.AddTravelSegment(
+                PlanningSlot.Create(0, travelSegment1.Slot.End!.Value, travelSegment1.Slot.End!.Value.AddDays(8)),
+                "Westeuropa – Kultur, Geschichte und Genuss"
+            ).Value!;
+
+            var destination2_1 = trip.AddDestinationToTravelSegment(
+                travelSegment2.Id,
+                "Amsterdam",
+                "Fahre mit dem Fahrrad durch die Grachtenstadt und genieße das bunte Treiben.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(4))
+            ).Value!;
+
+            var destination2_2 = trip.AddDestinationToTravelSegment(
+                travelSegment2.Id,
+                "Paris",
+                "Erlebe die Stadt der Liebe mit Eiffelturm, Louvre und französischer Küche.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment2.Slot.Start?.AddDays(4), travelSegment2.Slot.End)
+            ).Value!;
+
+            // TravelSegment 3: Südeuropa (8 Tage)
+            var travelSegment3 = trip.AddTravelSegment(
+                PlanningSlot.Create(0, travelSegment2.Slot.End!.Value, travelSegment2.Slot.End!.Value.AddDays(8)),
+                "Südeuropa – Sonne, Meer und mediterranes Flair"
+            ).Value!;
+
+            var destination3_1 = trip.AddDestinationToTravelSegment(
+                travelSegment3.Id,
+                "Barcelona",
+                "Genieße Tapas, die Sagrada Familia und das mediterrane Lebensgefühl.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(4))
+            ).Value!;
+
+            var destination3_2 = trip.AddDestinationToTravelSegment(
+                travelSegment3.Id,
+                "Rom",
+                "Tauche ein in die Geschichte der ewigen Stadt mit Kolosseum, Vatikan und italienischer Küche.",
+                Location.Empty,
+                PlanningSlot.Create(0, travelSegment3.Slot.Start?.AddDays(4), travelSegment3.Slot.End)
+            ).Value!;
+
+            // 4 Participants
+            trip.AddParticipantAsGuest("Anna Müller", new Email("anna.mueller@travelnize.de"));
+            trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
+            trip.AddParticipantAsGuest("Lisa Schmidt", new Email("lisa.schmidt@travelnize.de"));
+            trip.AddParticipantAsGuest("Tom Becker", new Email("tom.becker@travelnize.de"));
+
+            // Accommodations für alle Zeiträume
+            trip.AddAccommodationToDestination(destination1_1.Id, "Copenhagen City Hotel", AccommodationType.Hotel,
+                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4));
+            trip.AddAccommodationToDestination(destination1_2.Id, "Stockholm Waterfront Hotel", AccommodationType.Hotel,
+                Address.Empty, travelSegment1.Slot.Start?.AddDays(4), travelSegment1.Slot.End);
+
+            trip.AddAccommodationToDestination(destination2_1.Id, "Amsterdam Canal Apartments", AccommodationType.Hotel,
+                Address.Empty, travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(4));
+            trip.AddAccommodationToDestination(destination2_2.Id, "Hotel de Paris", AccommodationType.Hotel,
+                Address.Empty, travelSegment2.Slot.Start?.AddDays(4), travelSegment2.Slot.End);
+
+            trip.AddAccommodationToDestination(destination3_1.Id, "Barcelona Beach Resort", AccommodationType.Hotel,
+                Address.Empty, travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(4));
+            trip.AddAccommodationToDestination(destination3_2.Id, "Roma Centro Hotel", AccommodationType.Hotel,
+                Address.Empty, travelSegment3.Slot.Start?.AddDays(4), travelSegment3.Slot.End);
 
             appContext.Trips.Add(trip);
 

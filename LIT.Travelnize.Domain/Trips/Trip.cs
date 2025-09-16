@@ -78,7 +78,7 @@ namespace LIT.Travelnize.Domain.Trips
             return Result.Success();
         }
 
-        public Result<Destination> AddDestinationToTravelSegment(Guid segmentId, string name, string description, Location location)
+        public Result<Destination> AddDestinationToTravelSegment(Guid segmentId, string name, string description, Location location, PlanningSlot? slot = null)
         {
             var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
@@ -87,8 +87,8 @@ namespace LIT.Travelnize.Domain.Trips
             }
 
             var order = _travelSegments.Select(x => x.Slot.Order).LastOrDefault() + 1;
-            var destination = Destination.Create(Id, segmentId, name, description,
-                PlanningSlot.Create(order, segment.Slot.Start, segment.Slot.End), location);
+            slot ??= PlanningSlot.Create(order, segment.Slot.Start, segment.Slot.End);
+            var destination = Destination.Create(Id, segmentId, name, description, slot, location);
             var result = segment.AddDestination(destination);
 
             return result.IsSuccess ? destination : result.Error;
