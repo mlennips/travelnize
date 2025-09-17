@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Common;
-using LIT.Travelnize.Domain.Trips;
+﻿using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.Commands;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -16,7 +14,7 @@ namespace LIT.Travelnize.UseCases.Trips
                 return TripErrors.TripNotFound;
             }
             var result = trip.Update(request.Name, request.Description,
-                PlanningSlot.Create(0, request.TravelStart, request.TravelEnd));
+                PlanningSlot.Create(request.TravelStart, request.TravelEnd));
             await uow.UpdateAsync(trip);
             return result;
         }

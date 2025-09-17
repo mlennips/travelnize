@@ -35,6 +35,7 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
         public static AccommodationType Hotel => new("Hotel");
         public static AccommodationType Hostel => new("Hostel");
         public static AccommodationType Apartment => new("Apartment");
+        public static AccommodationType Lodge => new("Lodge");
         public static AccommodationType Guesthouse => new("Guesthouse");
         public static AccommodationType Resort => new("Resort");
         public static AccommodationType BedAndBreakfast => new("Bed and Breakfast");

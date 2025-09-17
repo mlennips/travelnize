@@ -21,7 +21,7 @@
                 trip.Description,
                 PlanningSlotDto.From(trip.Slot),
                 trip.Status.Value,
-                trip.TravelSegments.OrderBy(x => x.Slot.Start).Select(TravelSegmentDto.From).ToList(),
+                trip.TravelSegments.Select(TravelSegmentDto.From).ToList(),
                 trip.Participants.Select(ParticipantDto.From).ToList(),
                 trip.Transportations.Select(TransportationDto.From).ToList()
             );

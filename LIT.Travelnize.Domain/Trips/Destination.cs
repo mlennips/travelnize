@@ -19,7 +19,7 @@ namespace LIT.Travelnize.Domain.Trips
         public ExternalUrl? ImageUrl { get; private set; }
         public ExternalUrl? Website { get; private set; }
 
-        public IEnumerable<Accommodation> Accommodations { get => _accommodations.AsReadOnly(); init => _accommodations = value.ToList(); }
+        public IEnumerable<Accommodation> Accommodations { get => _accommodations.OrderBy(a => a.CheckIn); init => _accommodations = value.ToList(); }
         public IEnumerable<Activity> Activities { get => _activities.AsReadOnly(); init => _activities = value.ToList(); }
 
         internal static Destination Create(Guid tripId, Guid travelSegmentId, string name, string description,

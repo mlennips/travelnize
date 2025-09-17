@@ -16,7 +16,7 @@ namespace LIT.Travelnize.Domain.Trips
         public PlanningSlot Slot { get; private set; } = default!;
         public TripStatus Status => TripStatus.Create(Slot.Start, Slot.End);
 
-        public IEnumerable<TravelSegment> TravelSegments => _travelSegments.AsReadOnly();
+        public IEnumerable<TravelSegment> TravelSegments => _travelSegments.OrderBy(x => x.Slot);
         public IEnumerable<Participant> Participants => _participants.AsReadOnly();
         public IEnumerable<Transportation> Transportations => _transportations.AsReadOnly();
 
@@ -86,8 +86,7 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripErrors.TravelSegmentNotFound;
             }
 
-            var order = _travelSegments.Select(x => x.Slot.Order).LastOrDefault() + 1;
-            slot ??= PlanningSlot.Create(order, segment.Slot.Start, segment.Slot.End);
+            slot ??= PlanningSlot.Create(segment.Slot.Start, segment.Slot.End);
             var destination = Destination.Create(Id, segmentId, name, description, slot, location);
             var result = segment.AddDestination(destination);
 

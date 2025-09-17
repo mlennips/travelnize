@@ -11,7 +11,7 @@ namespace LIT.Travelnize.Domain.Trips
 
         public string Description { get; private set; } = default!;
         public PlanningSlot Slot { get; private set; } = default!;
-        public IEnumerable<Destination> Destinations => _destinations.AsReadOnly();
+        public IEnumerable<Destination> Destinations => _destinations.OrderBy(x => x.Slot);
 
         internal static TravelSegment Create(Guid tripId, string description, PlanningSlot slot)
         {

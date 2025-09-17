@@ -8,6 +8,8 @@
     )
     {
         public static TravelSegmentDto From(TravelSegment segment) =>
-            new(segment.Id, segment.Description, PlanningSlotDto.From(segment.Slot), segment.Destinations.Select(DestinationDto.From).ToList());
+            new(segment.Id, segment.Description, 
+                PlanningSlotDto.From(segment.Slot), 
+                segment.Destinations.Select(DestinationDto.From).ToList());
     }
 }

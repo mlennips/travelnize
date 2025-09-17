@@ -3,7 +3,7 @@
 @using LIT.Travelnize.Domain.Trips.Queries
 @inject TripsState TripsState
 
-@*  ToDo Farben pro Stufe (Trip, Segment, Destination, Accommodation) *@
+@*  ToDo Farben pro Stufe (Trip, Segment, Destination, Accommodation); Slot Component; *@
 
 <PageTitle>Travelnize - @TripsState.SelectedTrip?.Name</PageTitle>
 
@@ -59,7 +59,8 @@
                     {
                         <MudItem xs="12">
                             <MudPaper Elevation="0"
-                                      Class="bg-primary bg-opacity-75 text-bg-primary pa-4">
+                                      Class="bg-primary bg-opacity-75 text-bg-primary pa-4 d-flex align-items-center">
+                                <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2" />
                                 <MudText Typo="Typo.body2" Class="mb-0">
                                     @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
                                 </MudText>
@@ -70,12 +71,23 @@
                         {
                             <MudItem xs="12" md="4">
                                 <MudPaper Elevation="0"
-                                          Style="min-height: 180px;"
-                                          Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center bg-light text-bg-light">
-                                    <MudText Typo="Typo.body2" Class="mb-1">
-                                        @travelSegment.Slot.ToShortDateString()
+                                          Style="min-height: 180px; position: relative; overflow: hidden;"
+                                          Class="mud-width-full pa-4 bg-light text-bg-light">
+
+                                    <div class="d-flex align-items-center">
+                                        <MudIcon Icon="@Icons.Material.Filled.LocationCity"
+                                                 Color="Color.Tertiary"
+                                                 Class="me-2" />
+                                        <MudText Typo="Typo.body2">
+                                            @destination.Slot.ToShortDateString()
+                                        </MudText>
+                                    </div>
+                                    <MudText Typo="Typo.h6" Class="mb-0 fw-bolder" Color="Color.Tertiary">
+                                        @destination.Name
                                     </MudText>
-                                    <MudText Typo="Typo.body2" Class="mb-0 fw-medium">@travelSegment.Description</MudText>
+                                    <MudText Typo="Typo.caption" Class="mb-0">
+                                        @destination.Description
+                                    </MudText>
                                 </MudPaper>
                             </MudItem>
 
@@ -85,12 +97,20 @@
                                     <MudList T="AccommodationDto">
                                         @foreach (var accommodation in destination.Accommodations)
                                         {
-                                            <MudListItem>
+                                            <MudListItem Icon="@Icons.Material.Filled.Hotel">
+                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckIn?.ToShortDateString()</MudText>
+                                                -
+                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckOut?.ToShortDateString()</MudText>
                                                 <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
-                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckIn?.ToLongDateString()</MudText>
-                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckOut?.ToLongDateString()</MudText>
                                             </MudListItem>
                                         }
+
+                                        <MudListItem Icon="@Icons.Material.Filled.Attractions">
+                                            <MudText Typo="Typo.caption" Class="mb-0">Demo Attraktion 1</MudText>
+                                        </MudListItem>
+                                        <MudListItem Icon="@Icons.Material.Filled.Attractions">
+                                            <MudText Typo="Typo.caption" Class="mb-0">Demo Attraktion 2</MudText>
+                                        </MudListItem>
                                     </MudList>
                                 </MudPaper>
                             </MudItem>
@@ -99,6 +119,15 @@
 
                     <MudItem xs="12">
                         <MudText Typo="Typo.caption">Transport</MudText>
+
+                        <MudList T="TransportationDto">
+                            <MudListItem Icon="@Icons.Material.Filled.AirportShuttle">
+                                <MudText Typo="Typo.caption" Class="mb-0">Demo Auto</MudText>
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.AirportShuttle">
+                                <MudText Typo="Typo.caption" Class="mb-0">Demo Bus</MudText>
+                            </MudListItem>
+                        </MudList>
                     </MudItem>
 
                 </MudGrid>
