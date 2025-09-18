@@ -1,0 +1,25 @@
+@using MudBlazor
+
+<div class="d-flex flex-row mud-width-full py-4">
+    @if (!string.IsNullOrEmpty(Image))
+    {
+        <MudAvatar Size="Size.Large" Class="bg-white mx-4">
+            <MudImage Src="icon-192.png" Alt="Travelnize"></MudImage>
+        </MudAvatar>
+    }
+    <div>
+        <MudText Typo="Typo.h5" Class="fw-bold">@Title</MudText>
+        @if (!string.IsNullOrEmpty(Subtitle))
+        {
+            <MudText Typo="Typo.subtitle2" Class="fw-light">
+                @Subtitle
+            </MudText>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public string? Image { get; set; } = "icon-192.png";
+}

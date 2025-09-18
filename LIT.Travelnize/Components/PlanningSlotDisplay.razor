@@ -1,0 +1,21 @@
+@if (Slot is not null)
+{
+    <MudText Inline Typo="@Typo">@Slot.ToShortDateString()</MudText>
+    @if (ShowDays)
+    {
+        <MudText Inline Typo="@Typo"> (@Slot.TotalDays @(Slot.TotalDays == 1 ? "Tag" : "Tage"))</MudText>
+    }
+}
+else
+{
+    <MudText Typo="@Typo" Color="Color.Warning">Kein Zeitraum definiert</MudText>
+}
+
+@code {
+    [Parameter]
+    public PlanningSlot? Slot { get; set; }
+    [Parameter]
+    public bool ShowDays { get; set; } = false;
+    [Parameter]
+    public MudBlazor.Typo Typo { get; set; } = Typo.caption;
+}

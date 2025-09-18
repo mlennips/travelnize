@@ -11,8 +11,9 @@ namespace LIT.Travelnize.Domain.Trips
         public string Name { get; private set; } = default!;
         public AccommodationType Type { get; private set; } = default!;
         public Address Address { get; private set; } = default!;
-        public DateTime? CheckIn { get; private set; }
-        public DateTime? CheckOut { get; private set; }
+        public PlanningSlot Slot { get; private set; } = default!;
+        public DateTime? CheckIn => Slot.Start;
+        public DateTime? CheckOut => Slot.End;
 
         internal static Accommodation Create(Guid tripId, Guid travelSegmentId, string name, AccommodationType type, 
             Address address, DateTime? checkIn, DateTime? checkOut)
@@ -25,8 +26,7 @@ namespace LIT.Travelnize.Domain.Trips
                 Name = name,
                 Type = type,
                 Address = address,
-                CheckIn = checkIn,
-                CheckOut = checkOut
+                Slot = PlanningSlot.Create(checkIn, checkOut)
             };
         }
 
@@ -40,8 +40,7 @@ namespace LIT.Travelnize.Domain.Trips
             Name = name;
             Type = type;
             Address = address;
-            CheckIn = checkIn;
-            CheckOut = checkOut;
+            Slot = PlanningSlot.Create(checkIn, checkOut);
 
             return Result.Success();
         }

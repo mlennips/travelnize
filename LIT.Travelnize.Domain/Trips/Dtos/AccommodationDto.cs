@@ -6,8 +6,9 @@
         public string Name { get; init; } = default!;
         public AccommodationType Type { get; init; } = default!;
         public Address Address { get; init; } = default!;
-        public DateTime? CheckIn { get; init; }
-        public DateTime? CheckOut { get; init; }
+        public PlanningSlot Slot { get; init; } = default!;
+        public DateTime? CheckIn => Slot.Start;
+        public DateTime? CheckOut => Slot.End;
 
         public static AccommodationDto From(Accommodation accommodation)
         {
@@ -17,8 +18,7 @@
                 Name = accommodation.Name,
                 Type = accommodation.Type,
                 Address = accommodation.Address,
-                CheckIn = accommodation.CheckIn,
-                CheckOut = accommodation.CheckOut
+                Slot = accommodation.Slot
             };
         }
     }

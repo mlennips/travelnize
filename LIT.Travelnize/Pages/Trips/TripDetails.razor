@@ -4,24 +4,14 @@
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @inject TripsState TripsState
 
-@*  ToDo Farben pro Stufe (Trip, Segment, Destination, Accommodation); Slot Component; *@
-
 <PageTitle>Travelnize - @TripsState.SelectedTrip?.Name</PageTitle>
 
 <MudContainer Class="my-6" MaxWidth="MaxWidth.Large">
     <MudGrid Spacing="6">
         <MudItem xs="12">
-            <MudPaper Class="d-flex flex-row mud-width-full py-4" Elevation="0">
-                <MudAvatar Size="Size.Large" Class="bg-white mx-4">
-                    <MudImage Src="icon-192.png" Alt="Travelnize"></MudImage>
-                </MudAvatar>
-                <div>
-                    <MudText Typo="Typo.h5" Class="fw-bold">@TripsState.SelectedTrip?.Name</MudText>
-                    <MudText Typo="Typo.subtitle2" Class="fw-light">
-                        Hier findest du alle Informationen zu deinem Trip.
-                    </MudText>
-                </div>
-            </MudPaper>
+            <PageHeader Title="@TripsState.SelectedTrip?.Name"
+                        Subtitle="Hier findest du alle Informationen zu deinem Trip."
+                        Image="Icons.Material.Filled.FlightTakeoff" />
         </MudItem>
         <MudItem xs="12">
             @if (TripsState.IsLoading)
@@ -33,10 +23,10 @@
                 <MudGrid Spacing="4">
                     <MudItem xs="12">
                         <MudPaper Class="bg-light text-bg-light pa-4" Elevation="0" Outlined="false" Style="position: relative;">
-                            <MudText Style="position: absolute; top: -24px; right: 10px; font-size: 1.75rem; font-weight: bolder;"
+                            <MudText Style="position: absolute; top: -17px; right: 10px;"
                                      Color="Color.Dark"
-                                     Class="text-end opacity-25">
-                                @TripsState.SelectedTrip.Slot.ToShortDateString()
+                                     Class="text-end opacity-25 fw-bolder">
+                                <PlanningSlotDisplay Slot="@TripsState.SelectedTrip.Slot" Typo="Typo.h6"></PlanningSlotDisplay>
                             </MudText>
                             <MudText Color="Color.Secondary" Class="opacity-75">
                                 @TripsState.SelectedTrip?.Description
@@ -67,7 +57,7 @@
                                 <MudChip Icon="@Icons.Material.Filled.People" Color="Color.Tertiary">@TripsState.SelectedTrip.Participants.Count Teilnehmer</MudChip>
                             </MudChipSet>
                             <MudAvatarGroup Spacing="2"
-                                Max="9"
+                                            Max="9"
                                             Style="position: absolute; bottom: -24px; right: 10px;">
                                 @foreach (var participant in TripsState.SelectedTrip.Participants.OrderBy(p => p.Name))
                                 {
@@ -83,7 +73,7 @@
                             <MudPaper Elevation="0"
                                       Class="bg-primary bg-opacity-75 text-bg-primary pa-4 d-flex align-items-center">
                                 <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2" />
-                                <MudText Typo="Typo.body2" Class="mb-0" >
+                                <MudText Typo="Typo.body2" Class="mb-0">
                                     @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
                                 </MudText>
                             </MudPaper>
@@ -91,13 +81,13 @@
 
                         @foreach (var destination in travelSegment.Destinations)
                         {
-                            <MudItem xs="12" sm="12" lg="4" xl="4" >
+                            <MudItem xs="12" sm="12" lg="4" xl="4">
                                 <MudPaper Elevation="0"
                                           Style="min-height: 180px; position: relative; overflow: hidden;"
                                           Class="mud-width-full pa-4 bg-light text-bg-light">
 
                                     <MudText Typo="Typo.body2">
-                                        @(destination.Slot.ToShortDateString() + $" ({destination.Slot.TotalDays} Tage"))
+                                        <PlanningSlotDisplay Slot="@destination.Slot" ShowDays></PlanningSlotDisplay>
                                     </MudText>
                                     <div class="d-flex align-items-center">
                                         <MudIcon Icon="@Icons.Material.Filled.LocationCity"
@@ -120,9 +110,7 @@
                                         @foreach (var accommodation in destination.Accommodations)
                                         {
                                             <MudListItem Icon="@Icons.Material.Filled.Hotel">
-                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckIn?.ToShortDateString()</MudText>
-                                                -
-                                                <MudText Typo="Typo.caption" Class="mb-0">@accommodation.CheckOut?.ToShortDateString()</MudText>
+                                                <PlanningSlotDisplay Slot="@accommodation.Slot"></PlanningSlotDisplay>
                                                 <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
                                             </MudListItem>
                                         }

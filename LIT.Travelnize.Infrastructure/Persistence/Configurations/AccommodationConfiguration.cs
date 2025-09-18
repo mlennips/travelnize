@@ -12,6 +12,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             {
                 builder.OwnsOne(a => a.Type);
                 builder.OwnsOne(a => a.Address);
+                builder.OwnsOne(x => x.Slot);
             }
         }
     }
