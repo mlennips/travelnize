@@ -188,6 +188,18 @@ namespace LIT.Travelnize.Domain.Trips
             return Result.Success();
         }
 
+        public Result<Activity> AddActivity(Guid destinationId, string name, string description, Location location, DateTime? date, TimeSpan? duration)
+        {
+            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
+            if (destination == null)
+            {
+                return TripErrors.DestinationNotFound;
+            }
+            var activity = Activity.Create(Id, destination.TravelSegmentId, destinationId, name, description, date, duration, location);
+            var result = destination.AddActivity(activity);
+            return result.IsSuccess ? activity : result.Error;
+        }
+
         public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink,
             TransportationType type)

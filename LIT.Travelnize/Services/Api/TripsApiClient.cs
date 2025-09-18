@@ -1,5 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
-using LIT.Travelnize.Domain.Trips.Dtos;
+using LIT.Travelnize.Domain.Trips.Queries;
 using System.Net.Http.Json;
 
 namespace LIT.Travelnize.Services.Api
@@ -16,14 +16,14 @@ namespace LIT.Travelnize.Services.Api
             return null;
         }
 
-        public async Task<ListTripsDto[]?> GetTripsAsync(Guid userId)
+        public async Task<ListTripsResponse[]?> GetTripsAsync(Guid userId)
         {
-            return await httpClient.GetFromJsonAsync<ListTripsDto[]>($"/trips?userId={userId}");
+            return await httpClient.GetFromJsonAsync<ListTripsResponse[]>($"/trips?userId={userId}");
         }
 
-        public async Task<GetTripDto?> GetTripAsync(Guid tripId)
+        public async Task<GetTripResponse?> GetTripAsync(Guid tripId)
         {
-            return await httpClient.GetFromJsonAsync<GetTripDto>($"/trips/{tripId}");
+            return await httpClient.GetFromJsonAsync<GetTripResponse>($"/trips/{tripId}");
         }
 
         public async Task<bool> UpdateTripAsync(Guid tripId, UpdateTripCommand command)

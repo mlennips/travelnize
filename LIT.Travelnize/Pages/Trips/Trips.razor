@@ -22,7 +22,7 @@
         </MudItem>
         <MudItem xs="12">
                 <MudText Typo="Typo.h6" Class="mb-4">Deine Reisen</MudText>
-                <MudTable Items="TripsState.Trips" Hover="true" Loading="TripsState.IsLoading" Dense="true">
+                <MudTable Items="TripsState.Trips" Hover="true" Loading="TripsState.IsLoading" Dense="false">
                     <HeaderContent>
                         <MudTh>Name</MudTh>
                         <MudTh>Beschreibung</MudTh>
@@ -30,6 +30,7 @@
                         <MudTh>Status</MudTh>
                         <MudTh>Start</MudTh>
                         <MudTh>Ende</MudTh>
+                        <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.Name</MudTd>
@@ -38,6 +39,11 @@
                         <MudTd>@context.Status.ToString()</MudTd>
                         <MudTd>@context.Slot.Start?.ToShortDateString()</MudTd>
                         <MudTd>@context.Slot.End?.ToShortDateString()</MudTd>
+                        <MudTd>
+                        <MudButtonGroup Color="Color.Primary" Variant="Variant.Text">
+                            <MudIconButton Icon="@Icons.Material.Filled.NavigateNext" Href="@($"/trips/{context.Id}")"></MudIconButton>
+                        </MudButtonGroup>
+                        </MudTd>
                     </RowTemplate>
                 </MudTable>
                 @if (!TripsState.IsLoading && TripsState.Trips?.Count() == 0)

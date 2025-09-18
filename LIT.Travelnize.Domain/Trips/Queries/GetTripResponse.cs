@@ -1,26 +1,28 @@
-﻿namespace LIT.Travelnize.Domain.Trips.Dtos
+﻿using LIT.Travelnize.Domain.Trips.Dtos;
+
+namespace LIT.Travelnize.Domain.Trips.Queries
 {
-    public record GetTripDto(
+    public record GetTripResponse(
         Guid Id,
         Guid UserId,
         string Name,
         string Description,
-        PlanningSlotDto Slot,
-        string Status,
+        PlanningSlot Slot,
+        TripStatus Status,
         IReadOnlyList<TravelSegmentDto> TravelSegments,
         IReadOnlyList<ParticipantDto> Participants,
         IReadOnlyList<TransportationDto> Transportations
     )
     {
-        public static GetTripDto From(Trip trip)
+        public static GetTripResponse From(Trip trip)
         {
-            return new GetTripDto(
+            return new GetTripResponse(
                 trip.Id,
                 trip.UserId,
                 trip.Name,
                 trip.Description,
-                PlanningSlotDto.From(trip.Slot),
-                trip.Status.Value,
+                trip.Slot,
+                trip.Status,
                 trip.TravelSegments.Select(TravelSegmentDto.From).ToList(),
                 trip.Participants.Select(ParticipantDto.From).ToList(),
                 trip.Transportations.Select(TransportationDto.From).ToList()

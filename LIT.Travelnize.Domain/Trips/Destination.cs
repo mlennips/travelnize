@@ -20,7 +20,7 @@ namespace LIT.Travelnize.Domain.Trips
         public ExternalUrl? Website { get; private set; }
 
         public IEnumerable<Accommodation> Accommodations { get => _accommodations.OrderBy(a => a.CheckIn); init => _accommodations = value.ToList(); }
-        public IEnumerable<Activity> Activities { get => _activities.AsReadOnly(); init => _activities = value.ToList(); }
+        public IEnumerable<Activity> Activities { get => _activities.OrderBy(a => a.Date); init => _activities = value.ToList(); }
 
         internal static Destination Create(Guid tripId, Guid travelSegmentId, string name, string description,
             PlanningSlot slot, Location location, ExternalUrl? imageUrl = null, ExternalUrl? url = null)
@@ -52,6 +52,12 @@ namespace LIT.Travelnize.Domain.Trips
         internal Result AddAccommodation(Accommodation accommodation)
         {
             _accommodations.Add(accommodation);
+            return Result.Success();
+        }
+
+        internal Result AddActivity(Activity activity)
+        {
+            _activities.Add(activity);
             return Result.Success();
         }
     }

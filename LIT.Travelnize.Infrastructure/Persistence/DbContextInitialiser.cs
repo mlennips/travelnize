@@ -119,6 +119,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                     await AddDemoTrip2Async();
                     await AddDemoTrip3Async();
                     await AddDemoTrip4Async();
+                    await AddDemoTrip5Async();
                 }
             }
         }
@@ -145,7 +146,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 "Dänemark",
                 "Erkunde die dänische Hauptstadt mit Nyhavn, Tivoli und moderner Architektur.",
                 Location.Empty,
-                PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(3))
+                PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4))
             ).Value!;
 
             var destination1_2 = trip.AddDestinationToTravelSegment(
@@ -215,7 +216,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 Location.Empty,
                 PlanningSlot.Create(tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(26))
             ).Value!;
-
+            
             // 4 Participants
             trip.AddParticipantAsGuest("Anna Müller", new Email("anna.mueller@travelnize.de"));
             trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
@@ -257,6 +258,46 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 Address.Empty, tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(24));
             trip.AddAccommodationToDestination(destination3_2.Id, "Trastevere Boutique Hotel", AccommodationType.Hotel,
                 Address.Empty, tripSlot.Start?.AddDays(24), tripSlot.Start?.AddDays(26));
+
+            // Activities
+            // Dänemark
+            trip.AddActivity(destination1_1.Id, "Stadtrundgang Kopenhagen", "Geführte Tour durch die Altstadt und den Nyhavn.", Location.Empty, travelSegment1.Slot.Start, TimeSpan.FromHours(3));
+            trip.AddActivity(destination1_1.Id, "Besuch im Tivoli", "Erlebe den berühmten Freizeitpark Tivoli mit Fahrgeschäften und Shows.", Location.Empty, travelSegment1.Slot.Start?.AddDays(1), TimeSpan.FromHours(5));
+            trip.AddActivity(destination1_1.Id, "Fahrradtour", "Entdecke Kopenhagen auf dem Rad – vorbei an moderner Architektur und Parks.", Location.Empty, travelSegment1.Slot.Start?.AddDays(2), TimeSpan.FromHours(2));
+            
+            // Schweden
+            trip.AddActivity(destination1_2.Id, "Altstadt Gamla Stan", "Spaziergang durch die historische Altstadt von Stockholm.", Location.Empty, tripSlot.Start?.AddDays(4), TimeSpan.FromHours(2));
+            trip.AddActivity(destination1_2.Id, "Bootstour Schärengarten", "Bootsfahrt durch die Inselwelt vor Stockholm.", Location.Empty, tripSlot.Start?.AddDays(5), TimeSpan.FromHours(4));
+            trip.AddActivity(destination1_2.Id, "Besuch Königliches Schloss", "Führung durch das königliche Schloss in Stockholm.", Location.Empty, tripSlot.Start?.AddDays(6), TimeSpan.FromHours(2));
+            
+            // Norwegen
+            trip.AddActivity(destination1_3.Id, "Fjord-Kreuzfahrt", "Bootstour durch die berühmten norwegischen Fjorde.", Location.Empty, tripSlot.Start?.AddDays(8), TimeSpan.FromHours(6));
+            trip.AddActivity(destination1_3.Id, "Wanderung Preikestolen", "Atemberaubende Wanderung zum Felsenplateau Preikestolen.", Location.Empty, tripSlot.Start?.AddDays(9), TimeSpan.FromHours(5));
+            trip.AddActivity(destination1_3.Id, "Besuch Bergen", "Stadtrundgang durch die Hansestadt Bergen.", Location.Empty, tripSlot.Start?.AddDays(10), TimeSpan.FromHours(3));
+            
+            // Hamburg
+            trip.AddActivity(destination2_1.Id, "Hafenrundfahrt", "Bootstour durch den Hamburger Hafen und die Speicherstadt.", Location.Empty, tripSlot.Start?.AddDays(14), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_1.Id, "Reeperbahn-Tour", "Erkunde das berühmte Hamburger Nachtleben auf der Reeperbahn.", Location.Empty, tripSlot.Start?.AddDays(14).AddHours(20), TimeSpan.FromHours(3));
+
+            // Amsterdam
+            trip.AddActivity(destination2_2.Id, "Grachtenfahrt", "Bootsfahrt durch die Kanäle von Amsterdam.", Location.Empty, tripSlot.Start?.AddDays(15), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_2.Id, "Van Gogh Museum", "Besuch des weltberühmten Van Gogh Museums.", Location.Empty, tripSlot.Start?.AddDays(16), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_2.Id, "Fahrradtour", "Geführte Fahrradtour durch die Innenstadt.", Location.Empty, tripSlot.Start?.AddDays(16).AddHours(14), TimeSpan.FromHours(2));
+
+            // Paris
+            trip.AddActivity(destination2_3.Id, "Eiffelturm-Besuch", "Auffahrt auf den Eiffelturm mit Panoramablick.", Location.Empty, tripSlot.Start?.AddDays(17), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_3.Id, "Louvre-Führung", "Geführte Tour durch das berühmte Kunstmuseum Louvre.", Location.Empty, tripSlot.Start?.AddDays(18), TimeSpan.FromHours(3));
+            trip.AddActivity(destination2_3.Id, "Spaziergang Montmartre", "Erkunde das Künstlerviertel Montmartre und Sacré-Cœur.", Location.Empty, tripSlot.Start?.AddDays(18).AddHours(16), TimeSpan.FromHours(2));
+            
+            // Barcelona
+            trip.AddActivity(destination3_1.Id, "Sagrada Família", "Besichtigung der berühmten Basilika von Gaudí.", Location.Empty, tripSlot.Start?.AddDays(19), TimeSpan.FromHours(2));
+            trip.AddActivity(destination3_1.Id, "Tapas-Tour", "Kulinarische Tour durch Barcelonas Tapas-Bars.", Location.Empty, tripSlot.Start?.AddDays(20), TimeSpan.FromHours(3));
+            trip.AddActivity(destination3_1.Id, "Strandtag Barceloneta", "Entspannung und Baden am Stadtstrand.", Location.Empty, tripSlot.Start?.AddDays(21), TimeSpan.FromHours(5));
+            
+            // Rom
+            trip.AddActivity(destination3_2.Id, "Kolosseum & Forum Romanum", "Geführte Tour durch das antike Rom.", Location.Empty, tripSlot.Start?.AddDays(22), TimeSpan.FromHours(3));
+            trip.AddActivity(destination3_2.Id, "Vatikanische Museen", "Besuch der Vatikanstadt und der Sixtinischen Kapelle.", Location.Empty, tripSlot.Start?.AddDays(23), TimeSpan.FromHours(4));
+            trip.AddActivity(destination3_2.Id, "Piazza Navona & Pantheon", "Spaziergang durch das barocke Rom.", Location.Empty, tripSlot.Start?.AddDays(24), TimeSpan.FromHours(2));
 
             appContext.Trips.Add(trip);
 
@@ -598,5 +639,126 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
             await appContext.SaveChangesAsync();
         }
+
+        private async Task AddDemoTrip5Async()
+        {
+            // Start: 1. Juni nächsten Jahres, 7 Nächte Kreuzfahrt + 10 Nächte Dänemmark + 2 Nächte Hamburg
+            var nextYear = DateTime.UtcNow.Year + 1;
+            var tripStart = new DateTime(nextYear, 6, 6, 14, 0, 0, DateTimeKind.Utc);
+            var tripEnd = tripStart.AddDays(19); 
+
+            var tripSlot = PlanningSlot.Create(tripStart, tripEnd);
+            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var trip = Trip.Create(
+                user!,
+                "Elternzeit " + tripStart.Year,
+                "Kreuzfahrt ab Kiel und Ferienhaus in Dänemark",
+                tripSlot
+            );
+
+            #region Cruise
+
+            // Ein TravelSegment für die gesamte Kreuzfahrt
+            var cruiseSegment = trip.AddTravelSegment(
+                PlanningSlot.Create(tripStart, tripEnd),
+                "Kreuzfahrt"
+            ).Value!;
+
+            // Eine Destination: "AIDA Kreuzfahrt"
+            var cruiseDestination = trip.AddDestinationToTravelSegment(
+                cruiseSegment.Id,
+                "AIDA Kreuzfahrt - Nordeuropa",
+                "Kreuzfahrt mit der AIDA Nova ab/bis Kiel.",
+                Location.Empty,
+                PlanningSlot.Create(tripStart, tripStart.AddDays(7))
+            ).Value!;
+
+            // Accommodation: AIDA Nova für die gesamte Reise
+            trip.AddAccommodationToDestination(
+                cruiseDestination.Id,
+                "AIDA Nova",
+                AccommodationType.Cruise,
+                Address.Empty,
+                tripStart,
+                tripEnd
+            );
+
+            // Activities pro Tag
+            trip.AddActivity(cruiseDestination.Id, "Abfahrt Kiel", "Start der Kreuzfahrt in Kiel", Location.Empty, tripStart, TimeSpan.FromHours(4));
+            trip.AddActivity(cruiseDestination.Id, "Seetag", "Entspannung und Aktivitäten an Bord", Location.Empty, tripStart.AddDays(1), TimeSpan.FromHours(24));
+            trip.AddActivity(cruiseDestination.Id, "Oslo", "Landgang in Oslo, Norwegen", Location.Empty, tripStart.AddDays(2), TimeSpan.FromHours(10));
+            trip.AddActivity(cruiseDestination.Id, "Kristiansand", "Landgang in Kristiansand, Norwegen", Location.Empty, tripStart.AddDays(3), TimeSpan.FromHours(8));
+            trip.AddActivity(cruiseDestination.Id, "Skagen", "Landgang in Skagen, Dänemark", Location.Empty, tripStart.AddDays(4), TimeSpan.FromHours(8));
+            trip.AddActivity(cruiseDestination.Id, "Kopenhagen", "Landgang in Kopenhagen, Dänemark", Location.Empty, tripStart.AddDays(5), TimeSpan.FromHours(10));
+            trip.AddActivity(cruiseDestination.Id, "Arhus", "Landgang in Arhus, Dänemark", Location.Empty, tripStart.AddDays(6), TimeSpan.FromHours(8));
+            trip.AddActivity(cruiseDestination.Id, "Ankunft Kiel", "Ende der Kreuzfahrt in Kiel", Location.Empty, tripStart.AddDays(7), TimeSpan.FromHours(2));
+
+            #endregion
+
+            #region Denmark
+
+            var denmarkSegment = trip.AddTravelSegment(
+                PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2)),
+                "Dänemark"
+            ).Value!;
+
+            var denmarkDestination = trip.AddDestinationToTravelSegment(
+                denmarkSegment.Id,
+                "Ost-Dänemark",
+                "Erkunde Dänemark",
+                Location.Empty,
+                PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2))
+            ).Value!;
+
+            trip.AddAccommodationToDestination(
+                denmarkDestination.Id,
+                "Ferienhaus am Meer",
+                AccommodationType.Villa,
+                Address.Empty,
+                tripStart.AddDays(7),
+                tripEnd.AddDays(-2)
+            );
+
+            #endregion
+
+
+            #region Hamburg
+
+            var hamburgSegment = trip.AddTravelSegment(
+                PlanningSlot.Create(tripEnd.AddDays(-2), tripEnd),
+                "Rückreise"
+            ).Value!;
+
+            var hamburgDestination = trip.AddDestinationToTravelSegment(
+                hamburgSegment.Id,
+                "Hamburg",
+                "Erkunde Hamburg",
+                Location.Empty,
+                PlanningSlot.Create(tripEnd.AddDays(-2), tripEnd)
+            ).Value!;
+
+            trip.AddAccommodationToDestination(
+                hamburgDestination.Id,
+                "Hotel in Hamburg",
+                AccommodationType.Hotel,
+                Address.Empty,
+                tripEnd.AddDays(-2),
+                tripEnd
+            );
+
+            #endregion
+
+
+            // Teilnehmer
+            trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
+            trip.AddParticipantAsGuest("Ute Mustermann", new Email("ute.mustermann@travelnize.de"));
+            trip.AddParticipantAsGuest("Anton Mustermann", new Email("max.mustermann@travelnize.de"));
+            trip.AddParticipantAsGuest("Merle Mustermann", new Email("max.mustermann@travelnize.de"));
+
+            appContext.Trips.Add(trip);
+
+            await appContext.SaveChangesAsync();
+        }
+
     }
 }

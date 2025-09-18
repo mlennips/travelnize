@@ -3,13 +3,13 @@
     public record TravelSegmentDto(
         Guid Id,
         string Description,
-        PlanningSlotDto Slot,
+        PlanningSlot Slot,
         IReadOnlyList<DestinationDto> Destinations
     )
     {
         public static TravelSegmentDto From(TravelSegment segment) =>
             new(segment.Id, segment.Description, 
-                PlanningSlotDto.From(segment.Slot), 
+                segment.Slot, 
                 segment.Destinations.Select(DestinationDto.From).ToList());
     }
 }

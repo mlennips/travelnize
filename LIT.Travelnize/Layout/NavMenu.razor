@@ -31,7 +31,10 @@
                     <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Laufende Reisen</MudText>
                     @foreach (var trip in TripsState.OngoingTrips)
                     {
-                        <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.DoubleArrow">@trip.Name</MudNavLink>
+                        <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.PlayCircleOutline"
+                                    Style="white-space: nowrap; text-overflow: ellipsis;">
+                            @trip.Name
+                        </MudNavLink>
                     }
                 }
                 <!-- Upcoming Trips -->
@@ -40,7 +43,10 @@
                     <MudText Typo="Typo.body2" Class="px-4 py-4 mud-text-secondary fw-normal">Bevorstehende Reisen</MudText>
                     @foreach (var trip in TripsState.UpcomingTrips)
                     {
-                        <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.PendingActions">@trip.Name</MudNavLink>
+                        <MudNavLink Href="@($"/trips/{trip.Id}")" Icon="@Icons.Material.Filled.AccessTime" 
+                                    Style="white-space: nowrap; text-overflow: ellipsis;">
+                            @trip.Name
+                        </MudNavLink>
                     }
                 }
             }

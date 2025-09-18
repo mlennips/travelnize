@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Trips.Dtos;
-
-namespace LIT.Travelnize.Domain.Trips.Queries
+﻿namespace LIT.Travelnize.Domain.Trips.Queries
 {
-    public record GetTripQuery(Guid TripId) : IQuery<GetTripDto>;
+    public record GetTripQuery(Guid TripId) : IQuery<GetTripResponse>;
 }

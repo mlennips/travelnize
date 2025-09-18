@@ -26,7 +26,7 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
             "Cottage",
             "Motel",
             "Camping",
-            "Cruise Ship",
+            "Cruise",
             "Caravan",
             "Other"
         ];
@@ -43,7 +43,7 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
         public static AccommodationType Cottage => new("Cottage");
         public static AccommodationType Motel => new("Motel");
         public static AccommodationType Camping => new("Camping");
-        public static AccommodationType CruiseShip => new("Cruise Ship");
+        public static AccommodationType Cruise => new("Cruise");
         public static AccommodationType Caravan => new("Caravan");
         public static AccommodationType Other => new("Other");
     }

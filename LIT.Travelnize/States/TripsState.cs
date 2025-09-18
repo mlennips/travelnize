@@ -1,5 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
-using LIT.Travelnize.Domain.Trips.Dtos;
+using LIT.Travelnize.Domain.Trips.Queries;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 using LIT.Travelnize.Services.Api;
 
@@ -13,8 +13,8 @@ namespace LIT.Travelnize.States
 
         public bool IsLoading { get; set; }
 
-        private GetTripDto? _selectedTrip;
-        public GetTripDto? SelectedTrip
+        private GetTripResponse? _selectedTrip;
+        public GetTripResponse? SelectedTrip
         {
             get => _selectedTrip;
             set
@@ -26,8 +26,8 @@ namespace LIT.Travelnize.States
             }
         }
 
-        private ListTripsDto[]? _trips;
-        public ListTripsDto[]? Trips
+        private ListTripsResponse[]? _trips;
+        public ListTripsResponse[]? Trips
         {
             get => _trips;
             private set
@@ -39,11 +39,11 @@ namespace LIT.Travelnize.States
             }
         }
 
-        public IEnumerable<ListTripsDto> OngoingTrips =>
-            Trips?.Where(t => t.Status == TripStatus.Ongoing).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsDto>();
+        public IEnumerable<ListTripsResponse> OngoingTrips =>
+            Trips?.Where(t => t.Status == TripStatus.Ongoing).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsResponse>();
 
-        public IEnumerable<ListTripsDto> UpcomingTrips =>
-            Trips?.Where(t => t.Status == TripStatus.Upcoming).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsDto>();
+        public IEnumerable<ListTripsResponse> UpcomingTrips =>
+            Trips?.Where(t => t.Status == TripStatus.Upcoming).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsResponse>();
 
         public async Task LoadTripsAsync(Guid userId)
         {

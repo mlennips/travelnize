@@ -18,7 +18,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void Initialize()
         {
             _user = new TestUser(Guid.NewGuid(), "TestUser", "Max", "Mustermann", "test@example.com");
-            _tripSlot = PlanningSlot.Create(0, DateTime.Today, DateTime.Today.AddDays(14));
+            _tripSlot = PlanningSlot.Create(DateTime.Today, DateTime.Today.AddDays(14));
             _location = new Location(new Address("Musterstraße", "", "Musterstraße", "1", "12345", "Berlin", "Deutschland"), new Coordinates { Latitude = 52.52, Longitude = 13.405 });
             _email = new Email("test@example.com");
             _trip = Trip.Create(_user, "Reise", "Beschreibung", _tripSlot);
@@ -29,7 +29,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         {
             // Arrange
             var user = new TestUser(Guid.NewGuid(), "User2", "Max", "Mustermann", "user2@example.com");
-            var slot = PlanningSlot.Create(0, DateTime.Today, DateTime.Today.AddDays(3));
+            var slot = PlanningSlot.Create(DateTime.Today, DateTime.Today.AddDays(3));
 
             // Act
             var trip = Trip.Create(user, "Urlaub", "Test", slot);
@@ -46,7 +46,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void Update_ShouldChangeTripProperties()
         {
             // Arrange
-            var newSlot = PlanningSlot.Create(0, DateTime.Today.AddDays(1), DateTime.Today.AddDays(6));
+            var newSlot = PlanningSlot.Create(DateTime.Today.AddDays(1), DateTime.Today.AddDays(6));
 
             // Act
             var result = _trip.Update("Neu", "NeuDesc", newSlot);
@@ -103,7 +103,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         {
             // Arrange
             var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
-            var newSlot = PlanningSlot.Create(0, DateTime.Today.AddDays(2), DateTime.Today.AddDays(7));
+            var newSlot = PlanningSlot.Create(DateTime.Today.AddDays(2), DateTime.Today.AddDays(7));
 
             // Act
             var result = _trip.UpdateTravelSegment(segment.Id, newSlot, "Neu");
