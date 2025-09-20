@@ -34,6 +34,7 @@ internal class Program
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
         builder.Services.AddMudServices();
+
         builder.Services.AddSingleton<TripsState>();
 
         await builder.Build().RunAsync();

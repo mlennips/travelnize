@@ -89,8 +89,8 @@
         var user = await AuthService.GetCurrentUserAsync();
         if (user != null)
         {
-            await TripsState.LoadTripsAsync(user.UserId);
             IsInitialLoad = false;
+            await TripsState.LoadTripsAsync(user.UserId);
         }
     }
 

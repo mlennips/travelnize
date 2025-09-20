@@ -1,0 +1,20 @@
+﻿@inject TripsState TripsState
+
+<MudDialog>
+    <TitleContent>Reiseabschnitt</TitleContent>
+    <DialogContent>
+        <!-- Inhalt folgt -->
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog.Cancel()">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="() => MudDialog.Close()">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Guid TripId { get; set; }
+    [Parameter] public Guid TravelSegmentId { get; set; }
+
+
+}

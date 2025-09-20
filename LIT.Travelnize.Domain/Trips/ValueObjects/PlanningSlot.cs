@@ -70,6 +70,8 @@
             return new PlanningSlot(start, end);
         }
 
+        public static PlanningSlot Empty => new(null, null);
+
         public string ToShortDateString() => Start?.ToShortDateString() + " - " + End?.ToShortDateString();
         public string ToLongDateString() => Start?.ToLongDateString() + " - " + End?.ToLongDateString();
 
