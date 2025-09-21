@@ -185,16 +185,10 @@
     [Parameter] public Guid? ActivityId { get; set; }
 
     private IDialogReference? _dialog;
-
-    private bool _dialogsEvaluatedThisCycle;
-    private bool _pendingDialogEvaluation;
     private bool _hasRendered;
 
     protected override async Task OnParametersSetAsync()
     {
-        _dialogsEvaluatedThisCycle = false;
-        _pendingDialogEvaluation = true;
-
         if (TripsState.SelectedTrip?.Id != TripId)
         {
             await TripsState.LoadTripAsync(TripId);
@@ -204,38 +198,30 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender) _hasRendered = true;
-
-        if (_pendingDialogEvaluation && _hasRendered && !TripsState.IsLoading)
+        
+        if (_hasRendered && !TripsState.IsLoading)
         {
-            _pendingDialogEvaluation = false;
             await EvaluateRouteDialogsAsync();
         }
     }
 
+    #region Dialogs
+
     private async Task EvaluateRouteDialogsAsync()
     {
-        if (_dialogsEvaluatedThisCycle) return;
-        _dialogsEvaluatedThisCycle = true;
-
         if (ActivityId is Guid act && DestinationId is Guid dest && TravelSegmentId is Guid seg)
         {
             await EnsureActivityDialogAsync(seg, dest, act);
-            return;
         }
-
-        if (AccommodationId is Guid acc && DestinationId is Guid dest2 && TravelSegmentId is Guid seg2)
+        else if (AccommodationId is Guid acc && DestinationId is Guid dest2 && TravelSegmentId is Guid seg2)
         {
             await EnsureAccommodationDialogAsync(seg2, dest2, acc);
-            return;
         }
-
-        if (DestinationId is Guid d && TravelSegmentId is Guid s)
+        else if (DestinationId is Guid d && TravelSegmentId is Guid s)
         {
             await EnsureDestinationDialogAsync(s, d);
-            return;
         }
-
-        if (TravelSegmentId is Guid ts)
+        else if (TravelSegmentId is Guid ts)
         {
             await EnsureSegmentDialogAsync(ts);
         }
@@ -243,9 +229,7 @@
 
     private async Task EnsureSegmentDialogAsync(Guid segmentId)
     {
-        if (_dialog != null || TripsState.IsLoading) return;
-
-        _dialog = await ShowDialogAsync<TravelSegmentDialog>(
+        await ShowDialogAsync<TravelSegmentDialog>(
             "Reiseabschnitt",
             new()
             {
@@ -257,9 +241,7 @@
 
     private async Task EnsureDestinationDialogAsync(Guid segmentId, Guid destinationId)
     {
-        if (_dialog != null || TripsState.IsLoading) return;
-
-        _dialog = await ShowDialogAsync<DestinationDialog>(
+        await ShowDialogAsync<DestinationDialog>(
             "Destination",
             new()
             {
@@ -272,9 +254,7 @@
 
     private async Task EnsureAccommodationDialogAsync(Guid segmentId, Guid destinationId, Guid accommodationId)
     {
-        if (_dialog != null || TripsState.IsLoading) return;
-
-        _dialog = await ShowDialogAsync<AccommodationDialog>(
+        await ShowDialogAsync<AccommodationDialog>(
             "Unterkunft",
             new()
             {
@@ -288,9 +268,7 @@
 
     private async Task EnsureActivityDialogAsync(Guid segmentId, Guid destinationId, Guid activityId)
     {
-        if (_dialog != null || TripsState.IsLoading) return;
-
-        _dialog = await ShowDialogAsync<ActivityDialog>(
+        await ShowDialogAsync<ActivityDialog>(
             "Aktivität",
             new()
             {
@@ -302,11 +280,13 @@
         );
     }
 
-    private async Task<IDialogReference> ShowDialogAsync<TComponent>(
+    private async Task<IDialogReference?> ShowDialogAsync<TComponent>(
         string title,
         DialogParameters parameters)
         where TComponent : ComponentBase
     {
+        if (_dialog != null || TripsState.IsLoading) return null;
+
         var options = new DialogOptions
         {
             CloseButton = true,
@@ -325,8 +305,9 @@
 
         return dr;
     }
+    #endregion
 
-    // Navigation Helper
+    #region NavigationHelper
     private void NavigateToTravelSegment(Guid segmentId) =>
         Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{segmentId}");
 
@@ -338,4 +319,5 @@
 
     private void NavigateToActivity(Guid segmentId, Guid destinationId, Guid activityId) =>
         Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{segmentId}/destinations/{destinationId}/activities/{activityId}");
+    #endregion
 }
