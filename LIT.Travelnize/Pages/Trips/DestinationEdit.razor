@@ -1,0 +1,9 @@
+﻿@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/edit"
+@inject TripsState TripsState
+
+
+@code {
+    [Parameter] public Guid TripId { get; set; }
+    [Parameter] public Guid TravelSegmentId { get; set; }
+    [Parameter] public Guid DestinationId { get; set; }
+}

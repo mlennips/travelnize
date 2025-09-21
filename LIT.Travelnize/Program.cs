@@ -33,7 +33,8 @@ internal class Program
 
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
-        builder.Services.AddMudServices();
+        builder.Services.AddMudServices(); 
+        builder.Services.AddScoped<ScrollService>();
 
         builder.Services.AddSingleton<TripsState>();
 

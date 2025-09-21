@@ -1,14 +1,11 @@
 @page "/trips/{TripId:guid}"
-@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}"
-@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}"
-@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/accommodations/{AccommodationId:guid}"
-@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/activities/{ActivityId:guid}"
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @inject TripsState TripsState
 @inject IDialogService DialogService
 @inject NavigationManager Navigation
+@inject LIT.Travelnize.Services.ScrollService Scroll
 
 <PageTitle>Travelnize - @TripsState.SelectedTrip?.Name</PageTitle>
 
@@ -36,6 +33,9 @@
                             </MudText>
                             <MudText Color="Color.Secondary" Class="opacity-75">
                                 @TripsState.SelectedTrip?.Description
+                                <MudLink Href="@($"/trips/{TripId}/edit")" Typo="Typo.caption">
+                                    (bearbeiten)
+                                </MudLink>
                             </MudText>
                             <MudChipSet T="string" Size="Size.Medium" IconColor="Color.Default" ReadOnly>
                                 <MudChip Icon="@Icons.Material.Filled.FlightTakeoff" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.Start?.ToLongDateString()</MudChip>
@@ -59,7 +59,6 @@
                                 {
                                     <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDays Tage</MudChip>
                                 }
-
                                 <MudChip Icon="@Icons.Material.Filled.People" Color="Color.Tertiary">@TripsState.SelectedTrip.Participants.Count Teilnehmer</MudChip>
                             </MudChipSet>
                             <MudAvatarGroup Spacing="2"
@@ -82,7 +81,7 @@
                                 <MudLink Typo="Typo.body2"
                                          Color="Color.Default"
                                          Underline="Underline.Hover"
-                                         @onclick="() => NavigateToTravelSegment(travelSegment.Id)">
+                                         Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/edit")">
                                     @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
                                 </MudLink>
                             </MudPaper>
@@ -90,7 +89,7 @@
 
                         @foreach (var destination in travelSegment.Destinations)
                         {
-                            <MudItem xs="12" sm="12" lg="4" xl="4">
+                            <MudItem xs="12" sm="12" lg="4" xl="4" id="@destination.Id">
                                 <MudCard>
                                     <MudCardHeader>
                                         <CardHeaderAvatar>
@@ -99,16 +98,13 @@
                                             </MudAvatar>
                                         </CardHeaderAvatar>
                                         <CardHeaderContent>
-                                            <MudText Typo="Typo.body1">
-                                                <PlanningSlotDisplay Slot="@destination.Slot" ShowDays></PlanningSlotDisplay>
-                                            </MudText>
-                                            <MudText Typo="Typo.body2">@destination.Name</MudText>
+                                            <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/edit")">
+                                                <MudText Typo="Typo.body1">
+                                                    <PlanningSlotDisplay Slot="@destination.Slot" ShowDays></PlanningSlotDisplay>
+                                                </MudText>
+                                                <MudText Typo="Typo.body2">@destination.Name</MudText>
+                                            </MudLink>
                                         </CardHeaderContent>
-                                        <CardHeaderActions>
-                                            <MudIconButton Icon="@Icons.Material.Filled.Settings"
-                                                           Color="Color.Default"
-                                                           OnClick="@(() => NavigateToDestination(travelSegment.Id, destination.Id))" />
-                                        </CardHeaderActions>
                                     </MudCardHeader>
                                     <MudCardContent>
                                         <MudText Typo="Typo.body2">@TripsState.SelectedTrip.Description</MudText>
@@ -123,7 +119,8 @@
                                         @foreach (var accommodation in destination.Accommodations)
                                         {
                                             <MudListItem Icon="@Icons.Material.Filled.Hotel"
-                                                         @onclick="() => NavigateToAccommodation(travelSegment.Id, destination.Id, accommodation.Id)">
+                                                         id="@accommodation.Id"
+                                                         Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/{accommodation.Id}/edit")">
                                                 <PlanningSlotDisplay Slot="@accommodation.Slot"></PlanningSlotDisplay>
                                                 <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
                                             </MudListItem>
@@ -139,7 +136,8 @@
                                         @foreach (var activity in destination.Activities)
                                         {
                                             <MudListItem Icon="@Icons.Material.Filled.Attractions"
-                                                         @onclick="() => NavigateToActivity(travelSegment.Id, destination.Id, activity.Id)">
+                                                         id="@activity.Id"
+                                                         Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/{activity.Id}/edit")">
                                                 <MudText Typo="Typo.caption" Class="mb-0">@activity.Date?.ToShortDateString()</MudText>
                                                 <MudText Typo="Typo.caption" Class="mb-0">@activity.Name</MudText>
                                             </MudListItem>
@@ -165,6 +163,35 @@
                     <MudItem xs="12">
                         <MudText Typo="Typo.caption">Aktiviäten im Überblick</MudText>
                     </MudItem>
+                    @foreach (var destination in TripsState.SelectedTrip.TravelSegments.SelectMany(ts => ts.Destinations))
+                    {
+                        @foreach (var activity in destination.Activities)
+                        {
+                            <MudItem xs="12" sm="6" lg="4">
+                                <MudCard Class="mb-2">
+                                    <MudCardHeader>
+                                        <CardHeaderAvatar>
+                                            <MudAvatar Color="Color.Secondary">
+                                                <MudIcon Icon="@Icons.Material.Filled.Attractions" />
+                                            </MudAvatar>
+                                        </CardHeaderAvatar>
+                                        <CardHeaderContent>
+                                            <MudLink Typo="Typo.body1" Href="@($"/trips/{TripId}/travelsegments/{activity.TravelSegmentId}/destinations/{activity.DestinationId}/activities/{activity.Id}/edit")">@activity.Name</MudLink>
+                                            <MudText Typo="Typo.body2">
+                                                @activity.Date?.ToLongDateString()
+                                            </MudText>
+                                            <MudText Typo="Typo.body2">
+                                                @destination.Name
+                                            </MudText>
+                                        </CardHeaderContent>
+                                    </MudCardHeader>
+                                    <MudCardContent Class="flex-grow-1">
+
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                        }
+                    }
                 </MudGrid>
             }
             else
@@ -184,9 +211,6 @@
     [Parameter] public Guid? AccommodationId { get; set; }
     [Parameter] public Guid? ActivityId { get; set; }
 
-    private IDialogReference? _dialog;
-    private bool _hasRendered;
-
     protected override async Task OnParametersSetAsync()
     {
         if (TripsState.SelectedTrip?.Id != TripId)
@@ -194,130 +218,4 @@
             await TripsState.LoadTripAsync(TripId);
         }
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender) _hasRendered = true;
-        
-        if (_hasRendered && !TripsState.IsLoading)
-        {
-            await EvaluateRouteDialogsAsync();
-        }
-    }
-
-    #region Dialogs
-
-    private async Task EvaluateRouteDialogsAsync()
-    {
-        if (ActivityId is Guid act && DestinationId is Guid dest && TravelSegmentId is Guid seg)
-        {
-            await EnsureActivityDialogAsync(seg, dest, act);
-        }
-        else if (AccommodationId is Guid acc && DestinationId is Guid dest2 && TravelSegmentId is Guid seg2)
-        {
-            await EnsureAccommodationDialogAsync(seg2, dest2, acc);
-        }
-        else if (DestinationId is Guid d && TravelSegmentId is Guid s)
-        {
-            await EnsureDestinationDialogAsync(s, d);
-        }
-        else if (TravelSegmentId is Guid ts)
-        {
-            await EnsureSegmentDialogAsync(ts);
-        }
-    }
-
-    private async Task EnsureSegmentDialogAsync(Guid segmentId)
-    {
-        await ShowDialogAsync<TravelSegmentDialog>(
-            "Reiseabschnitt",
-            new()
-            {
-                { nameof(TravelSegmentDialog.TripId), TripId },
-                { nameof(TravelSegmentDialog.TravelSegmentId), segmentId }
-            }
-        );
-    }
-
-    private async Task EnsureDestinationDialogAsync(Guid segmentId, Guid destinationId)
-    {
-        await ShowDialogAsync<DestinationDialog>(
-            "Destination",
-            new()
-            {
-                { nameof(DestinationDialog.TripId), TripId },
-                { nameof(DestinationDialog.TravelSegmentId), segmentId },
-                { nameof(DestinationDialog.DestinationId), destinationId }
-            }
-        );
-    }
-
-    private async Task EnsureAccommodationDialogAsync(Guid segmentId, Guid destinationId, Guid accommodationId)
-    {
-        await ShowDialogAsync<AccommodationDialog>(
-            "Unterkunft",
-            new()
-            {
-                { nameof(AccommodationDialog.TripId), TripId },
-                { nameof(AccommodationDialog.TravelSegmentId), segmentId },
-                { nameof(AccommodationDialog.DestinationId), destinationId },
-                { nameof(AccommodationDialog.AccommodationId), accommodationId }
-            }
-        );
-    }
-
-    private async Task EnsureActivityDialogAsync(Guid segmentId, Guid destinationId, Guid activityId)
-    {
-        await ShowDialogAsync<ActivityDialog>(
-            "Aktivität",
-            new()
-            {
-                { nameof(ActivityDialog.TripId), TripId },
-                { nameof(ActivityDialog.TravelSegmentId), segmentId },
-                { nameof(ActivityDialog.DestinationId), destinationId },
-                { nameof(ActivityDialog.ActivityId), activityId }
-            }
-        );
-    }
-
-    private async Task<IDialogReference?> ShowDialogAsync<TComponent>(
-        string title,
-        DialogParameters parameters)
-        where TComponent : ComponentBase
-    {
-        if (_dialog != null || TripsState.IsLoading) return null;
-
-        var options = new DialogOptions
-        {
-            CloseButton = true,
-            FullWidth = true,
-            BackdropClick = true,
-            CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.Medium
-        };
-
-        var dr = await DialogService.ShowAsync<TComponent>(title, parameters, options);
-        _ = dr.Result.ContinueWith(t =>
-        {
-            _dialog = null;
-            Navigation.NavigateTo($"/trips/{TripId}", false);
-        });
-
-        return dr;
-    }
-    #endregion
-
-    #region NavigationHelper
-    private void NavigateToTravelSegment(Guid segmentId) =>
-        Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{segmentId}");
-
-    private void NavigateToDestination(Guid segmentId, Guid destinationId) =>
-        Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{segmentId}/destinations/{destinationId}");
-
-    private void NavigateToAccommodation(Guid segmentId, Guid destinationId, Guid accommodationId) =>
-        Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{segmentId}/destinations/{destinationId}/accommodations/{accommodationId}");
-
-    private void NavigateToActivity(Guid segmentId, Guid destinationId, Guid activityId) =>
-        Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{segmentId}/destinations/{destinationId}/activities/{activityId}");
-    #endregion
 }

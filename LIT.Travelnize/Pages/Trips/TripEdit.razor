@@ -1,0 +1,306 @@
+﻿@page "/trips/{TripId:guid}/edit"
+@using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Domain.Trips.Commands
+@using System.ComponentModel.DataAnnotations
+@inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>Travelnize - Reise bearbeiten</PageTitle>
+
+<MudContainer Class="my-6" MaxWidth="MaxWidth.Medium">
+    <MudGrid Spacing="6">
+        <MudItem xs="12">
+            <PageHeader Title="Reise bearbeiten"
+                        Subtitle="Passe die Basisdaten deiner Reise an."
+                        Image="Icons.Material.Filled.EditNote" />
+        </MudItem>
+
+        <MudItem xs="12">
+            @if (IsLoading)
+            {
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudProgressCircular Indeterminate Color="Color.Primary" />
+                    <MudText Typo="Typo.body2">Lade Reisedaten...</MudText>
+                </MudStack>
+            }
+            else if (LoadError != null)
+            {
+                <MudAlert Severity="Severity.Error" Elevation="0" Variant="Variant.Filled">
+                    @LoadError
+                </MudAlert>
+            }
+            else if (FormModel != null)
+            {
+                <EditForm Model="@FormModel" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <MudPaper Class="pa-4" Elevation="1">
+                        <MudGrid Spacing="4">
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="FormModel.Name"
+                                              Label="Name"
+                                              For="@(() => FormModel.Name)"
+                                              Required="true"
+                                              Immediate="true"
+                                              Variant="Variant.Outlined"
+                                              Disabled="IsSaving"
+                                              Placeholder="Titel der Reise" />
+                            </MudItem>
+
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="FormModel.Description"
+                                              Label="Beschreibung"
+                                              For="@(() => FormModel.Description)"
+                                              Variant="Variant.Outlined"
+                                              Placeholder="Kurze Beschreibung"
+                                              Disabled="IsSaving"
+                                              Lines="4"
+                                              TextArea="true" />
+                            </MudItem>
+
+                            <MudItem xs="12" sm="6">
+                                <MudDatePicker @bind-Date="FormModel.TravelStart"
+                                               Label="Startdatum"
+                                               For="@(() => FormModel.TravelStart)"
+                                               Disabled="IsSaving"
+                                               DateFormat="dd.MM.yyyy"
+                                               DisableToolbar="true"
+                                               OpenTo="OpenTo.Date"
+                                               Required="true"
+                                               Variant="Variant.Outlined"
+                                               Immediate="true"
+                                               MaxDate="FormModel.TravelEnd" />
+                            </MudItem>
+
+                            <MudItem xs="12" sm="6">
+                                <MudDatePicker @bind-Date="FormModel.TravelEnd"
+                                               Label="Enddatum"
+                                               For="@(() => FormModel.TravelEnd)"
+                                               Disabled="IsSaving"
+                                               DateFormat="dd.MM.yyyy"
+                                               DisableToolbar="true"
+                                               OpenTo="OpenTo.Date"
+                                               Required="true"
+                                               Variant="Variant.Outlined"
+                                               Immediate="true"
+                                               MinDate="FormModel.TravelStart" />
+                            </MudItem>
+
+                            <MudItem xs="12">
+                                <ValidationSummary />
+                            </MudItem>
+
+                            <MudItem xs="12" Class="d-flex justify-end">
+                                <MudButton Variant="Variant.Text"
+                                           Color="Color.Default"
+                                           OnClick="Cancel"
+                                           Disabled="IsSaving">
+                                    Abbrechen
+                                </MudButton>
+                                <MudButton Class="ms-2"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           Disabled="false && (IsSaving || !IsValid)"
+                                           ButtonType="ButtonType.Submit"
+                                           StartIcon="@Icons.Material.Filled.Save">
+                                    @if (IsSaving)
+                                    {
+                                        <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" />
+                                    }
+                                    Speichern
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+                </EditForm>
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter] public Guid TripId { get; set; }
+
+    private TripEditFormModel? FormModel;
+    private bool IsLoading;
+    private bool IsSaving;
+    private string? LoadError;
+    private bool IsValid;
+
+    protected override void OnInitialized()
+    {
+        TripsState.OnChange += StateChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (TripsState.SelectedTrip == null || TripsState.SelectedTrip.Id != TripId)
+        {
+            await LoadAsync();
+        }
+        else
+        {
+            InitializeForm(TripsState.SelectedTrip);
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            LoadError = null;
+            await TripsState.LoadTripAsync(TripId);
+            if (TripsState.SelectedTrip == null)
+            {
+                LoadError = "Reise wurde nicht gefunden.";
+            }
+            else
+            {
+                InitializeForm(TripsState.SelectedTrip);
+            }
+        }
+        catch (Exception ex)
+        {
+            LoadError = "Fehler beim Laden: " + ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void InitializeForm(GetTripResponse trip)
+    {
+        FormModel = new TripEditFormModel
+        {
+            TripId = trip.Id,
+            Name = trip.Name,
+            Description = trip.Description,
+            TravelStart = trip.Slot.Start?.Date,
+            TravelEnd = trip.Slot.End?.Date
+        };
+        ValidateModel();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (FormModel == null) return;
+
+        IsSaving = true;
+        try
+        {
+            var command = new UpdateTripCommand(
+                FormModel.TripId,
+                FormModel.Name!.Trim(),
+                FormModel.Description?.Trim() ?? string.Empty,
+                FormModel.TravelStart!.Value,
+                FormModel.TravelEnd!.Value
+            );
+
+            var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
+            if (ok)
+            {
+                Snackbar.Add("Reise aktualisiert.", Severity.Success);
+                Navigation.NavigateTo($"/trips/{TripId}", forceLoad: false);
+            }
+            else
+            {
+                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo($"/trips/{TripId}");
+    }
+
+    private void StateChanged()
+    {
+        InvokeAsync(() =>
+        {
+            if (TripsState.SelectedTrip != null &&
+                TripsState.SelectedTrip.Id == TripId)
+            {
+                InitializeForm(TripsState.SelectedTrip);
+            }
+            StateHasChanged();
+        });
+    }
+
+    private void OnFieldChanged()
+    {
+        if (FormModel == null) return;
+
+        ValidateModel();
+    }
+
+    private void ValidateModel()
+    {
+        if (FormModel == null)
+        {
+            IsValid = false;
+            return;
+        }
+
+        var context = new ValidationContext(FormModel);
+        var results = new List<ValidationResult>();
+        IsValid = Validator.TryValidateObject(FormModel, context, results, validateAllProperties: true);
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= StateChanged;
+    }
+
+    private class TripEditFormModel : IValidatableObject
+    {
+        public Guid TripId { get; set; }
+
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
+        public string? Name { get; set; }
+
+        [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Startdatum ist erforderlich.")]
+        public DateTime? TravelStart { get; set; }
+
+        [Required(ErrorMessage = "Enddatum ist erforderlich.")]
+        public DateTime? TravelEnd { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (TravelStart.HasValue && TravelEnd.HasValue)
+            {
+                if (TravelEnd.Value.Date < TravelStart.Value.Date)
+                {
+                    yield return new ValidationResult("Enddatum darf nicht vor dem Startdatum liegen.", new[] { nameof(TravelEnd) });
+                }
+                if ((TravelEnd.Value.Date - TravelStart.Value.Date).TotalDays > 365)
+                {
+                    yield return new ValidationResult("Reise darf maximal 365 Tage dauern.", new[] { nameof(TravelEnd) });
+                }
+            }
+        }
+    }
+
+    // Handle field change (bind with lambda wiring)
+    private string? _nameBacking
+    {
+        get => FormModel?.Name;
+        set { if (FormModel != null) { FormModel.Name = value; OnFieldChanged(); } }
+    }
+}
