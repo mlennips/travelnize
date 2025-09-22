@@ -1,0 +1,239 @@
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
+@typeparam TModel
+
+<MudContainer Class="@ContainerClass" MaxWidth="@(MaxWidth)">
+    <MudGrid Spacing="6">
+        <MudItem xs="12">
+            <PageHeader Title="@Title"
+                        Subtitle="@Subtitle"
+                        Image="@Image" />
+        </MudItem>
+
+        <MudItem xs="12">
+            @if (IsLoading)
+            {
+                <MudStack Row="false" AlignItems="AlignItems.Start" Spacing="2">
+                    <MudProgressLinear Indeterminate Color="Color.Primary" Size="Size.Small" />
+                </MudStack>
+            }
+            else if (CurrentEditContext is not null && Model is not null)
+            {
+                <EditForm EditContext="CurrentEditContext"                          
+                          OnValidSubmit="ValidSubmitAsync">
+                    <DataAnnotationsValidator />
+                    <MudPaper Class="pa-0" Elevation="0">
+                        @if (FormContent is not null)
+                        {
+                            @FormContent
+                        }
+
+                        <MudSpacer />
+                        @if (ShowValidationSummary)
+                        {
+                            <MudPaper Elevation="0" Outlined="true" Class="mt-4 pt-4 bg-light bg-opacity-50" Style="margin-bottom: -20px">
+                                <ValidationSummary />
+                            </MudPaper>
+                        }
+
+@*                         @if (ActionContent is not null)
+                        {
+                            @ActionContent
+                        } *@
+
+                        <MudPaper>
+
+                        </MudPaper>
+                        <MudPaper Elevation="0" Outlined="true" Class="mt-4 bg-light">
+                            <MudToolBar Dense="false" Gutters="true">
+                                @if (IsSaving)
+                                {
+                                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" />
+                                }
+                                <MudSpacer />
+                                <MudIconButton Icon="@Icons.Material.Outlined.Cancel"
+                                               Color="Color.Tertiary"
+                                               OnClick="Cancel"
+                                               title="@CancelText"
+                                               Disabled="IsSaving || DisableCancel">
+                                </MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Outlined.Save"
+                                               Color="Color.Primary"
+                                               Disabled="@IsSaveButtonDisabled"
+                                               title="@SaveText"
+                                               ButtonType="ButtonType.Submit">
+                                </MudIconButton>
+                            </MudToolBar>
+                        </MudPaper>
+                    </MudPaper>
+                </EditForm>
+            }
+            else if (!string.IsNullOrWhiteSpace(LoadError))
+            {
+                <MudAlert Severity="Severity.Error" Elevation="0" Variant="Variant.Filled">
+                    @LoadError
+                </MudAlert>
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    // Layout / Header
+    [Parameter, EditorRequired] public string Title { get; set; } = default!;
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public string? Image { get; set; }
+
+    // Data / State
+    [Parameter] public TModel? Model { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public string? LoadError { get; set; }
+    [Parameter] public bool IsSaving { get; set; }
+
+    // Manuelle Steuerung (nur relevant wenn AutoValidate = false)
+    [Parameter] public bool CanSave { get; set; } = true;
+
+    [Parameter] public bool DisableCancel { get; set; }
+
+    // Form Inhalt
+    [Parameter] public RenderFragment? FormContent { get; set; }
+    [Parameter] public bool ShowValidationSummary { get; set; } = true;
+
+    // Actions / Texte
+    [Parameter] public string CancelText { get; set; } = "Abbrechen";
+    [Parameter] public string SaveText { get; set; } = "Speichern";
+    [Parameter] public RenderFragment? ActionContent { get; set; }
+
+    // Navigation / Cancel
+    [Parameter] public string? CancelHref { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    // Submit
+    [Parameter] public EventCallback<EditContext> OnValidSubmit { get; set; }
+
+    // Validation
+    [Parameter] public bool AutoValidate { get; set; } = true;
+    [Parameter] public EventCallback<bool> OnValidationChanged { get; set; }
+
+    // Appearance
+    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Large;
+    [Parameter] public string? ContainerClass { get; set; }
+
+    // Extern bereitgestellter EditContext (optional)
+    [Parameter] public EditContext? EditContext { get; set; }
+
+    private EditContext? _internalEditContext;
+    private EditContext? CurrentEditContext => EditContext ?? _internalEditContext;
+
+    private bool _validationSubscribed;
+    private bool _isModelValid;
+    private object? _lastModelRef;
+
+    private bool EffectiveCanSave => AutoValidate ? _isModelValid : CanSave;
+    private bool IsSaveButtonDisabled => IsSaving || !EffectiveCanSave;
+
+    protected override void OnParametersSet()
+    {
+        if (Model == null)
+        {
+            _internalEditContext = null;
+            return;
+        }
+
+        // Nur neuen internen EditContext erzeugen, wenn keiner extern geliefert wurde
+        if (EditContext == null)
+        {
+            if (_internalEditContext == null || !ReferenceEquals(_lastModelRef, Model))
+            {
+                _internalEditContext = new EditContext(Model);
+                _lastModelRef = Model;
+                _validationSubscribed = false; // neu abonnieren
+            }
+        }
+
+        if (AutoValidate && CurrentEditContext is not null && !_validationSubscribed)
+        {
+            CurrentEditContext.OnFieldChanged += HandleFieldChanged;
+            _validationSubscribed = true;
+
+            // Initial einmal validieren
+            Revalidate(triggerEvent: true);
+        }
+
+        if (!AutoValidate && _validationSubscribed && CurrentEditContext is not null)
+        {
+            // AutoValidate aus -> Abonnements entfernen
+            CurrentEditContext.OnFieldChanged -= HandleFieldChanged;
+            _validationSubscribed = false;
+        }
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (AutoValidate)
+        {
+            Revalidate(triggerEvent: true);
+            // Kein explizites StateHasChanged nötig: EditForm löst bereits ein Render aus
+        }
+    }
+
+    private async Task ValidSubmitAsync()
+    {
+        IsSaving = true;
+        await Task.Delay(500); // Damit der Spinner sichtbar wird
+        if (OnValidSubmit.HasDelegate && CurrentEditContext is not null)
+        {
+            await OnValidSubmit.InvokeAsync(CurrentEditContext);
+        }
+        IsSaving = false;
+    }
+
+    private void Revalidate(bool triggerEvent)
+    {
+        ShowValidationSummary = false;
+        if (CurrentEditContext == null)
+        {
+            _isModelValid = false;
+            return;
+        }
+
+        // Nutzt DataAnnotationsValidator (der im EditForm vorhanden ist)
+        var newValid = CurrentEditContext.Validate();
+
+        if (newValid != _isModelValid)
+        {
+            _isModelValid = newValid;
+            if (triggerEvent && OnValidationChanged.HasDelegate)
+            {
+                _ = OnValidationChanged.InvokeAsync(_isModelValid);
+            }
+            ShowValidationSummary = true;
+            CurrentEditContext.NotifyValidationStateChanged();
+        }
+    }
+
+    private async Task Cancel()
+    {
+        if (OnCancel.HasDelegate)
+        {
+            await OnCancel.InvokeAsync();
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(CancelHref))
+        {
+            Navigation.NavigateTo(CancelHref);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_validationSubscribed && CurrentEditContext is not null)
+        {
+            CurrentEditContext.OnFieldChanged -= HandleFieldChanged;
+            _validationSubscribed = false;
+        }
+    }
+}
