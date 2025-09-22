@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Tests", "3. Tests", "{1C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.Infrastructure", "LIT.Travelnize.Infrastructure\LIT.Travelnize.Infrastructure.csproj", "{7B523E64-98F6-49D7-A2DB-843E1DA4FE64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.UseCases", "LIT.Travelnize.Application\LIT.Travelnize.UseCases.csproj", "{A2A4A760-59CC-40D8-B7E9-E71DFE0AE61A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.UseCases", "LIT.Travelnize.UseCases\LIT.Travelnize.UseCases.csproj", "{A2A4A760-59CC-40D8-B7E9-E71DFE0AE61A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIT.Travelnize.Domain", "LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj", "{C0CB6A3D-56BA-4EAF-A5B9-BED0CB6D868C}"
 EndProject
