@@ -18,9 +18,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LIT.Travelnize.API\LIT.Travelnize.API.csproj" />
-    <ProjectReference Include="..\LIT.Travelnize.Application\LIT.Travelnize.UseCases.csproj" />
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
     <ProjectReference Include="..\LIT.Travelnize.Infrastructure\LIT.Travelnize.Infrastructure.csproj" />
+    <ProjectReference Include="..\LIT.Travelnize.UseCases\LIT.Travelnize.UseCases.csproj" />
     <ProjectReference Include="..\LIT.Travelnize\LIT.Travelnize.csproj" />
   </ItemGroup>
   
