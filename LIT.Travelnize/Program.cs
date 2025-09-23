@@ -3,6 +3,7 @@ using LIT.Travelnize.Interfaces;
 using LIT.Travelnize.Services;
 using LIT.Travelnize.Services.Api;
 using LIT.Travelnize.Services.Auth;
+using LIT.Travelnize.Services.External;
 using LIT.Travelnize.States;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -35,6 +36,7 @@ internal class Program
         builder.Services.AddScoped<LocalStorageService>();
         builder.Services.AddMudServices(); 
         builder.Services.AddScoped<ScrollService>();
+        builder.Services.AddScoped<IWikipediaApiClient, WikipediaApiClient>();
 
         builder.Services.AddSingleton<TripsState>();
 

@@ -1,3 +1,4 @@
+using LIT.Travelnize.Api.External.Wikipedia;
 using LIT.Travelnize.API.Endpoints;
 using LIT.Travelnize.Domain;
 using LIT.Travelnize.Infrastructure;
@@ -19,6 +20,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddDomainServices();
 builder.Services.AddUseCasesServices();
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<IWikipediaClient, WikipediaClient>();
 
 builder.Services.AddCors(policy =>
 {
@@ -32,9 +35,10 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 app.MapDefaultEndpoints();
-app.RegisterHomeEndpoints();
-app.RegisterAuthEndpoints();
-app.RegisterUsersEndpoints();
+app.MapHomeEndpoints();
+app.MapAuthEndpoints();
+app.MapTripsEndpoints();
+app.MapWikipediaEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
 

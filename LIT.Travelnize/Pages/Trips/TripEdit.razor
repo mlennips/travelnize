@@ -19,8 +19,7 @@
                 LoadError="LoadError"
                 AutoValidate="true"
                 CancelHref="@($"/trips/{TripId}")"
-                OnValidSubmit="HandleValidSubmit"
-                OnValidationChanged="v => _isValid = v">
+                OnValidSubmit="HandleValidSubmit">
     <FormContent>
         <MudGrid Spacing="4">
             <MudItem xs="12">
@@ -65,7 +64,6 @@
     private TripEditFormModel? FormModel;
     private bool IsLoading;
     private string? LoadError;
-    private bool _isValid; // nur falls du den Status außerhalb brauchst
 
     protected override void OnInitialized()
     {

@@ -1,0 +1,142 @@
+@using LIT.Travelnize.Domain.External.Wikipedia
+@inject IWikipediaApiClient Wikipedia
+@inject ISnackbar Snackbar
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="2">
+            <MudTextField @bind-Value="_query"
+                          Label="Suchbegriff"
+                          Immediate="true"
+                          Placeholder="Begriff eingeben und Enter dr¸cken"
+                          OnKeyDown="HandleKeyDown"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" />
+            @if (_loading)
+            {
+                <MudProgressLinear Indeterminate="true" Color="Color.Info" />
+            }
+
+            @if (_error is not null)
+            {
+                <MudAlert Severity="Severity.Error">@_error</MudAlert>
+            }
+
+            @if (!_loading && _results.Count == 0 && string.IsNullOrWhiteSpace(_error))
+            {
+                <MudText Typo="Typo.caption" Class="mt-2">Keine Ergebnisse.</MudText>
+            }
+
+            <MudList Dense="true" Class="wiki-search-list" T="WikipediaSearchResultDto">
+                @foreach (var r in _results)
+                {
+                    <MudListItem Style="cursor:pointer"
+                                 OnClick="@(() => SelectAsync(r))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start">
+                            <MudImage Size="Size.Medium" Src="@r.ThumbnailUrl" />
+                            <MudStack Spacing="0">
+                                <MudText Typo="Typo.subtitle2">@r.Title</MudText>
+                                @if (!string.IsNullOrWhiteSpace(r.Description))
+                                {
+                                    <MudText Typo="Typo.caption" Class="text-secondary">@r.Description</MudText>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(r.Excerpt))
+                                {
+                                    <MudText Typo="Typo.caption">@((MarkupString)TrimExcerpt(r.Excerpt))</MudText>
+                                }
+                            </MudStack>
+                        </MudStack>
+                    </MudListItem>
+                    <MudDivider />
+                }
+            </MudList>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close" Color="Color.Secondary">Schlieﬂen</MudButton>
+        <MudButton OnClick="SearchAsync" Disabled="@_loading" Color="Color.Primary" Variant="Variant.Filled">Suchen</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance Dialog { get; set; } = default!;
+    [Parameter] public string? InitialQuery { get; set; }
+
+    private string _query = string.Empty;
+    private bool _loading;
+    private string? _error;
+    private readonly List<WikipediaSearchResultDto> _results = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(InitialQuery))
+        {
+            _query = InitialQuery;
+            await SearchAsync();
+        }
+    }
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_query))
+        {
+            _results.Clear();
+            return;
+        }
+
+        _loading = true;
+        _error = null;
+        StateHasChanged();
+
+        try
+        {
+            var items = await Wikipedia.SearchAsync(_query, "de", 10);
+            _results.Clear();
+            _results.AddRange(items);
+        }
+        catch (Exception ex)
+        {
+            _error = "Fehler bei der Suche: " + ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SelectAsync(WikipediaSearchResultDto result)
+    {
+        try
+        {
+            var summary = await Wikipedia.GetSummaryAsync(result.Title, "de");
+            if (summary is null)
+            {
+                Snackbar.Add("Kein Summary gefunden.", Severity.Warning);
+                return;
+            }
+            Dialog.Close(DialogResult.Ok(summary));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Fehler beim Laden des Artikels: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private void Close() => Dialog.Cancel();
+
+    private Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key is "Enter")
+            return SearchAsync();
+        return Task.CompletedTask;
+    }
+
+    private static string TrimExcerpt(string? excerpt)
+    {
+        if (string.IsNullOrWhiteSpace(excerpt)) return string.Empty;
+        // Wikipedia Excerpt enth‰lt <span class="searchmatch">...</span> usw. -> rudiment‰r entfernen
+        return System.Text.RegularExpressions.Regex
+            .Replace(excerpt, "<.*?>", string.Empty)
+            .Trim();
+    }
+}

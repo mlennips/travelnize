@@ -99,7 +99,7 @@
 
     // Form Inhalt
     [Parameter] public RenderFragment? FormContent { get; set; }
-    [Parameter] public bool ShowValidationSummary { get; set; } = true;
+    [Parameter] public bool ShowValidationSummary { get; set; } = false;
 
     // Actions / Texte
     [Parameter] public string CancelText { get; set; } = "Abbrechen";
@@ -209,7 +209,7 @@
             {
                 _ = OnValidationChanged.InvokeAsync(_isModelValid);
             }
-            ShowValidationSummary = true;
+            ShowValidationSummary = !_isModelValid;
             CurrentEditContext.NotifyValidationStateChanged();
         }
     }

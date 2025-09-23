@@ -2,7 +2,7 @@
 {
     public static class Home
     {
-        public static void RegisterHomeEndpoints(this IEndpointRouteBuilder routes)
+        public static void MapHomeEndpoints(this IEndpointRouteBuilder routes)
         {
             RouteGroupBuilder api = routes.MapGroup("")
                 .WithTags("");
