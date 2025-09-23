@@ -1,10 +1,8 @@
-﻿using LIT.Travelnize.Domain.Base;
-
-namespace LIT.Travelnize.Domain.Common
+﻿namespace LIT.Travelnize.Domain.Common
 {
     public record Location : ValueObject
     {
-        public Location() : this(new Address(), new Coordinates()) { }
+        private Location() : this(new Address(), new Coordinates()) { }
 
         public Location(Address address, Coordinates coordinates)
         {
@@ -24,6 +22,8 @@ namespace LIT.Travelnize.Domain.Common
             }
         }
 
-        public static Location Empty => new();
+        public static Location Empty => new(Address.Empty, Coordinates.Empty);
+
+        public static Location WithCoordinates(double latitude, double longitude) => new(Address.Empty, new Coordinates { Latitude = latitude, Longitude = longitude });
     }
 }

@@ -12,10 +12,18 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             {
                 builder.HasKey(x => x.Id);
                 builder.OwnsOne(x => x.Slot);
+
                 builder.OwnsOne(x => x.Location, l =>
                 {
                     l.OwnsOne(x => x.Address);
+                    l.OwnsOne(x => x.Coordinates, c =>
+                    {
+                        // Optional: sprechende Spaltennamen vergeben
+                        c.Property(p => p.Latitude).HasColumnName("Location_Latitude");
+                        c.Property(p => p.Longitude).HasColumnName("Location_Longitude");
+                    });
                 });
+
                 builder.OwnsOne(x => x.ImageUrl);
                 builder.OwnsOne(x => x.Website);
 

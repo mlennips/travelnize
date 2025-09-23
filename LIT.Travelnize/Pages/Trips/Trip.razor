@@ -2,6 +2,7 @@
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
 @using LIT.Travelnize.Domain.Trips.ValueObjects
+@using LIT.Travelnize.Shared.Map
 @inject TripsState TripsState
 @inject IDialogService DialogService
 @inject NavigationManager Navigation
@@ -42,22 +43,22 @@
                                 <MudChip Icon="@Icons.Material.Filled.FlightLand" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.End?.ToLongDateString()</MudChip>
                                 @if (TripsState.SelectedTrip.Status == TripStatus.Pending)
                                 {
-                                    <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDays Tage</MudChip>
+                                    <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage</MudChip>
                                 }
                                 else if (TripsState.SelectedTrip.Status == TripStatus.Upcoming)
                                 {
                                     <MudChip Icon="@Icons.Material.Filled.HourglassTop" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.DaysUntilStart Tage</MudChip>
-                                    <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDays Tage</MudChip>
+                                    <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage</MudChip>
                                 }
                                 else if (TripsState.SelectedTrip.Status == TripStatus.Ongoing)
                                 {
                                     <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Success">
-                                        @TripsState.SelectedTrip.Slot.ActiveDays/@TripsState.SelectedTrip.Slot.TotalDays Tage
+                                        @TripsState.SelectedTrip.Slot.ActiveDays/@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage
                                     </MudChip>
                                 }
                                 else if (TripsState.SelectedTrip.Status == TripStatus.Past)
                                 {
-                                    <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDays Tage</MudChip>
+                                    <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage</MudChip>
                                 }
                                 <MudChip Icon="@Icons.Material.Filled.People" Color="Color.Tertiary">@TripsState.SelectedTrip.Participants.Count Teilnehmer</MudChip>
                             </MudChipSet>
@@ -75,7 +76,7 @@
                     @foreach (var travelSegment in TripsState.SelectedTrip.TravelSegments)
                     {
                         <MudItem xs="12" id="@travelSegment.Id">
-                            <MudPaper Elevation="0"
+                            <MudPaper Elevation="5"
                                       Class="bg-primary bg-opacity-75 text-bg-primary pa-4 d-flex align-items-center">
                                 <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2" />
                                 <MudLink Typo="Typo.body2"
@@ -90,7 +91,7 @@
                         @foreach (var destination in travelSegment.Destinations)
                         {
                             <MudItem xs="12" sm="12" lg="4" xl="4" id="@destination.Id">
-                                <MudCard>
+                                <MudCard Elevation="0" Outlined="true">
                                     <MudCardHeader>
                                         <CardHeaderAvatar>
                                             <MudAvatar Color="Color.Secondary">
@@ -109,6 +110,16 @@
                                     <MudCardContent>
                                         <MudText Typo="Typo.body2">@destination.Description</MudText>
                                     </MudCardContent>
+                                    @if (destination.Location.Coordinates.Latitude != 0 && destination.Location.Coordinates.Longitude != 0)
+                                    {
+                                        <MudCardContent Class="pa-0">
+                                            <StaticMap Latitude="@(destination.Location.Coordinates.Latitude)"
+                                                       Longitude="@(destination.Location.Coordinates.Longitude)"
+                                                       Zoom="4"
+                                                       PixelHeight="120"
+                                                       MarkerColor="red" />
+                                        </MudCardContent>
+                                    }
                                 </MudCard>
                             </MudItem>
 
@@ -161,37 +172,35 @@
                     </MudItem>
 
                     <MudItem xs="12">
-                        <MudText Typo="Typo.caption">Aktiviäten im Überblick</MudText>
+                        <MudText Typo="Typo.caption">Aktivitäten im Überblick</MudText>
                     </MudItem>
-                    @foreach (var destination in TripsState.SelectedTrip.TravelSegments.SelectMany(ts => ts.Destinations))
-                    {
-                        @foreach (var activity in destination.Activities)
-                        {
-                            <MudItem xs="12" sm="6" lg="4">
-                                <MudCard Class="mb-2">
-                                    <MudCardHeader>
-                                        <CardHeaderAvatar>
-                                            <MudAvatar Color="Color.Secondary">
-                                                <MudIcon Icon="@Icons.Material.Filled.Attractions" />
-                                            </MudAvatar>
-                                        </CardHeaderAvatar>
-                                        <CardHeaderContent>
-                                            <MudLink Typo="Typo.body1" Href="@($"/trips/{TripId}/travelsegments/{activity.TravelSegmentId}/destinations/{activity.DestinationId}/activities/{activity.Id}/edit")">@activity.Name</MudLink>
-                                            <MudText Typo="Typo.body2">
-                                                @activity.Date?.ToLongDateString()
-                                            </MudText>
-                                            <MudText Typo="Typo.body2">
-                                                @destination.Name
-                                            </MudText>
-                                        </CardHeaderContent>
-                                    </MudCardHeader>
-                                    <MudCardContent Class="flex-grow-1">
 
-                                    </MudCardContent>
-                                </MudCard>
-                            </MudItem>
+                    <MudGrid Spacing="0">
+                        @foreach (var destination in TripsState.SelectedTrip.TravelSegments.SelectMany(ts => ts.Destinations))
+                        {
+                            @foreach (var activity in destination.Activities)
+                            {
+                                <MudItem xs="6" sm="4" lg="3">
+                                    <MudCard Square Outlined >
+                                        <MudCardHeader>
+                                            <CardHeaderContent>
+                                                <MudLink Typo="Typo.body1" Href="@($"/trips/{TripId}/travelsegments/{activity.TravelSegmentId}/destinations/{activity.DestinationId}/activities/{activity.Id}/edit")">@activity.Name</MudLink>
+                                                <MudText Typo="Typo.body2">
+                                                    @activity.Date?.ToLongDateString()
+                                                </MudText>
+                                                <MudText Typo="Typo.body2">
+                                                    @destination.Name
+                                                </MudText>
+                                            </CardHeaderContent>
+                                        </MudCardHeader>
+                                        <MudCardContent Class="flex-grow-1">
+
+                                        </MudCardContent>
+                                    </MudCard>
+                                </MudItem>
+                            }
                         }
-                    }
+                    </MudGrid>
                 </MudGrid>
             }
             else

@@ -3,7 +3,7 @@
     <MudText Inline Typo="@Typo">@Slot.ToShortDateString()</MudText>
     @if (ShowDays)
     {
-        <MudText Inline Typo="@Typo"> (@Slot.TotalDays @(Slot.TotalDays == 1 ? "Tag" : "Tage"))</MudText>
+        <MudText Inline Typo="@Typo"> (@Slot.TotalDays @(Slot.TotalDaysInclusive == 1 ? "Tag" : "Tage"))</MudText>
     }
 }
 else

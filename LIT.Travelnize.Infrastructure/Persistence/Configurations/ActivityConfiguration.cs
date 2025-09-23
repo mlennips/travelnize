@@ -11,10 +11,15 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             public void Configure(EntityTypeBuilder<Activity> builder)
             {
                 builder.HasKey(x => x.Id);
+
                 builder.OwnsOne(x => x.Location, l =>
                 {
                     l.OwnsOne(x => x.Address);
-                    l.OwnsOne(x => x.Coordinates);
+                    l.OwnsOne(x => x.Coordinates, c =>
+                    {
+                        c.Property(p => p.Latitude).HasColumnName("Location_Latitude");
+                        c.Property(p => p.Longitude).HasColumnName("Location_Longitude");
+                    });
                 });
             }
         }

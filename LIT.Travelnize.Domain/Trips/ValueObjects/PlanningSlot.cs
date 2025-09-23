@@ -4,7 +4,21 @@
     {
         public DateTime? Start { get; init; }
         public DateTime? End { get; init; }
-        public int TotalDays => (int)((End ?? DateTime.MinValue) - (Start ?? DateTime.MinValue)).TotalDays;
+
+        public int TotalDays =>
+            Start.HasValue && End.HasValue
+                ? (End.Value.Date - Start.Value.Date).Days 
+                : 0;
+
+        public int TotalDaysInclusive =>
+            Start.HasValue && End.HasValue
+                ? (End.Value.Date - Start.Value.Date).Days + 1
+                : 0;
+
+        public int Nights =>
+            Start.HasValue && End.HasValue
+                ? Math.Max(0, (End.Value.Date - Start.Value.Date).Days)
+                : 0;
 
         /// <summary>
         /// Gibt die verbleibenden Tage bis zum Ende des Slots zurück (ab heute).

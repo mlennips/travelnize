@@ -1,0 +1,133 @@
+@using Microsoft.JSInterop
+@using System.Globalization
+
+@if (!_hasCoords)
+{
+    <div class="static-map-placeholder @Class">
+        <span>@FallbackText</span>
+    </div>
+}
+else
+{
+    <div id="@_mapId"
+         class="@($"leaflet-map {Class}")"
+         style="width:@(PixelWidth <= 0 ? "100%" : PixelWidth + "px");height:@(PixelHeight)px;position:relative;">
+    </div>
+}
+
+@code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    [Parameter] public double? Latitude { get; set; }
+    [Parameter] public double? Longitude { get; set; }
+    [Parameter] public int Zoom { get; set; } = 12;
+
+    // Vorher PixelWidth/PixelHeight => weiter nutzen
+    [Parameter] public int PixelWidth { get; set; } = 0;
+    [Parameter] public int PixelHeight { get; set; } = 180;
+
+    [Parameter] public string MarkerColor { get; set; } = "orange";
+    [Parameter] public string TileUrl { get; set; } = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    [Parameter] public string? TileAttribution { get; set; }
+
+    [Parameter] public string Class { get; set; } = "";
+    [Parameter] public string FallbackText { get; set; } = "Keine Karte verfügbar";
+
+    private bool _hasCoords;
+    private string _mapId = "map_" + Guid.NewGuid().ToString("N");
+    private double? _prevLat;
+    private double? _prevLon;
+    private int _prevZoom;
+    private bool _initialized;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_hasCoords)
+            return;
+
+        if (firstRender || !_initialized)
+        {
+            await InitAsync();
+        }
+        else if (CoordsChanged() || Zoom != _prevZoom)
+        {
+            await UpdateAsync();
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        _hasCoords = Latitude is not null && Longitude is not null &&
+                     Latitude is >= -90 and <= 90 &&
+                     Longitude is >= -180 and <= 180;
+    }
+
+    private async Task InitAsync()
+    {
+        if (!_hasCoords) return;
+        await JS.InvokeVoidAsync("travelnizeLeaflet.init",
+            _mapId,
+            Latitude!.Value,
+            Longitude!.Value,
+            6,
+            null,
+            null,
+            "#ff6600",
+            new {
+                zoomControl = false,
+                disableInteraction = true
+            });
+        _prevLat = Latitude;
+        _prevLon = Longitude;
+        _prevZoom = Zoom;
+        _initialized = true;
+    }
+
+    private async Task UpdateAsync()
+    {
+        if (!_initialized) return;
+        await JS.InvokeVoidAsync("travelnizeLeaflet.update",
+            _mapId,
+            Latitude,
+            Longitude,
+            Zoom,
+            MarkerColor);
+        _prevLat = Latitude;
+        _prevLon = Longitude;
+        _prevZoom = Zoom;
+    }
+
+    private bool CoordsChanged() =>
+        Latitude != _prevLat || Longitude != _prevLon;
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_initialized)
+            {
+                await JS.InvokeVoidAsync("travelnizeLeaflet.dispose", _mapId);
+            }
+        }
+        catch { /* Ignorieren beim Unload */ }
+    }
+}
+
+<style>
+    .leaflet-map {
+        background: #e9ecef;
+    }
+    .static-map-placeholder {
+        width: 100%;
+        min-height: 140px;
+        background: repeating-linear-gradient(45deg,#f5f5f5,#f5f5f5 10px,#ebebeb 10px,#ebebeb 20px);
+        font-size: .75rem;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#666;
+        border-radius:0px;
+        text-align:center;
+        padding:.5rem;
+    }
+</style>

@@ -145,7 +145,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment1.Id,
                 "Dänemark",
                 "Erkunde die dänische Hauptstadt mit Nyhavn, Tivoli und moderner Architektur.",
-                Location.Empty,
+                Location.WithCoordinates(55.78333333, 9.78333333),
                 PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4))
             ).Value!;
 
@@ -153,7 +153,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment1.Id,
                 "Schweden",
                 "Entdecke die schwedische Metropole mit Altstadt, Schärengarten und königlichem Schloss.",
-                Location.Empty,
+                Location.WithCoordinates(61.31666667, 14.83333333),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(8))
             ).Value!;
 
@@ -161,7 +161,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment1.Id,
                 "Norwegen",
                 "Erlebe beeindruckende Fjorde, Berge und die Natur Norwegens.",
-                Location.Empty,
+                Location.WithCoordinates(62.76666667, 9.45),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(8), tripSlot.Start?.AddDays(14))
             ).Value!;
 
@@ -175,7 +175,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment2.Id,
                 "Hamburg",
                 "Entdecke den Hafen, Speicherstadt und das Nachtleben.",
-                Location.Empty,
+                Location.WithCoordinates(53.550556, 9.993333),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(15))
             ).Value!;
 
@@ -183,7 +183,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment2.Id,
                 "Amsterdam",
                 "Fahre mit dem Fahrrad durch die Grachtenstadt und genieße das bunte Treiben.",
-                Location.Empty,
+                Location.WithCoordinates(52.37019722, 4.89044444),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(15), tripSlot.Start?.AddDays(17))
             ).Value!;
 
@@ -191,7 +191,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment2.Id,
                 "Paris",
                 "Besuche Eiffelturm, Louvre und genieße französisches Flair.",
-                Location.Empty,
+                Location.WithCoordinates(48.85666667, 2.35166667),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(17), tripSlot.Start?.AddDays(19))
             ).Value!;
 
@@ -205,7 +205,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment3.Id,
                 "Barcelona",
                 "Erlebe Gaudí, Tapas und das mediterrane Lebensgefühl.",
-                Location.Empty,
+                Location.WithCoordinates(41.4, 2.16666667),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(22))
             ).Value!;
 
@@ -213,7 +213,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 travelSegment3.Id,
                 "Rom",
                 "Tauche ein in die Geschichte der ewigen Stadt mit Kolosseum, Vatikan und italienischer Küche.",
-                Location.Empty,
+                Location.WithCoordinates(41.88333333, 12.48333333),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(26))
             ).Value!;
             
