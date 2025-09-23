@@ -27,4 +27,8 @@
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Shared\Forms\" />
+  </ItemGroup>
+
 </Project>
