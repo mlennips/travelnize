@@ -142,5 +142,11 @@ namespace LIT.Travelnize.Services.Api
                 return await response.Content.ReadFromJsonAsync<Guid>();
             return null;
         }
+
+        public async Task<bool> UpdateActivityAsync(Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command)
+        {
+            var response = await httpClient.PutAsJsonAsync($"/trips/{tripId}/destinations/{destinationId}/activities/{activityId}", command);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

@@ -200,6 +200,22 @@ namespace LIT.Travelnize.Domain.Trips
             return result.IsSuccess ? activity : result.Error;
         }
 
+        public Result UpdateActivity(Guid destinationId, Guid activityId, string name, string description, Location location, DateTime? date, TimeSpan? duration)
+        {
+            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
+            if (destination == null)
+            {
+                return TripErrors.DestinationNotFound;
+            }
+            var activity = destination.Activities.FirstOrDefault(a => a.Id == activityId);
+            if (activity == null)
+            {
+                return TripErrors.ActivityNotFound;
+            }
+            activity.Update(name, description, location, date, duration);
+            return Result.Success();
+        }
+
         public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
             Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink,
             TransportationType type)
@@ -219,13 +235,13 @@ namespace LIT.Travelnize.Domain.Trips
         public Result<Accommodation> AddAccommodationToDestination(Guid destinationId, string name, AccommodationType accommodationType,
             Address address, DateTime? checkIn, DateTime? checkOut)
         {
-            var destination = _travelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);   
+            var destination = _travelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
             if (destination == null)
             {
                 return TripErrors.DestinationNotFound;
             }
 
-            var accommodation = Accommodation.Create(Id, destinationId, name, accommodationType, 
+            var accommodation = Accommodation.Create(Id, destinationId, name, accommodationType,
                 address, checkIn, checkOut);
 
             var result = destination.AddAccommodation(accommodation);

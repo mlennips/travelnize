@@ -1,10 +1,410 @@
 ﻿@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/activities/{ActivityId:guid}/edit"
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Domain.Common
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.Commands
+@using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Domain.Trips.ValueObjects
+@using LIT.Travelnize.Domain.External.Wikipedia
+@using LIT.Travelnize.Shared.External
+@using LIT.Travelnize.Layout
 @inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject IDialogService Dialog
+@inject IWikipediaApiClient Wikipedia
 
+<PageTitle>Travelnize - Aktivität bearbeiten</PageTitle>
+
+<EditPageLayout TModel="ActivityEditFormModel"
+                Title="Aktivität bearbeiten"
+                Subtitle="Passe die Daten deiner Aktivität an."
+                ContainerClass="my-6"
+                Model="FormModel"
+                IsLoading="IsLoading"
+                LoadError="LoadError"
+                CancelHref="@($"/trips/{TripId}")"
+                OnValidSubmit="HandleValidSubmit">
+    <FormContent>
+        <MudGrid Spacing="4">
+            <MudItem xs="12" sm="10">
+                <MudTextField @bind-Value="FormModel!.Name"
+                              Label="Name"
+                              For="@(() => FormModel!.Name)"
+                              Required="true"
+                              Placeholder="Name der Aktivität" />
+            </MudItem>
+
+            <MudItem xs="12" sm="2">
+                <MudButtonGroup>
+                    <MudButton Disabled="@(string.IsNullOrWhiteSpace(FormModel?.Name))"
+                               OnClick="OpenWikipediaDialogAsync"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary">
+                        Aus Wikipedia ergänzen
+                    </MudButton>
+                </MudButtonGroup>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="FormModel!.Description"
+                              Label="Beschreibung"
+                              For="@(() => FormModel!.Description)"
+                              Placeholder="Beschreibung"
+                              Lines="4"
+                              TextArea="true" />
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudDatePicker @bind-Date="FormModel!.Date"
+                               Label="Datum"
+                               Clearable="true"
+                               DateFormat="dd.MM.yyyy" />
+            </MudItem>
+
+            <MudItem xs="6" sm="2">
+                <MudNumericField T="int?" @bind-Value="FormModel!.DurationHours"
+                                 Label="Dauer (Std.)"
+                                 Min="0" Max="240" Immediate="true" />
+            </MudItem>
+            <MudItem xs="6" sm="2">
+                <MudNumericField T="int?" @bind-Value="FormModel!.DurationMinutes"
+                                 Label="Dauer (Min.)"
+                                 Min="0" Max="59" Immediate="true" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudDivider Class="my-2" />
+                <MudText Typo="Typo.subtitle2">Adresse</MudText>
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="FormModel!.AddressLine1"
+                              Label="Adresszeile 1"
+                              For="@(() => FormModel!.AddressLine1)" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="FormModel!.AddressLine2"
+                              Label="Adresszeile 2"
+                              For="@(() => FormModel!.AddressLine2)" />
+            </MudItem>
+
+            <MudItem xs="12" sm="5">
+                <MudTextField @bind-Value="FormModel!.Street"
+                              Label="Straße"
+                              For="@(() => FormModel!.Street)" />
+            </MudItem>
+            <MudItem xs="6" sm="2">
+                <MudTextField @bind-Value="FormModel!.HouseNumber"
+                              Label="Nr."
+                              For="@(() => FormModel!.HouseNumber)" />
+            </MudItem>
+            <MudItem xs="6" sm="2">
+                <MudTextField @bind-Value="FormModel!.PostalCode"
+                              Label="PLZ"
+                              For="@(() => FormModel!.PostalCode)" />
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudTextField @bind-Value="FormModel!.City"
+                              Label="Stadt"
+                              For="@(() => FormModel!.City)" />
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudTextField @bind-Value="FormModel!.Country"
+                              Label="Land"
+                              For="@(() => FormModel!.Country)" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudDivider Class="my-2" />
+                <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudNumericField T="double?" @bind-Value="FormModel!.Latitude"
+                                 Label="Breitengrad (Latitude)"
+                                 For="@(() => FormModel!.Latitude)"
+                                 Immediate="true"
+                                 Clearable="true"
+                                 Placeholder="z.B. 52.5200" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudNumericField T="double?" @bind-Value="FormModel!.Longitude"
+                                 Label="Längengrad (Longitude)"
+                                 For="@(() => FormModel!.Longitude)"
+                                 Immediate="true"
+                                 Clearable="true"
+                                 Placeholder="z.B. 13.4050" />
+            </MudItem>
+        </MudGrid>
+    </FormContent>
+</EditPageLayout>
 
 @code {
     [Parameter] public Guid TripId { get; set; }
     [Parameter] public Guid TravelSegmentId { get; set; }
     [Parameter] public Guid DestinationId { get; set; }
     [Parameter] public Guid ActivityId { get; set; }
+
+    private ActivityEditFormModel? FormModel;
+    private bool IsLoading;
+    private string? LoadError;
+
+    private TravelSegmentDto? _segment;
+    private DestinationDto? _destination;
+    private ActivityDto? _activity;
+
+    protected override void OnInitialized()
+    {
+        TripsState.OnChange += StateChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await EnsureTripLoadedAsync();
+        InitializeActivityModel();
+    }
+
+    private async Task EnsureTripLoadedAsync()
+    {
+        if (TripsState.SelectedTrip == null || TripsState.SelectedTrip.Id != TripId)
+        {
+            await LoadTripAsync();
+        }
+    }
+
+    private async Task LoadTripAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            LoadError = null;
+            await TripsState.LoadTripAsync(TripId);
+            if (TripsState.SelectedTrip == null)
+            {
+                LoadError = "Reise wurde nicht gefunden.";
+            }
+        }
+        catch (Exception ex)
+        {
+            LoadError = "Fehler beim Laden: " + ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void InitializeActivityModel()
+    {
+        if (TripsState.SelectedTrip == null) return;
+
+        _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
+        if (_segment == null)
+        {
+            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            return;
+        }
+
+        _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
+        if (_destination == null)
+        {
+            LoadError = "Ziel wurde nicht gefunden.";
+            return;
+        }
+
+        _activity = _destination.Activities.FirstOrDefault(a => a.Id == ActivityId);
+        if (_activity == null)
+        {
+            LoadError = "Aktivität wurde nicht gefunden.";
+            return;
+        }
+
+        var addr = _activity.Location?.Address ?? Address.Empty;
+        var coords = _activity.Location?.Coordinates;
+
+        FormModel = new ActivityEditFormModel
+        {
+            TripId = TripId,
+            SegmentId = TravelSegmentId,
+            DestinationId = DestinationId,
+            ActivityId = ActivityId,
+            Name = _activity.Name,
+            Description = _activity.Description,
+            Date = _activity.Date,
+            DurationHours = _activity.Duration?.Hours,
+            DurationMinutes = _activity.Duration?.Minutes % 60,
+            AddressLine1 = addr.Line1,
+            AddressLine2 = addr.Line2,
+            Street = addr.Street,
+            HouseNumber = addr.HouseNumber,
+            PostalCode = addr.PostalCode,
+            City = addr.City,
+            Country = addr.Country,
+            Latitude = coords?.Latitude,
+            Longitude = coords?.Longitude
+        };
+    }
+
+    private async Task HandleValidSubmit(EditContext _)
+    {
+        if (FormModel == null) return;
+
+        try
+        {
+            TimeSpan? duration = null;
+            if (FormModel.DurationHours.HasValue || FormModel.DurationMinutes.HasValue)
+            {
+                var h = FormModel.DurationHours ?? 0;
+                var m = FormModel.DurationMinutes ?? 0;
+                duration = new TimeSpan(h, m, 0);
+            }
+
+            var address = new Address(
+                FormModel.AddressLine1 ?? string.Empty,
+                FormModel.AddressLine2 ?? string.Empty,
+                FormModel.Street ?? string.Empty,
+                FormModel.HouseNumber ?? string.Empty,
+                FormModel.PostalCode ?? string.Empty,
+                FormModel.City ?? string.Empty,
+                FormModel.Country ?? string.Empty
+            );
+
+            var coordinates = new Coordinates
+            {
+                Latitude = FormModel.Latitude ?? 0,
+                Longitude = FormModel.Longitude ?? 0
+            };
+
+            var location = new Location(address, coordinates);
+
+            var command = new UpdateActivityCommand(
+                FormModel.TripId,
+                FormModel.SegmentId,
+                FormModel.DestinationId,
+                FormModel.ActivityId,
+                FormModel.Name!.Trim(),
+                FormModel.Description?.Trim() ?? string.Empty,
+                location,
+                FormModel.Date,
+                duration
+            );
+
+            var success = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
+            if (success)
+            {
+                Snackbar.Add("Aktivität aktualisiert.", Severity.Success);
+                Navigation.NavigateTo($"/trips/{TripId}");
+            }
+            else
+            {
+                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private void StateChanged()
+    {
+        InvokeAsync(() =>
+        {
+            if (TripsState.SelectedTrip != null &&
+                TripsState.SelectedTrip.Id == TripId)
+            {
+                InitializeActivityModel();
+            }
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= StateChanged;
+    }
+
+    private class ActivityEditFormModel : IValidatableObject
+    {
+        public Guid TripId { get; set; }
+        public Guid SegmentId { get; set; }
+        public Guid DestinationId { get; set; }
+        public Guid ActivityId { get; set; }
+
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
+        public string? Name { get; set; }
+
+        [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
+        public string? Description { get; set; }
+
+        public DateTime? Date { get; set; }
+        public int? DurationHours { get; set; }
+        public int? DurationMinutes { get; set; }
+
+        // Adresse
+        [StringLength(200)] public string? AddressLine1 { get; set; }
+        [StringLength(200)] public string? AddressLine2 { get; set; }
+        [StringLength(150)] public string? Street { get; set; }
+        [StringLength(30)] public string? HouseNumber { get; set; }
+        [StringLength(20)] public string? PostalCode { get; set; }
+        [StringLength(100)] public string? City { get; set; }
+        [StringLength(100)] public string? Country { get; set; }
+
+        // Koordinaten
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Latitude.HasValue && (Latitude < -90 || Latitude > 90))
+                yield return new ValidationResult("Latitude muss zwischen -90 und 90 liegen.", [nameof(Latitude)]);
+            if (Longitude.HasValue && (Longitude < -180 || Longitude > 180))
+                yield return new ValidationResult("Longitude muss zwischen -180 und 180 liegen.", [nameof(Longitude)]);
+
+            if (DurationHours is < 0)
+                yield return new ValidationResult("Stunden dürfen nicht negativ sein.", [nameof(DurationHours)]);
+            if (DurationMinutes is < 0 or > 59)
+                yield return new ValidationResult("Minuten müssen zwischen 0 und 59 liegen.", [nameof(DurationMinutes)]);
+        }
+    }
+
+    private async Task OpenWikipediaDialogAsync()
+    {
+        if (string.IsNullOrWhiteSpace(FormModel?.Name))
+            return;
+
+        var parameters = new DialogParameters
+        {
+            ["InitialQuery"] = FormModel.Name
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true,
+            CloseOnEscapeKey = true
+        };
+
+        var dialogRef = await Dialog.ShowAsync<WikipediaSearchDialog>("Wikipedia Suche", parameters, options);
+        var result = await dialogRef.Result;
+
+        if (result != null && !result.Canceled && result.Data is WikipediaSummaryDto summary)
+        {
+            if (string.IsNullOrWhiteSpace(FormModel!.Name))
+                FormModel!.Name = summary.Title;
+            if (string.IsNullOrWhiteSpace(FormModel.Description) && !string.IsNullOrWhiteSpace(summary.Extract))
+                FormModel.Description = summary.ShortDescription + ". " + summary.Extract;
+            if (summary.Latitude.HasValue)
+                FormModel.Latitude = summary.Latitude;
+            if (summary.Longitude.HasValue)
+                FormModel.Longitude = summary.Longitude;
+
+            Snackbar.Add("Wikipedia-Daten übernommen.", Severity.Success);
+            StateHasChanged();
+        }
+    }
 }

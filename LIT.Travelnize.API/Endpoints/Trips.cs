@@ -176,6 +176,13 @@ namespace LIT.Travelnize.API.Endpoints
                         onFailure: Results.BadRequest))
                 .Produces<Guid>(StatusCodes.Status200OK)
                 .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
+
+            api.MapPut("/{tripId}/destinations/{destinationId}/activities/{activityId}", async (IMediator mediator, Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command) =>
+                    await mediator.SendAndMatchAsync(command,
+                        onSuccess: Results.NoContent,
+                        onFailure: Results.BadRequest))
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace LIT.Travelnize.Domain.Trips
         public TimeSpan? Duration { get; private set; }
         public Location Location { get; private set; } = default!;
 
-        internal static Activity Create(Guid tripId, Guid travelSegmentId, Guid destinationId, string name, string description, 
+        internal static Activity Create(Guid tripId, Guid travelSegmentId, Guid destinationId, string name, string description,
             DateTime? date, TimeSpan? duration = null, Location? location = null)
         {
             return new Activity()
@@ -33,7 +33,7 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
         internal Result Update(string name, string description, Location location,
-            DateTime date, TimeSpan? time = null)
+            DateTime? date, TimeSpan? time = null)
         {
             Name = name;
             Description = description;
