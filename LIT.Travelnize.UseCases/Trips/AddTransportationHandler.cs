@@ -12,7 +12,7 @@ namespace LIT.Travelnize.UseCases.Trips
 
             var result = trip.AddTransportation(request.Name, request.Description, request.Identifier,
                 request.Departure, request.Arrival, request.DepartureDate, request.ArrivalDate,
-                request.RouteLink, request.Type);
+                request.RouteWebsite, request.Type);
 
             if (!result.IsSuccess) return result.Error;
 

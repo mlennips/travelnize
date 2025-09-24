@@ -6,6 +6,8 @@ namespace LIT.Travelnize.Domain.Trips.Commands
         Guid DestinationId,
         string Name,
         string Description,
-        Location Location
+        Location Location,
+        ResourceReference? Image,
+        ResourceReference? Website
     ) : ICommand;
 }

@@ -6,8 +6,8 @@
         string Description,
         PlanningSlot Slot,
         Location Location,
-        string? ImageUrl,
-        string? Website,
+        ResourceReference? Image,
+        ResourceReference? Website,
         IReadOnlyList<AccommodationDto> Accommodations,
         IReadOnlyList<ActivityDto> Activities
     )
@@ -19,8 +19,8 @@
                 d.Description,
                 d.Slot,
                 d.Location,
-                d.ImageUrl?.Value,
-                d.Website?.Value,
+                d.Image,
+                d.Website,
                 d.Accommodations.Select(AccommodationDto.From).ToList(),
                 d.Activities.Select(ActivityDto.From).ToList()
             );

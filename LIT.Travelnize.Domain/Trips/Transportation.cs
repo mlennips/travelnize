@@ -17,12 +17,12 @@ namespace LIT.Travelnize.Domain.Trips
         public Location Arrival { get; private set; } = default!;
         public DateTime DepartureDate { get; private set; }
         public DateTime ArrivalDate { get; private set; }
-        public ExternalUrl RouteLink { get; private set; } = default!;
+        public ResourceReference? RouteWebsite { get; private set; } = default!;
         public TransportationType Type { get; private set; } = default!;
         public IEnumerable<Participant> Passengers => _passengers.AsReadOnly();
 
         internal static Transportation Create(Guid tripId, string name, string description, string identifier, Location departure, 
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink, TransportationType type)
+            Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference? RouteWebsite, TransportationType type)
         {
             return new Transportation()
             {
@@ -35,13 +35,13 @@ namespace LIT.Travelnize.Domain.Trips
                 Arrival = arrival,
                 DepartureDate = departureDate,
                 ArrivalDate = arrivalDate,
-                RouteLink = routeLink,
+                RouteWebsite = RouteWebsite,
                 Type = type
             };
         }
 
         internal Result Update(string name, string description, string identifier, Location departure, 
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink, 
+            Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference routeWebsite, 
             TransportationType type, Participant[] passengers)
         {
             if (departureDate >= arrivalDate)
@@ -55,7 +55,7 @@ namespace LIT.Travelnize.Domain.Trips
             Arrival = arrival;
             DepartureDate = departureDate;
             ArrivalDate = arrivalDate;
-            RouteLink = routeLink;
+            RouteWebsite = routeWebsite;
             Type = type;
             _passengers = passengers.ToList();
             return Result.Success();

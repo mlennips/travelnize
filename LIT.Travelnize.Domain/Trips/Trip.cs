@@ -110,7 +110,8 @@ namespace LIT.Travelnize.Domain.Trips
             return Result.Success();
         }
 
-        public Result UpdateDestinationInTravelSegment(Guid segmentId, Guid destinationId, string name, string description, Location location)
+        public Result UpdateDestinationInTravelSegment(Guid segmentId, Guid destinationId, string name, string description,
+            Location location, ResourceReference? image, ResourceReference? website)
         {
             var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
@@ -122,7 +123,7 @@ namespace LIT.Travelnize.Domain.Trips
             {
                 return TripErrors.DestinationNotFound;
             }
-            destination.Update(name, description, location);
+            destination.Update(name, description, location, image, website);
 
             return Result.Success();
         }
@@ -217,7 +218,7 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
         public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ExternalUrl routeLink,
+            Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference routeWebsite,
             TransportationType type)
         {
             if (departureDate >= arrivalDate)
@@ -225,7 +226,7 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripErrors.InvalidTransportationDates;
             }
             var transportation = Transportation.Create(Id, name, description, identifier, departure, arrival,
-                departureDate, arrivalDate, routeLink, type);
+                departureDate, arrivalDate, routeWebsite, type);
 
             _transportations.Add(transportation);
 

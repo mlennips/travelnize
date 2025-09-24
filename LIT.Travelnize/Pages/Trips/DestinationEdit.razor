@@ -249,7 +249,9 @@
                 FormModel.DestinationId,
                 FormModel.Name!.Trim(),
                 FormModel.Description?.Trim() ?? string.Empty,
-                location
+                location,
+                null,
+                null
             );
 
             var success = await TripsState.UpdateDestinationAsync(FormModel.TripId, command);
@@ -313,7 +315,6 @@
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        // Read-only Anzeige
         public DateTime? SlotStart { get; set; }
         public DateTime? SlotEnd { get; set; }
 

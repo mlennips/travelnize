@@ -9,7 +9,7 @@
         Location Arrival,
         DateTime DepartureDate,
         DateTime ArrivalDate,
-        string? RouteLink,
+        ResourceReference? RouteWebsite,
         string Type
     )
     {
@@ -23,7 +23,7 @@
                 t.Arrival,
                 t.DepartureDate,
                 t.ArrivalDate,
-                t.RouteLink?.Value,
+                t.RouteWebsite,
                 t.Type.ToString()
             );
     }

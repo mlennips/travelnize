@@ -234,7 +234,7 @@ namespace LIT.Travelnize.DomainTests.Trips
             var arrival = new Location(new Address("Hauptstraße", "", "Hauptstraße", "2", "20095", "Hamburg", "Deutschland"), new Coordinates{ Latitude = 53.55, Longitude = 10.0 });
             var departureDate = DateTime.Today;
             var arrivalDate = DateTime.Today.AddHours(2);
-            var routeLink = new ExternalUrl("https://bahn.de");
+            var routeLink = ResourceReference.FromUrl("DB", "https://bahn.de");
 
             // Act
             var result = _trip.AddTransportation("ICE", "Schnellzug", "123", departure, arrival,
@@ -253,7 +253,7 @@ namespace LIT.Travelnize.DomainTests.Trips
             var arrival = new Location(new Address("Hauptstraße", "", "Hauptstraße", "2", "20095", "Hamburg", "Deutschland"), new Coordinates{ Latitude = 53.55, Longitude = 10.0 });
             var departureDate = DateTime.Today.AddHours(2);
             var arrivalDate = DateTime.Today;
-            var routeLink = new ExternalUrl("https://bahn.de");
+            var routeLink = ResourceReference.FromUrl("DB", "https://bahn.de");
 
             // Act
             var result = _trip.AddTransportation("ICE", "Schnellzug", "123", departure, arrival,

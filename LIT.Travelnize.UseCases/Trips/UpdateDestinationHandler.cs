@@ -11,7 +11,7 @@ namespace LIT.Travelnize.UseCases.Trips
             if (trip is null) return TripErrors.TripNotFound;
 
             var result = trip.UpdateDestinationInTravelSegment(request.SegmentId, request.DestinationId,
-                request.Name, request.Description, request.Location);
+                request.Name, request.Description, request.Location, request.Image, request.Website);
 
             if (result.IsSuccess)
             {

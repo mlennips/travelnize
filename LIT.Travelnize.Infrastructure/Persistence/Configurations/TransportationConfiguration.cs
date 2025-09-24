@@ -32,7 +32,15 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                     });
                 });
 
-                builder.OwnsOne(t => t.RouteLink);
+                builder.OwnsOne(x => x.RouteWebsite, o =>
+                {
+                    o.Property(p => p.Name).HasColumnName("RouteWebsite_Name");
+                    o.Property(p => p.Source).HasColumnName("RouteWebsite_Source");
+                    o.Property(p => p.Kind).HasColumnName("RouteWebsite_Kind");
+                    o.Property(p => p.Thumbnail).HasColumnName("RouteWebsite_Thumbnail");
+                    o.Property(p => p.IsExternal).HasColumnName("RouteWebsite_IsExternal");
+                });
+
                 builder.OwnsOne(t => t.Type);
 
                 builder.HasMany(x => x.Passengers);

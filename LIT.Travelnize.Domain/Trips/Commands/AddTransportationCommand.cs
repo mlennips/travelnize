@@ -9,7 +9,7 @@ namespace LIT.Travelnize.Domain.Trips.Commands
         Location Arrival,
         DateTime DepartureDate,
         DateTime ArrivalDate,
-        ExternalUrl RouteLink,
+        ResourceReference RouteWebsite,
         TransportationType Type
     ) : ICommand<Guid>;
 }
