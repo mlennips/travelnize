@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Trips.ValueObjects;
-
-namespace LIT.Travelnize.Domain.Trips
+﻿namespace LIT.Travelnize.Domain.Trips
 {
     public class Accommodation : IEntity
     {

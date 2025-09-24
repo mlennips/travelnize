@@ -2,8 +2,8 @@
 {
     public record DateRange : ValueObject
     {
-        public DateTime Start { get; init; }
-        public DateTime? End { get; init; }
+        public DateTime Start { get; private init; }
+        public DateTime? End { get; private init; }
 
         public DateRange(DateTime start, DateTime? end)
         {

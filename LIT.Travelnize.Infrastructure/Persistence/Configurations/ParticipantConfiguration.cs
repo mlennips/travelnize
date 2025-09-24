@@ -12,7 +12,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             {
                 builder.HasKey(x => x.Id);
                 builder.OwnsOne(p => p.Email);
-                builder.OwnsOne(p => p.PermissionLevel);
+                builder.ComplexProperty(p => p.PermissionLevel);
             }
         }
     }

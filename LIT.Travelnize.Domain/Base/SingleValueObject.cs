@@ -2,7 +2,7 @@
 {
     public abstract record SingleValueObject<T> : ValueObject, IComparable<SingleValueObject<T>>
     {
-        public T Value { get; init; }
+        public T Value { get; private init; }
 
         protected SingleValueObject(T value)
         {

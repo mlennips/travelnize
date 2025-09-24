@@ -11,7 +11,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             public void Configure(EntityTypeBuilder<Trip> builder)
             {
                 builder.HasKey(x => x.Id);
-                builder.OwnsOne(t => t.Slot);
+                builder.ComplexProperty(x => x.Slot);
                 builder.HasMany(x => x.TravelSegments);
                 builder.HasMany(x => x.Transportations);
                 builder.HasMany(x => x.Participants);

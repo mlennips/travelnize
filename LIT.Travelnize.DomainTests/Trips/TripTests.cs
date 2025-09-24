@@ -151,7 +151,7 @@ namespace LIT.Travelnize.DomainTests.Trips
             var destination = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location).Value!;
 
             // Act
-            var result = _trip.UpdateDestinationInTravelSegment(segment.Id, destination.Id, "Paris", "Neu", _location);
+            var result = _trip.UpdateDestinationInTravelSegment(segment.Id, destination.Id, "Paris", "Neu", _location, null, null);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);

@@ -10,9 +10,11 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         {
             public void Configure(EntityTypeBuilder<Accommodation> builder)
             {
-                builder.OwnsOne(a => a.Type);
-                builder.OwnsOne(a => a.Address);
-                builder.OwnsOne(x => x.Slot);
+                builder.HasKey(x => x.Id);
+
+                builder.ComplexProperty(a => a.Type);
+                builder.ComplexProperty(a => a.Address);
+                builder.ComplexProperty(a => a.Slot); 
             }
         }
     }

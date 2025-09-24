@@ -11,40 +11,20 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             public void Configure(EntityTypeBuilder<Transportation> builder)
             {
                 builder.HasKey(x => x.Id);
-
-                builder.OwnsOne(t => t.Departure, d =>
+                builder.ComplexProperty(x => x.Departure, l =>
                 {
-                    d.OwnsOne(x => x.Address);
-                    d.OwnsOne(x => x.Coordinates, c =>
-                    {
-                        c.Property(p => p.Latitude).HasColumnName("Departure_Latitude");
-                        c.Property(p => p.Longitude).HasColumnName("Departure_Longitude");
-                    });
+                    l.ComplexProperty(l => l.Coordinates);
+                    l.ComplexProperty(l => l.Address);
                 });
-
-                builder.OwnsOne(t => t.Arrival, a =>
+                builder.ComplexProperty(x => x.Arrival, l =>
                 {
-                    a.OwnsOne(x => x.Address);
-                    a.OwnsOne(x => x.Coordinates, c =>
-                    {
-                        c.Property(p => p.Latitude).HasColumnName("Arrival_Latitude");
-                        c.Property(p => p.Longitude).HasColumnName("Arrival_Longitude");
-                    });
+                    l.ComplexProperty(l => l.Coordinates);
+                    l.ComplexProperty(l => l.Address);
                 });
-
-                builder.OwnsOne(x => x.RouteWebsite, o =>
-                {
-                    o.Property(p => p.Name).HasColumnName("RouteWebsite_Name");
-                    o.Property(p => p.Source).HasColumnName("RouteWebsite_Source");
-                    o.Property(p => p.Kind).HasColumnName("RouteWebsite_Kind");
-                    o.Property(p => p.Thumbnail).HasColumnName("RouteWebsite_Thumbnail");
-                    o.Property(p => p.IsExternal).HasColumnName("RouteWebsite_IsExternal");
-                });
-
-                builder.OwnsOne(t => t.Type);
-
+                builder.OwnsOne(t => t.RouteWebsite);
+                builder.ComplexProperty(t => t.Type);
                 builder.HasMany(x => x.Passengers);
-                builder.Navigation(t => t.Passengers).AutoInclude();
+                builder.Navigation(x => x.Passengers).AutoInclude();
             }
         }
     }

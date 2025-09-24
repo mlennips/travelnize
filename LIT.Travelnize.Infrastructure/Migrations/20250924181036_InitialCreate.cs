@@ -19,9 +19,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Slot_Order = table.Column<int>(type: "integer", nullable: false),
-                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,7 +38,29 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     Identifier = table.Column<string>(type: "text", nullable: false),
                     DepartureDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ArrivalDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RouteLink_Value = table.Column<string>(type: "text", nullable: false),
+                    RouteWebsite_Name = table.Column<string>(type: "text", nullable: true),
+                    RouteWebsite_Source = table.Column<string>(type: "text", nullable: true),
+                    RouteWebsite_Kind = table.Column<int>(type: "integer", nullable: true),
+                    RouteWebsite_Thumbnail = table.Column<string>(type: "text", nullable: true),
+                    RouteWebsite_IsExternal = table.Column<bool>(type: "boolean", nullable: true),
+                    Arrival_Address_City = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Address_HouseNumber = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Address_Line2 = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Address_PostalCode = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Address_Street = table.Column<string>(type: "text", nullable: false),
+                    Arrival_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Arrival_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    Departure_Address_City = table.Column<string>(type: "text", nullable: false),
+                    Departure_Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Departure_Address_HouseNumber = table.Column<string>(type: "text", nullable: false),
+                    Departure_Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Departure_Address_Line2 = table.Column<string>(type: "text", nullable: false),
+                    Departure_Address_PostalCode = table.Column<string>(type: "text", nullable: false),
+                    Departure_Address_Street = table.Column<string>(type: "text", nullable: false),
+                    Departure_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Departure_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false),
                     Type_Value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -60,9 +81,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Slot_Order = table.Column<int>(type: "integer", nullable: false),
-                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,8 +104,8 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email_Value = table.Column<string>(type: "text", nullable: true),
-                    PermissionLevel_Value = table.Column<string>(type: "text", nullable: false),
-                    TransportationId = table.Column<Guid>(type: "uuid", nullable: true)
+                    TransportationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PermissionLevel_Value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,11 +132,27 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     TravelSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Slot_Order = table.Column<int>(type: "integer", nullable: false),
-                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Image_Name = table.Column<string>(type: "text", nullable: true),
+                    Image_Source = table.Column<string>(type: "text", nullable: true),
+                    Image_Kind = table.Column<int>(type: "integer", nullable: true),
+                    Image_Thumbnail = table.Column<string>(type: "text", nullable: true),
+                    Image_IsExternal = table.Column<bool>(type: "boolean", nullable: true),
+                    Website_Name = table.Column<string>(type: "text", nullable: true),
+                    Website_Source = table.Column<string>(type: "text", nullable: true),
+                    Website_Kind = table.Column<int>(type: "integer", nullable: true),
+                    Website_Thumbnail = table.Column<string>(type: "text", nullable: true),
+                    Website_IsExternal = table.Column<bool>(type: "boolean", nullable: true),
+                    Location_Address_City = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_HouseNumber = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Line2 = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_PostalCode = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Street = table.Column<string>(type: "text", nullable: false),
+                    Location_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Location_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false),
                     Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ImageUrl_Value = table.Column<string>(type: "text", nullable: true),
-                    Website_Value = table.Column<string>(type: "text", nullable: true)
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -137,10 +173,17 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     TravelSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Type_Value = table.Column<string>(type: "text", nullable: false),
-                    CheckIn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CheckOut = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DestinationId = table.Column<Guid>(type: "uuid", nullable: true)
+                    DestinationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Address_City = table.Column<string>(type: "text", nullable: false),
+                    Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Address_HouseNumber = table.Column<string>(type: "text", nullable: false),
+                    Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Address_Line2 = table.Column<string>(type: "text", nullable: false),
+                    Address_PostalCode = table.Column<string>(type: "text", nullable: false),
+                    Address_Street = table.Column<string>(type: "text", nullable: false),
+                    Slot_End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Slot_Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Type_Value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -163,7 +206,14 @@ namespace LIT.Travelnize.Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Time = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    Duration = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    Location_Address_City = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Country = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_HouseNumber = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Line1 = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Line2 = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_PostalCode = table.Column<string>(type: "text", nullable: false),
+                    Location_Address_Street = table.Column<string>(type: "text", nullable: false),
                     Location_Coordinates_Latitude = table.Column<double>(type: "double precision", nullable: false),
                     Location_Coordinates_Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },

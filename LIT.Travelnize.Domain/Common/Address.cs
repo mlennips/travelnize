@@ -21,13 +21,13 @@ namespace LIT.Travelnize.Domain.Common
             Country = country;
         }
 
-        public string Line1 { get; }
-        public string Line2 { get; }
-        public string Street { get; }
-        public string HouseNumber { get; }
-        public string PostalCode { get; }
-        public string City { get; }
-        public string Country { get; }
+        public string Line1 { get; private init; }
+        public string Line2 { get; private init; }
+        public string Street { get; private init; }
+        public string HouseNumber { get; private init; }
+        public string PostalCode { get; private init; }
+        public string City { get; private init; }
+        public string Country { get; private init; }
 
         public override string ToString()
         {

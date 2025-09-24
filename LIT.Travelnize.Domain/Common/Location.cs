@@ -10,8 +10,8 @@
             Coordinates = coordinates;
         }
 
-        public Address Address { get; }
-        public Coordinates Coordinates { get; }
+        public Address Address { get; private init; }
+        public Coordinates Coordinates { get; private init; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
