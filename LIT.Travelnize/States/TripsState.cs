@@ -47,6 +47,13 @@ namespace LIT.Travelnize.States
 
         public IEnumerable<ListTripsResponse> UpcomingTrips =>
             Trips?.Where(t => t.Status == TripStatus.Upcoming).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsResponse>();
+
+        public IEnumerable<ListTripsResponse> PastTrips =>
+            Trips?.Where(t => t.Status == TripStatus.Past).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsResponse>();
+
+        public IEnumerable<ListTripsResponse> PendingTrips =>
+            Trips?.Where(t => t.Status == TripStatus.Pending).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsResponse>();
+
         #endregion
 
         #region Loading

@@ -5,49 +5,160 @@
 
 <PageTitle>Travelnize - Reisen</PageTitle>
 
-<MudContainer Fixed Class="my-6">
+<MudContainer Class="my-6" MaxWidth="MaxWidth.Large">
     <MudGrid Spacing="6">
         <MudItem xs="12">
             <PageHeader Title="Reisen"
-                        Subtitle="Alle deine geplanten und vergangenen Reisen im Überblick." />
+                        Subtitle="Alle deine Abenteuer im Überblick." />
         </MudItem>
+
+        <!-- Horizontale Timeline Darstellung aller Reisen -->
+        @if (TimelineTrips.Any())
+        {
+            <MudItem xs="12">
+                <MudPaper Elevation="0">
+                    <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Bottom">
+                        @foreach (var trip in TimelineTrips)
+                        {
+                            <MudTimelineItem Size="Size.Small" Class="align-items-center" Color="@(trip.Status == TripStatus.Ongoing ? Color.Success : Color.Default)">
+                                <ItemContent>
+                                    <MudLink Typo="Typo.caption" Href="@($"/trips/{trip.Id}")" Underline="Underline.None">
+                                        @trip.Name
+                                    </MudLink>
+                                    <MudHidden Breakpoint="Breakpoint.Xs" Invert="false">
+                                        <MudText Typo="Typo.caption" Inline="false"><br />@trip.Slot?.Start?.ToShortDateString()</MudText>
+                                    </MudHidden>
+                                </ItemContent>
+                            </MudTimelineItem>
+                        }
+                    </MudTimeline>
+                </MudPaper>
+            </MudItem>
+        }
+
+        @foreach (var tripGroup in GroupedTrips.Where(x => x.Value.Any()))
+        {
+            {
+                <MudItem xs="12">
+                    <MudPaper Elevation="0">
+                        <MudText GutterBottom Typo="Typo.caption" Color="Color.Secondary">
+                            @tripGroup.Key.Value
+                        </MudText>
+                    </MudPaper>
+                    <MudStack Spacing="2">
+                        @foreach (var trip in tripGroup.Value)
+                        {
+                            <MudCard Class="my-2" Elevation="25">
+                                <MudCardContent Class="pa-4">
+                                    <MudStack Breakpoint="Breakpoint.Xs" Row="true" StretchItems="StretchItems.Start">
+                                        <MudStack Row="false">
+                                            <MudText Typo="Typo.subtitle1" Class="fw-semibold">
+                                                <MudLink Href="@($"/trips/{trip.Id}")" Underline="Underline.None" Class="text-primary">
+                                                    @trip.Name
+                                                </MudLink>
+                                            </MudText>
+                                            @if (!string.IsNullOrWhiteSpace(trip.Description))
+                                            {
+                                                <MudText Typo="Typo.body2" Class="opacity-85">
+                                                    @trip.Description
+                                                </MudText>
+                                            }
+
+                                            @{
+                                                string statusDetail = trip.Status switch
+                                                {
+                                                    var s when s == TripStatus.Upcoming =>
+                                                    trip.Slot.DaysUntilStart == 0
+                                                    ? "Startet heute"
+                                                    : $"Startet in {trip.Slot.DaysUntilStart} Tagen",
+                                                    var s when s == TripStatus.Ongoing =>
+                                                    $"Tag {trip.Slot.ActiveDays} von {trip.Slot.TotalDaysInclusive} • {trip.Slot.RemainingDays} Tage verbleiben",
+                                                    var s when s == TripStatus.Past => "Abgeschlossen",
+                                                    var s when s == TripStatus.Pending => "In Planung",
+                                                    _ => ""
+                                                };
+                                            }
+
+                                            <MudText Typo="Typo.caption" Class="mt-1">
+                                                <PlanningSlotDisplay Slot="@trip.Slot" />
+                                                <MudText Typo="Typo.caption" Class="opacity-75 ml-1">
+                                                    @statusDetail
+                                                </MudText>
+                                            </MudText>
+
+                                            @if (trip.Status == TripStatus.Ongoing && trip.Slot.TotalDaysInclusive > 0)
+                                            {
+                                                var progress = Math.Clamp(
+                                                trip.Slot.TotalDaysInclusive == 0
+                                                ? 0
+                                                : (double)trip.Slot.ActiveDays / trip.Slot.TotalDaysInclusive * 100d,
+                                                0, 100);
+
+                                                <MudProgressLinear Class="mt-1" Color="Color.Primary" Value="@progress" Rounded="true" />
+                                            }
+                                        </MudStack>
+                                        <MudStack Row="false" Justify="Justify.FlexStart" StretchItems="StretchItems.End" Breakpoint="Breakpoint.Xs" Spacing="0">
+                                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@trip.Status.Value</MudChip>
+                                            <MudChip T="string" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">@trip.UserRole</MudChip>
+
+                                            @if (trip.Slot.Nights > 0)
+                                            {
+                                                <MudChip T="string" Color="Color.Tertiary" Variant="Variant.Outlined" Size="Size.Small">
+                                                    @($"{trip.Slot.Nights} Nächte")
+                                                </MudChip>
+                                            }
+                                            <MudButton Variant="Variant.Text"
+                                                       Color="Color.Primary"
+                                                       Size="Size.Small"
+                                                       Href="@($"/trips/{trip.Id}")"
+                                                       StartIcon="@Icons.Material.Filled.OpenInNew">
+                                                Öffnen
+                                            </MudButton>
+                                        </MudStack>
+                                    </MudStack>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+
+                    </MudStack>
+
+                </MudItem>
+            }
+        }
         <MudItem xs="12">
-                <MudText Typo="Typo.h6" Class="mb-4">Deine Reisen</MudText>
-                <MudTable Items="TripsState.Trips" Hover="true" Loading="TripsState.IsLoading" Dense="false">
-                    <HeaderContent>
-                        <MudTh>Name</MudTh>
-                        <MudTh>Beschreibung</MudTh>
-                        <MudTh>Role</MudTh>
-                        <MudTh>Status</MudTh>
-                        <MudTh>Start</MudTh>
-                        <MudTh>Ende</MudTh>
-                        <MudTh></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd>@context.Name</MudTd>
-                        <MudTd>@context.Description</MudTd>
-                        <MudTd>@context.UserRole</MudTd>
-                        <MudTd>@context.Status.ToString()</MudTd>
-                        <MudTd>@context.Slot.Start?.ToShortDateString()</MudTd>
-                        <MudTd>@context.Slot.End?.ToShortDateString()</MudTd>
-                        <MudTd>
-                        <MudButtonGroup Color="Color.Primary" Variant="Variant.Text">
-                            <MudIconButton Icon="@Icons.Material.Filled.NavigateNext" Href="@($"/trips/{context.Id}")"></MudIconButton>
-                        </MudButtonGroup>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
-                @if (!TripsState.IsLoading && TripsState.Trips?.Count() == 0)
-                {
-                    <MudAlert Severity="Severity.Info" Elevation="0" Variant="Variant.Filled" Dense="true" Class="mt-4">
-                        Es wurden noch keine Reisen angelegt.
-                    </MudAlert>
-                }
+            @if (!TripsState.IsLoading && TripsState.Trips?.Count() == 0)
+            {
+                <MudAlert Severity="Severity.Info" Elevation="0" Variant="Variant.Filled" Dense="true" Class="mt-4">
+                    Es wurden noch keine Reisen angelegt.
+                </MudAlert>
+            }
         </MudItem>
     </MudGrid>
 </MudContainer>
 
 @code {
+    // Timeline sortierte Reisen (Startdatum aufsteigend, null zuletzt)
+    private IEnumerable<ListTripsResponse> TimelineTrips =>
+        (TripsState.Trips ?? Enumerable.Empty<ListTripsResponse>())
+            .Where(x => x.Status == TripStatus.Ongoing || x.Status == TripStatus.Upcoming)
+            .OrderBy(t => t.Slot.Start ?? DateTime.MaxValue);
+
+    Dictionary<TripStatus, ListTripsResponse[]> GroupedTrips
+    {
+        get
+        {
+            var dict = new Dictionary<TripStatus, ListTripsResponse[]>();
+            if (TripsState.Trips != null)
+            {
+                dict.Add(TripStatus.Ongoing, TripsState.OngoingTrips.ToArray());
+                dict.Add(TripStatus.Upcoming, TripsState.UpcomingTrips.ToArray());
+                dict.Add(TripStatus.Pending, TripsState.PendingTrips.ToArray());
+                dict.Add(TripStatus.Past, TripsState.PastTrips.ToArray());
+            }
+            return dict;
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
