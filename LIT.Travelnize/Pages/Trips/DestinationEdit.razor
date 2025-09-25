@@ -215,7 +215,9 @@
             Latitude = coords?.Latitude,
             Longitude = coords?.Longitude,
             SlotStart = _destination.Slot.Start,
-            SlotEnd = _destination.Slot.End
+            SlotEnd = _destination.Slot.End,
+            Image = _destination.Image?.Source,
+            Thumbnail = _destination.Image?.Thumbnail
         };
     }
 
@@ -243,6 +245,12 @@
 
             var location = new Location(address, coordinates);
 
+            ResourceReference? image = null;
+            if (!string.IsNullOrWhiteSpace(FormModel.Image))
+            {
+                image = ResourceReference.FromUrl(FormModel.Image, FormModel.Image, FormModel.Thumbnail, ResourceKind.Image);
+            }
+
             var command = new UpdateDestinationCommand(
                 FormModel.TripId,
                 FormModel.SegmentId,
@@ -250,7 +258,7 @@
                 FormModel.Name!.Trim(),
                 FormModel.Description?.Trim() ?? string.Empty,
                 location,
-                null,
+                image,
                 null
             );
 
@@ -310,6 +318,8 @@
         [StringLength(20)] public string? PostalCode { get; set; }
         [StringLength(100)] public string? City { get; set; }
         [StringLength(100)] public string? Country { get; set; }
+        [StringLength(200)] public string? Image { get; set; }
+        [StringLength(200)] public string? Thumbnail { get; set; }
 
         // Koordinaten
         public double? Latitude { get; set; }
@@ -361,6 +371,11 @@
                 FormModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
                 FormModel.Longitude = summary.Longitude;
+            if (string.IsNullOrWhiteSpace(FormModel!.Image))
+            {
+                FormModel.Image = summary.OriginalImageUrl;
+                FormModel.Thumbnail = summary.ThumbnailUrl;
+            }           
 
             Snackbar.Add("Wikipedia-Daten übernommen.", Severity.Success);
             StateHasChanged();

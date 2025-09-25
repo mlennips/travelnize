@@ -10,7 +10,7 @@ public sealed record ResourceReference : ValueObject
 
     private ResourceReference() { }
 
-    private ResourceReference(string name, string source, ResourceKind kind, string? thumbnail, bool isExternal)
+    public ResourceReference(string name, string source, ResourceKind kind, string? thumbnail, bool isExternal)
     {
         Name = name;
         Source = source;

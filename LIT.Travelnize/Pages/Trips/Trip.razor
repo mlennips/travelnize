@@ -91,13 +91,22 @@
                         @foreach (var destination in travelSegment.Destinations)
                         {
                             <MudItem xs="12" sm="12" lg="4" xl="4" id="@destination.Id">
-                                <MudCard Elevation="0" Outlined="true">
-                                    <MudCardHeader>
+                                <MudCard Elevation="0"
+                                         Outlined="true">
+                                    <MudCardHeader Class="pb-0">
                                         <CardHeaderAvatar>
                                             <MudAvatar Color="Color.Secondary">
-                                                <MudIcon Icon="@Icons.Material.Filled.LocationCity" />
+                                                @if (destination.Image != null)
+                                                {
+                                                    <MudImage Src="@destination.Image?.Thumbnail" />
+                                                }
+                                                else
+                                                {
+                                                    <MudIcon Icon="@Icons.Material.Filled.LocationCity" />
+                                                }
                                             </MudAvatar>
                                         </CardHeaderAvatar>
+
                                         <CardHeaderContent>
                                             <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/edit")">
                                                 <MudText Typo="Typo.body1">
@@ -181,7 +190,7 @@
                             @foreach (var activity in destination.Activities)
                             {
                                 <MudItem xs="6" sm="4" lg="3">
-                                    <MudCard Square Outlined >
+                                    <MudCard Square Outlined>
                                         <MudCardHeader>
                                             <CardHeaderContent>
                                                 <MudLink Typo="Typo.body1" Href="@($"/trips/{TripId}/travelsegments/{activity.TravelSegmentId}/destinations/{activity.DestinationId}/activities/{activity.Id}/edit")">@activity.Name</MudLink>
