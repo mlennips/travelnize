@@ -136,7 +136,7 @@
 
                             <MudItem xs="12" sm="6" lg="4" xl="4">
                                 <MudPaper Elevation="0"
-                                          Class="mud-width-full bg-light text-bg-light bg-opacity-75">
+                                          Class="mud-width-full">
                                     <MudList T="AccommodationDto">
                                         <MudListItem Class="text-accommodation bg-transparent border-accommodation-bottom"
                                                        Dense="true" Ripple="false">
@@ -151,13 +151,17 @@
                                                 <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
                                             </MudListItem>
                                         }
+                                        <MudListItem T="string" Icon="@Icons.Material.Filled.Add"
+                                                     Class="text-accommodation"
+                                                     Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/create")">
+                                        </MudListItem>
                                     </MudList>
                                 </MudPaper>
                             </MudItem>
 
                             <MudItem xs="12" sm="6" lg="4" xl="4">
                                 <MudPaper Elevation="0"
-                                          Class="mud-width-full bg-light text-bg-light bg-opacity-50">
+                                          Class="mud-width-full">
                                     <MudList T="ActivityDto">
                                         <MudListItem Class="text-activity bg-transparent border-activity-bottom"
                                                      Dense="true" Ripple="false">
@@ -172,11 +176,39 @@
                                                 <MudText Typo="Typo.caption" Class="mb-0">@activity.Name</MudText>
                                             </MudListItem>
                                         }
+                                        <MudListItem T="string" Icon="@Icons.Material.Filled.Add"
+                                                     Class="text-activity"
+                                                     Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/create")">
+                                        </MudListItem>
                                     </MudList>
                                 </MudPaper>
                             </MudItem>
                         }
+
+                        <MudItem xs="12">
+                            <MudStack Row>
+                                <MudButton Variant="Variant.Text"
+                                           FullWidth
+                                           StartIcon="@Icons.Material.Filled.Add"
+                                           Class="text-destination"
+                                           Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/create")">
+                                    Neues Reiseziel hinzufügen
+                                </MudButton>
+                            </MudStack>
+                        </MudItem>
                     }
+
+                    <MudItem xs="12">
+                        <MudStack Row>
+                            <MudButton Variant="Variant.Text"
+                                       FullWidth
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       Class="text-travelsegment"
+                                       Href="@($"/trips/{TripId}/travelsegments/create")">
+                                Neuen Reiseabschnitt hinzufügen
+                            </MudButton>
+                        </MudStack>
+                    </MudItem>
 
                     <MudItem xs="12">
                         <MudText Typo="Typo.caption">Transport</MudText>
