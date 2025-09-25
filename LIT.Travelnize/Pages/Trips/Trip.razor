@@ -2,6 +2,7 @@
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
 @using LIT.Travelnize.Domain.Trips.ValueObjects
+@using LIT.Travelnize.Helpers
 @using LIT.Travelnize.Shared.Map
 @inject TripsState TripsState
 @inject IDialogService DialogService
@@ -77,10 +78,10 @@
                     {
                         <MudItem xs="12" id="@travelSegment.Id">
                             <MudPaper Elevation="5"
-                                      Class="bg-primary bg-opacity-75 text-bg-primary pa-4 d-flex align-items-center">
+                                      Class="text-bg-travelsegment bg-opacity-50 pa-4 d-flex align-items-center bg">
                                 <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2" />
                                 <MudLink Typo="Typo.body2"
-                                         Color="Color.Default"
+                                         Class="text-bg-travelsegment"
                                          Underline="Underline.Hover"
                                          Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/edit")">
                                     @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
@@ -92,10 +93,11 @@
                         {
                             <MudItem xs="12" sm="12" lg="4" xl="4" id="@destination.Id">
                                 <MudCard Elevation="0"
+                                         Class="card-destination"
                                          Outlined="true">
                                     <MudCardHeader Class="pb-0">
                                         <CardHeaderAvatar>
-                                            <MudAvatar Color="Color.Secondary">
+                                            <MudAvatar Color="Color.Tertiary">
                                                 @if (destination.Image != null)
                                                 {
                                                     <MudImage Src="@destination.Image?.Thumbnail" />
@@ -136,6 +138,10 @@
                                 <MudPaper Elevation="0"
                                           Class="mud-width-full bg-light text-bg-light bg-opacity-75">
                                     <MudList T="AccommodationDto">
+                                        <MudListItem Class="text-accommodation bg-transparent border-accommodation-bottom"
+                                                       Dense="true" Ripple="false">
+                                            <MudText Typo="Typo.subtitle1">Unterkünfte</MudText>                                            
+                                        </MudListItem>
                                         @foreach (var accommodation in destination.Accommodations)
                                         {
                                             <MudListItem Icon="@Icons.Material.Filled.Hotel"
@@ -153,6 +159,10 @@
                                 <MudPaper Elevation="0"
                                           Class="mud-width-full bg-light text-bg-light bg-opacity-50">
                                     <MudList T="ActivityDto">
+                                        <MudListItem Class="text-activity bg-transparent border-activity-bottom"
+                                                     Dense="true" Ripple="false">
+                                            <MudText Typo="Typo.subtitle1">Aktivitäten</MudText>
+                                        </MudListItem>
                                         @foreach (var activity in destination.Activities)
                                         {
                                             <MudListItem Icon="@Icons.Material.Filled.Attractions"

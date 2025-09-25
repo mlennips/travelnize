@@ -29,8 +29,7 @@
             <MudList Dense="true" Class="wiki-search-list" T="WikipediaSearchResultDto">
                 @foreach (var r in _results)
                 {
-                    <MudListItem Style="cursor:pointer"
-                                 OnClick="@(() => SelectAsync(r))">
+                    <MudListItem OnClick="@(() => SelectAsync(r))">
                         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start">
                             <MudImage Size="Size.Medium" Src="@r.ThumbnailUrl" />
                             <MudStack Spacing="0">
@@ -46,7 +45,7 @@
                             </MudStack>
                         </MudStack>
                     </MudListItem>
-                    <MudDivider />
+                    @* <MudDivider /> *@
                 }
             </MudList>
         </MudStack>
