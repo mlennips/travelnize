@@ -112,3 +112,27 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* Brand Akzent für "nize" */
+.lacquer-regular {
+    font-family: "Lacquer", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.brand-accent {
+    font-family: 'Lacquer', system-ui;
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: var(--mud-palette-tertiary); /* greift MudBlazor Palette (Tertiary) */
+
+    display: inline-block;
+    transform: translateY(0px);
+    
+}
+
+.dark-theme .brand-accent {
+    /* Falls im Dark Mode andere Farbe gewünscht:
+    color: var(--mud-palette-info);
+    */
+}

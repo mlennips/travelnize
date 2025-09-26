@@ -1,4 +1,6 @@
-﻿namespace LIT.Travelnize.Domain.Trips.ValueObjects
+﻿using System.Globalization;
+
+namespace LIT.Travelnize.Domain.Trips.ValueObjects
 {
     public record PlanningSlot : ValueObject, IComparable<PlanningSlot>
     {
@@ -7,7 +9,7 @@
 
         public int TotalDays =>
             Start.HasValue && End.HasValue
-                ? (End.Value.Date - Start.Value.Date).Days 
+                ? (End.Value.Date - Start.Value.Date).Days
                 : 0;
 
         public int TotalDaysInclusive =>
@@ -20,10 +22,6 @@
                 ? Math.Max(0, (End.Value.Date - Start.Value.Date).Days)
                 : 0;
 
-        /// <summary>
-        /// Gibt die verbleibenden Tage bis zum Ende des Slots zurück (ab heute).
-        /// Ist das Enddatum in der Vergangenheit oder nicht gesetzt, wird 0 zurückgegeben.
-        /// </summary>
         public int RemainingDays
         {
             get
@@ -34,10 +32,6 @@
             }
         }
 
-        /// <summary>
-        /// Gibt die Anzahl der bereits aktiven Tage zurück (seit Start bis heute).
-        /// Ist der Slot noch nicht gestartet oder das Startdatum nicht gesetzt, wird 0 zurückgegeben.
-        /// </summary>
         public int ActiveDays
         {
             get
@@ -47,16 +41,11 @@
                 if (today < Start.Value.Date) return 0;
                 var end = End?.Date ?? today;
                 var days = (today - Start.Value.Date).Days;
-                // Begrenzung auf die Gesamtdauer des Slots
                 var maxDays = (end - Start.Value.Date).Days;
                 return Math.Min(days, maxDays > 0 ? maxDays : 0) + 1;
             }
         }
 
-        /// <summary>
-        /// Gibt die Anzahl der Tage bis zum Start des Slots zurück (ab heute).
-        /// Ist das Startdatum in der Vergangenheit oder nicht gesetzt, wird 0 zurückgegeben.
-        /// </summary>
         public int DaysUntilStart
         {
             get
@@ -67,7 +56,7 @@
             }
         }
 
-        private PlanningSlot() { } // For EF Core
+        private PlanningSlot() { }
 
         public PlanningSlot(DateTime? start, DateTime? end)
         {
@@ -86,7 +75,30 @@
 
         public static PlanningSlot Empty => new(null, null);
 
-        public string ToShortDateString() => Start?.ToShortDateString() + " - " + End?.ToShortDateString();
+        public string ToShortDateString()
+        {
+            if (Start.HasValue && End.HasValue && Start.Value.Year == End.Value.Year)
+            {
+                var culture = CultureInfo.CurrentCulture;
+                var pattern = culture.DateTimeFormat.ShortDatePattern;
+
+                // Jahr-Anteil entfernen (alle y-Gruppen) und abschließende Trenner säubern
+                var patternWithoutYear = System.Text.RegularExpressions.Regex
+                    .Replace(pattern, "y+", "")
+                    .TrimEnd('.', '-', '/', ',', ' ')
+                    .Trim();
+
+                if (string.IsNullOrWhiteSpace(patternWithoutYear))
+                    return Start.Value.ToShortDateString() + " - " + End.Value.ToShortDateString();
+
+                var startStr = Start.Value.ToString(patternWithoutYear, culture);
+                var endStr = End.Value.ToString(pattern, culture);
+                return startStr + " - " + endStr;
+            }
+
+            return (Start?.ToShortDateString() ?? string.Empty) + " - " + (End?.ToShortDateString() ?? string.Empty);
+        }
+
         public string ToLongDateString() => Start?.ToLongDateString() + " - " + End?.ToLongDateString();
 
         public int CompareTo(PlanningSlot? other)

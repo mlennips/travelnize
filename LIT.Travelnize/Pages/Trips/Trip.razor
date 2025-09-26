@@ -78,10 +78,10 @@
                     {
                         <MudItem xs="12" id="@travelSegment.Id">
                             <MudPaper Elevation="5"
-                                      Class="text-bg-travelsegment bg-opacity-50 pa-4 d-flex align-items-center bg">
-                                <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2" />
+                                      Class="bg-soft-travelsegment pa-4 d-flex align-items-center bg">
+                                <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2 text-travelsegment" />
                                 <MudLink Typo="Typo.body2"
-                                         Class="text-bg-travelsegment"
+                                         Class="text-travelsegment"
                                          Underline="Underline.Hover"
                                          Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/edit")">
                                     @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
@@ -97,7 +97,7 @@
                                          Outlined="true">
                                     <MudCardHeader Class="pb-0">
                                         <CardHeaderAvatar>
-                                            <MudAvatar Color="Color.Tertiary">
+                                            <MudAvatar Color="Color.Default" Class="bg-destination">
                                                 @if (destination.Image != null)
                                                 {
                                                     <MudImage Src="@destination.Image?.Thumbnail" />

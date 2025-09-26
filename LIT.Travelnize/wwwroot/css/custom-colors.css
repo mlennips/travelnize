@@ -2,7 +2,7 @@
     /* Basis (dezente Flächen) */
     --tn-trip:            #9edff1; /* Pastell aus Blue Light (Reiseplanung ruhig, luftig) */
     --tn-travelsegment:   #96bce9; /* Aufgehellter Brutal Blue (Struktur) */
-    --tn-destination:     #ffc2d3; /* Aufgehelltes Yass Queen (Highlight, aber weich) */
+    --tn-destination:     #ffb29d; /* Warmes Korall-Pastell (Destination) */
     --tn-accommodation:   #fff7b3; /* Sanfteres Crown Yellow (Unterkunft = warm) */
     --tn-transportation:  #b3f2fb; /* Leichte Cyan-Fläche (Bewegung, Dynamik) */
     --tn-activity:        #f9a8c1; /* Pastell aus Sister Sister (Aktivität, lebendig) */
@@ -10,7 +10,7 @@
     /* Starke Varianten (Akzente, Badges, text-bg-*) */
     --tn-trip-strong:            #007fb0;  /* Mischung Blue Light + Brutal Blue (solide, fokussiert) */
     --tn-travelsegment-strong:   #0049B7;  /* Brutal Blue unverändert */
-    --tn-destination-strong:     #ff1d58;  /* Yass Queen unverändert (Highlight) */
+    --tn-destination-strong:     #cc3a24;  /* Satter Korall-Rotton (AA-Kontrast zu Weiß) */
     --tn-accommodation-strong:   #d6b700;  /* Abgedunkeltes Gold statt zu helles #fff685 für Kontrast */
     --tn-transportation-strong:  #00DDFF;  /* Blue Light unverändert (Bewegung) */
     --tn-activity-strong:        #f75990;  /* Sister Sister unverändert (Energie) */

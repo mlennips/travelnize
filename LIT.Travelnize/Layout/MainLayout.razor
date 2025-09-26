@@ -3,11 +3,7 @@
 @* Required *@
 <MudThemeProvider Theme="@MyCustomTheme" @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
-
-@* Needed for dialogs *@
 <MudDialogProvider />
-
-@* Needed for snackbars *@
 <MudSnackbarProvider />
 
 <MudLayout>
@@ -16,7 +12,9 @@
         <MudAvatar Size="Size.Small" Class="me-2 bg-light">
             <MudImage Src="icon-192.png" Alt="Travelnize"></MudImage>
         </MudAvatar>
-        <MudText Typo="Typo.h6">Travelnize</MudText>
+        <MudText Typo="Typo.h6">
+            Travel<span class="brand-accent">nize</span>
+        </MudText>
         <MudSpacer />
         <LoginDisplay />
     </MudAppBar>
