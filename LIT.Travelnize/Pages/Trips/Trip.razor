@@ -72,14 +72,14 @@
                 </MudPaper>
             
                 <MudTabs>
-                    <MudTabPanel Text="Übersicht" Icon="@Icons.Material.Filled.Map">
+                    <MudTabPanel Text="Übersicht">
                         <MudGrid Spacing="4" Class="my-0">
                             @foreach (var travelSegment in TripsState.SelectedTrip.TravelSegments)
                             {
                                 <MudItem xs="12" id="@travelSegment.Id">
                                     <MudPaper Elevation="5"
                                                 Class="bg-soft-travelsegment pa-4 d-flex align-items-center bg">
-                                        <MudIcon Icon="@Icons.Material.Filled.Landslide" Class="me-2 text-travelsegment" />
+                                        <MudIcon Icon="@IconHelper.TravelSegmentOutlined" Class="me-2 text-travelsegment" />
                                         <MudLink Typo="Typo.body2"
                                                     Class="text-travelsegment"
                                                     Underline="Underline.Hover"
@@ -137,7 +137,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <MudIcon Icon="@Icons.Material.Filled.LocationCity" />
+                                                            <MudIcon Icon="@IconHelper.DestinationOutlined" />
                                                         }
                                                     </MudAvatar>
                                                 </CardHeaderAvatar>
@@ -184,7 +184,7 @@
                                             <MudList T="AccommodationDto">
                                                 @foreach (var accommodation in destination.Accommodations)
                                                 {
-                                                    <MudListItem Icon="@Icons.Material.Filled.Hotel"
+                                                    <MudListItem Icon="@IconHelper.AccommodationOutlined"
                                                                     id="@accommodation.Id"
                                                                     Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/{accommodation.Id}/edit")">
                                                         <PlanningSlotDisplay Slot="@accommodation.Slot"></PlanningSlotDisplay>
@@ -217,7 +217,7 @@
                                             <MudList T="ActivityDto">
                                                 @foreach (var activity in destination.Activities)
                                                 {
-                                                    <MudListItem Icon="@Icons.Material.Filled.Attractions"
+                                                    <MudListItem Icon="@IconHelper.ActivityOutlined"
                                                                     id="@activity.Id"
                                                                     Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/{activity.Id}/edit")">
                                                         <MudText Typo="Typo.caption" Class="mb-0">@activity.Date?.ToShortDateString()</MudText>
@@ -249,10 +249,10 @@
                             </MudItem>
                         </MudGrid>
                     </MudTabPanel>
-                    <MudTabPanel Text="Teilnehmer" Icon="@Icons.Material.Filled.People"></MudTabPanel>
-                    <MudTabPanel Text="Transport" Icon="@Icons.Material.Filled.AirportShuttle">
+                    <MudTabPanel Text="Teilnehmer"></MudTabPanel>
+                    <MudTabPanel Text="Transport">
                     </MudTabPanel>
-                    <MudTabPanel Text="Tagesplan" Icon="@Icons.Material.Filled.CalendarToday">
+                    <MudTabPanel Text="Tagesplan">
                         <MudGrid Spacing="4">
                             <MudItem xs="12">
                                 <MudText Typo="Typo.caption">Aktivitäten im Überblick</MudText>
@@ -302,10 +302,6 @@
 
 @code {
     [Parameter] public Guid TripId { get; set; }
-    // [Parameter] public Guid? TravelSegmentId { get; set; }
-    // [Parameter] public Guid? DestinationId { get; set; }
-    // [Parameter] public Guid? AccommodationId { get; set; }
-    // [Parameter] public Guid? ActivityId { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {

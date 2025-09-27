@@ -51,12 +51,11 @@
                             <MudCard Class="my-2" Elevation="25">
                                 <MudCardContent Class="pa-4">
                                     <MudStack Breakpoint="Breakpoint.Xs" Row="true" StretchItems="StretchItems.Start">
-                                        <MudStack Row="false">
-                                            <MudText Typo="Typo.subtitle1" Class="fw-semibold">
-                                                <MudLink Href="@($"/trips/{trip.Id}")" Underline="Underline.None" Class="text-primary">
-                                                    @trip.Name
-                                                </MudLink>
-                                            </MudText>
+                                        <MudStack Row="false" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.Middle" Justify="Justify.FlexEnd"  Spacing="0">
+                                            <MudLink Href="@($"/trips/{trip.Id}")" Underline="Underline.None" Class="text-trip fw-semibold" Typo="Typo.h6">
+                                                @trip.Name
+                                            </MudLink>
+                                          
                                             @if (!string.IsNullOrWhiteSpace(trip.Description))
                                             {
                                                 <MudText Typo="Typo.body2" Class="opacity-85">
@@ -64,43 +63,43 @@
                                                 </MudText>
                                             }
 
-                                            @{
-                                                string statusDetail = trip.Status switch
-                                                {
-                                                    var s when s == TripStatus.Upcoming =>
-                                                    trip.Slot.DaysUntilStart == 0
-                                                    ? "Startet heute"
-                                                    : $"Startet in {trip.Slot.DaysUntilStart} Tagen",
-                                                    var s when s == TripStatus.Ongoing =>
-                                                    $"Tag {trip.Slot.ActiveDays} von {trip.Slot.TotalDaysInclusive} • {trip.Slot.RemainingDays} Tage verbleiben",
-                                                    var s when s == TripStatus.Past => "Abgeschlossen",
-                                                    var s when s == TripStatus.Pending => "In Planung",
-                                                    _ => ""
-                                                };
-                                            }
+                                            <MudPaper Elevation="0">
+                                                @{
+                                                    string statusDetail = trip.Status switch
+                                                    {
+                                                        var s when s == TripStatus.Upcoming =>
+                                                        trip.Slot.DaysUntilStart == 0
+                                                        ? "Startet heute"
+                                                        : $"Startet in {trip.Slot.DaysUntilStart} Tagen",
+                                                        var s when s == TripStatus.Ongoing =>
+                                                        $"Tag {trip.Slot.ActiveDays} von {trip.Slot.TotalDaysInclusive} • {trip.Slot.RemainingDays} Tage verbleiben",
+                                                        var s when s == TripStatus.Past => "Abgeschlossen",
+                                                        var s when s == TripStatus.Pending => "In Planung",
+                                                        _ => ""
+                                                    };
+                                                }
 
-                                            <MudText Typo="Typo.caption" Class="mt-1">
-                                                <PlanningSlotDisplay Slot="@trip.Slot" />
-                                                <MudText Typo="Typo.caption" Class="opacity-75 ml-1">
-                                                    @statusDetail
+                                                <MudText Typo="Typo.caption" Class="mt-1">
+                                                    <PlanningSlotDisplay Slot="@trip.Slot" />
+                                                    <MudText Typo="Typo.caption" Class="opacity-75 ml-1">
+                                                        @statusDetail
+                                                    </MudText>
                                                 </MudText>
-                                            </MudText>
 
-                                            @if (trip.Status == TripStatus.Ongoing && trip.Slot.TotalDaysInclusive > 0)
-                                            {
-                                                var progress = Math.Clamp(
-                                                trip.Slot.TotalDaysInclusive == 0
-                                                ? 0
-                                                : (double)trip.Slot.ActiveDays / trip.Slot.TotalDaysInclusive * 100d,
-                                                0, 100);
+                                                @if (trip.Status == TripStatus.Ongoing && trip.Slot.TotalDaysInclusive > 0)
+                                                {
+                                                    var progress = Math.Clamp(
+                                                    trip.Slot.TotalDaysInclusive == 0
+                                                    ? 0
+                                                    : (double)trip.Slot.ActiveDays / trip.Slot.TotalDaysInclusive * 100d,
+                                                    0, 100);
 
-                                                <MudProgressLinear Class="mt-1" Color="Color.Primary" Value="@progress" Rounded="true" />
-                                            }
+                                                    <MudProgressLinear Class="mt-1" Color="Color.Primary" Value="@progress" Rounded="true" />
+                                                }
+                                            </MudPaper>
                                         </MudStack>
-                                        <MudStack Row="false" Justify="Justify.FlexStart" StretchItems="StretchItems.End" Breakpoint="Breakpoint.Xs" Spacing="0">
-                                            <MudChip T="string" Color="Color.Primary" Size="Size.Small">@trip.Status.Value</MudChip>
+                                        <MudStack Row="false" Justify="Justify.FlexStart" StretchItems="StretchItems.End" Breakpoint="Breakpoint.Xs" Spacing="0">                                           
                                             <MudChip T="string" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">@trip.UserRole</MudChip>
-
                                             @if (trip.Slot.Nights > 0)
                                             {
                                                 <MudChip T="string" Color="Color.Tertiary" Variant="Variant.Outlined" Size="Size.Small">
