@@ -1,24 +1,21 @@
 :root {
     /* Basis (dezente Flächen) */
-    --tn-trip:            #9edff1; /* Pastell aus Blue Light (Reiseplanung ruhig, luftig) */
-    --tn-travelsegment:   #96bce9; /* Aufgehellter Brutal Blue (Struktur) */
-    --tn-destination:     #ffb29d; /* Warmes Korall-Pastell (Destination) */
-    --tn-accommodation:   #fff7b3; /* Sanfteres Crown Yellow (Unterkunft = warm) */
-    --tn-transportation:  #b3f2fb; /* Leichte Cyan-Fläche (Bewegung, Dynamik) */
-    --tn-activity:        #f9a8c1; /* Pastell aus Sister Sister (Aktivität, lebendig) */
-
+    --tn-trip: #9edff1; /* Pastell aus Blue Light (Reiseplanung ruhig, luftig) */
+    --tn-travelsegment: #96bce9; /* Aufgehellter Brutal Blue (Struktur) */
+    --tn-destination: #ffb29d; /* Warmes Korall-Pastell (Destination) */
+    --tn-accommodation: #fff7b3; /* Sanfteres Crown Yellow (Unterkunft = warm) */
+    --tn-transportation: #b3f2fb; /* Leichte Cyan-Fläche (Bewegung, Dynamik) */
+    --tn-activity: #f9a8c1; /* Pastell aus Sister Sister (Aktivität, lebendig) */
     /* Starke Varianten (Akzente, Badges, text-bg-*) */
-    --tn-trip-strong:            #007fb0;  /* Mischung Blue Light + Brutal Blue (solide, fokussiert) */
-    --tn-travelsegment-strong:   #0049B7;  /* Brutal Blue unverändert */
-    --tn-destination-strong:     #cc3a24;  /* Satter Korall-Rotton (AA-Kontrast zu Weiß) */
-    --tn-accommodation-strong:   #d6b700;  /* Abgedunkeltes Gold statt zu helles #fff685 für Kontrast */
-    --tn-transportation-strong:  #00DDFF;  /* Blue Light unverändert (Bewegung) */
-    --tn-activity-strong:        #f75990;  /* Sister Sister unverändert (Energie) */
-
+    --tn-trip-strong: #007fb0; /* Mischung Blue Light + Brutal Blue (solide, fokussiert) */
+    --tn-travelsegment-strong: #0049B7; /* Brutal Blue unverändert */
+    --tn-destination-strong: #cc3a24; /* Satter Korall-Rotton (AA-Kontrast zu Weiß) */
+    --tn-accommodation-strong: #d6b700; /* Abgedunkeltes Gold statt zu helles #fff685 für Kontrast */
+    --tn-transportation-strong: #00DDFF; /* Blue Light unverändert (Bewegung) */
+    --tn-activity-strong: #f75990; /* Sister Sister unverändert (Energie) */
     /* Neutral */
-    --tn-text-on-dark:  #ffffff;
+    --tn-text-on-dark: #ffffff;
     --tn-text-on-light: #1a1a1a;
-
     /* Ableitungs-Intensitäten */
     --tn-soft-strength: 26%;
     --tn-border-strength: 54%;
@@ -26,102 +23,254 @@
 }
 
 /* Pastell Vollflächen */
-.bg-trip            { background-color: var(--tn-trip) !important; }
-.bg-travelsegment   { background-color: var(--tn-travelsegment) !important; }
-.bg-destination     { background-color: var(--tn-destination) !important; }
-.bg-accommodation   { background-color: var(--tn-accommodation) !important; }
-.bg-transportation  { background-color: var(--tn-transportation) !important; }
-.bg-activity        { background-color: var(--tn-activity) !important; }
+.bg-trip {
+    background-color: var(--tn-trip) !important;
+}
+
+.bg-travelsegment {
+    background-color: var(--tn-travelsegment) !important;
+}
+
+.bg-destination {
+    background-color: var(--tn-destination) !important;
+}
+
+.bg-accommodation {
+    background-color: var(--tn-accommodation) !important;
+}
+
+.bg-transportation {
+    background-color: var(--tn-transportation) !important;
+}
+
+.bg-activity {
+    background-color: var(--tn-activity) !important;
+}
 
 /* Optionale starke Vollflächen */
-.bg-strong-trip            { background-color: var(--tn-trip-strong) !important; color: var(--tn-text-on-dark) !important; }
-.bg-strong-travelsegment   { background-color: var(--tn-travelsegment-strong) !important; color: var(--tn-text-on-dark) !important; }
-.bg-strong-destination     { background-color: var(--tn-destination-strong) !important; color: var(--tn-text-on-dark) !important; }
-.bg-strong-accommodation   { background-color: var(--tn-accommodation-strong) !important; color: var(--tn-text-on-dark) !important; }
-.bg-strong-transportation  { background-color: var(--tn-transportation-strong) !important; color: var(--tn-text-on-dark) !important; }
-.bg-strong-activity        { background-color: var(--tn-activity-strong) !important; color: var(--tn-text-on-dark) !important; }
+.bg-strong-trip {
+    background-color: var(--tn-trip-strong) !important;
+    color: var(--tn-text-on-dark) !important;
+}
+
+.bg-strong-travelsegment {
+    background-color: var(--tn-travelsegment-strong) !important;
+    color: var(--tn-text-on-dark) !important;
+}
+
+.bg-strong-destination {
+    background-color: var(--tn-destination-strong) !important;
+    color: var(--tn-text-on-dark) !important;
+}
+
+.bg-strong-accommodation {
+    background-color: var(--tn-accommodation-strong) !important;
+    color: var(--tn-text-on-dark) !important;
+}
+
+.bg-strong-transportation {
+    background-color: var(--tn-transportation-strong) !important;
+    color: var(--tn-text-on-dark) !important;
+}
+
+.bg-strong-activity {
+    background-color: var(--tn-activity-strong) !important;
+    color: var(--tn-text-on-dark) !important;
+}
 
 /* Soft (tinted) – Tönung aus starken Varianten */
-.bg-soft-trip            { background-color: color-mix(in srgb, var(--tn-trip-strong) var(--tn-soft-strength), transparent) !important; }
-.bg-soft-travelsegment   { background-color: color-mix(in srgb, var(--tn-travelsegment-strong) var(--tn-soft-strength), transparent) !important; }
-.bg-soft-destination     { background-color: color-mix(in srgb, var(--tn-destination-strong) var(--tn-soft-strength), transparent) !important; }
-.bg-soft-accommodation   { background-color: color-mix(in srgb, var(--tn-accommodation-strong) var(--tn-soft-strength), transparent) !important; }
-.bg-soft-transportation  { background-color: color-mix(in srgb, var(--tn-transportation-strong) var(--tn-soft-strength), transparent) !important; }
-.bg-soft-activity        { background-color: color-mix(in srgb, var(--tn-activity-strong) var(--tn-soft-strength), transparent) !important; }
+.bg-soft-trip {
+    background-color: color-mix(in srgb, var(--tn-trip-strong) var(--tn-soft-strength), transparent) !important;
+}
+
+.bg-soft-travelsegment {
+    background-color: color-mix(in srgb, var(--tn-travelsegment-strong) var(--tn-soft-strength), transparent) !important;
+}
+
+.bg-soft-destination {
+    background-color: color-mix(in srgb, var(--tn-destination-strong) var(--tn-soft-strength), transparent) !important;
+}
+
+.bg-soft-accommodation {
+    background-color: color-mix(in srgb, var(--tn-accommodation-strong) var(--tn-soft-strength), transparent) !important;
+}
+
+.bg-soft-transportation {
+    background-color: color-mix(in srgb, var(--tn-transportation-strong) var(--tn-soft-strength), transparent) !important;
+}
+
+.bg-soft-activity {
+    background-color: color-mix(in srgb, var(--tn-activity-strong) var(--tn-soft-strength), transparent) !important;
+}
 
 /* Textfarben */
-.text-trip            { color: var(--tn-trip-strong) !important; }
-.text-travelsegment   { color: var(--tn-travelsegment-strong) !important; }
-.text-destination     { color: var(--tn-destination-strong) !important; }
-.text-accommodation   { color: var(--tn-accommodation-strong) !important; }
-.text-transportation  { color: var(--tn-transportation-strong) !important; }
-.text-activity        { color: var(--tn-activity-strong) !important; }
+.text-trip {
+    color: var(--tn-trip-strong) !important;
+}
+
+.text-travelsegment {
+    color: var(--tn-travelsegment-strong) !important;
+}
+
+.text-destination {
+    color: var(--tn-destination-strong) !important;
+}
+
+.text-accommodation {
+    color: var(--tn-accommodation-strong) !important;
+}
+
+.text-transportation {
+    color: var(--tn-transportation-strong) !important;
+}
+
+.text-activity {
+    color: var(--tn-activity-strong) !important;
+}
 
 /* Akzent-Hintergrund + Weiß */
 .text-bg-trip {
     background-color: var(--tn-trip-strong) !important;
     color: var(--tn-text-on-dark) !important;
 }
+
 .text-bg-travelsegment {
     background-color: var(--tn-travelsegment-strong) !important;
     color: var(--tn-text-on-dark) !important;
 }
+
 .text-bg-destination {
     background-color: var(--tn-destination-strong) !important;
     color: var(--tn-text-on-dark) !important;
 }
+
 .text-bg-accommodation {
     background-color: var(--tn-accommodation-strong) !important;
     color: var(--tn-text-on-dark) !important;
 }
+
 .text-bg-transportation {
     background-color: var(--tn-transportation-strong) !important;
     color: var(--tn-text-on-dark) !important;
 }
+
 .text-bg-activity {
     background-color: var(--tn-activity-strong) !important;
     color: var(--tn-text-on-dark) !important;
 }
 
 /* Border */
-.border-trip            { border: 1px solid var(--tn-trip-strong) !important; }
-.border-travelsegment   { border: 1px solid var(--tn-travelsegment-strong) !important; }
-.border-destination     { border: 1px solid var(--tn-destination-strong) !important; }
-.border-accommodation   { border: 1px solid var(--tn-accommodation-strong) !important; }
-.border-accommodation-bottom { border-bottom: 1px solid var(--tn-accommodation-strong) !important; }
-.border-transportation  { border: 1px solid var(--tn-transportation-strong) !important; }
-.border-activity        { border: 1px solid var(--tn-activity-strong) !important; }
-.border-activity-bottom { border-bottom: 1px solid var(--tn-activity-strong) !important; }
+.border-trip {
+    border: 1px solid var(--tn-trip-strong) !important;
+}
+
+.border-travelsegment {
+    border: 1px solid var(--tn-travelsegment-strong) !important;
+}
+
+.border-destination {
+    border: 1px solid var(--tn-destination-strong) !important;
+}
+
+.border-destination-bottom {
+    border-bottom: 2px solid var(--tn-destination-strong) !important;
+}
+
+.border-accommodation {
+    border: 1px solid var(--tn-accommodation-strong) !important;
+}
+
+.border-accommodation-bottom {
+    border-bottom: 2px solid var(--tn-accommodation-strong) !important;
+}
+
+.border-transportation {
+    border: 1px solid var(--tn-transportation-strong) !important;
+}
+
+.border-activity {
+    border: 1px solid var(--tn-activity-strong) !important;
+}
+
+.border-activity-bottom {
+    border-bottom: 2px solid var(--tn-activity-strong) !important;
+}
 
 /* Badges */
-.badge-trip            { background: var(--tn-trip-strong); color: #fff; border-radius: 4px; padding: 2px 6px; font-size: .75rem; }
-.badge-travelsegment   { background: var(--tn-travelsegment-strong); color: #fff; border-radius: 4px; padding: 2px 6px; font-size: .75rem; }
-.badge-destination     { background: var(--tn-destination-strong); color: #fff; border-radius: 4px; padding: 2px 6px; font-size: .75rem; }
-.badge-accommodation   { background: var(--tn-accommodation-strong); color: #fff; border-radius: 4px; padding: 2px 6px; font-size: .75rem; }
-.badge-transportation  { background: var(--tn-transportation-strong); color: #fff; border-radius: 4px; padding: 2px 6px; font-size: .75rem; }
-.badge-activity        { background: var(--tn-activity-strong); color: #fff; border-radius: 4px; padding: 2px 6px; font-size: .75rem; }
+.badge-trip {
+    background: var(--tn-trip-strong);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: .75rem;
+}
+
+.badge-travelsegment {
+    background: var(--tn-travelsegment-strong);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: .75rem;
+}
+
+.badge-destination {
+    background: var(--tn-destination-strong);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: .75rem;
+}
+
+.badge-accommodation {
+    background: var(--tn-accommodation-strong);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: .75rem;
+}
+
+.badge-transportation {
+    background: var(--tn-transportation-strong);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: .75rem;
+}
+
+.badge-activity {
+    background: var(--tn-activity-strong);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: .75rem;
+}
 
 /* Karten / Panels */
 .card-trip {
     border: 1px solid color-mix(in srgb, var(--tn-trip-strong) var(--tn-border-strength), #ffffff);
     background: color-mix(in srgb, var(--tn-trip) var(--tn-card-bg-strength), #ffffff);
 }
+
 .card-destination {
     border: 1px solid color-mix(in srgb, var(--tn-destination-strong) var(--tn-border-strength), #ffffff);
     background: color-mix(in srgb, var(--tn-destination) var(--tn-card-bg-strength), #ffffff);
 }
+
 .card-travelsegment {
     border: 1px solid color-mix(in srgb, var(--tn-travelsegment-strong) var(--tn-border-strength), #ffffff);
     background: color-mix(in srgb, var(--tn-travelsegment) var(--tn-card-bg-strength), #ffffff);
 }
+
 .card-accommodation {
     border: 1px solid color-mix(in srgb, var(--tn-accommodation-strong) var(--tn-border-strength), #ffffff);
     background: color-mix(in srgb, var(--tn-accommodation) var(--tn-card-bg-strength), #ffffff);
 }
+
 .card-transportation {
     border: 1px solid color-mix(in srgb, var(--tn-transportation-strong) var(--tn-border-strength), #ffffff);
     background: color-mix(in srgb, var(--tn-transportation) var(--tn-card-bg-strength), #ffffff);
 }
+
 .card-activity {
     border: 1px solid color-mix(in srgb, var(--tn-activity-strong) var(--tn-border-strength), #ffffff);
     background: color-mix(in srgb, var(--tn-activity) var(--tn-card-bg-strength), #ffffff);
