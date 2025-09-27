@@ -19,43 +19,46 @@ else
     }
     else
     {
-        <MudStack Spacing="2">
+        <MudGrid Class="my-2" GutterSize="2">
             @foreach (var day in _days)
             {
-                <MudPaper Class="pa-3 mb-0" Elevation="0">
-                    <MudStack Spacing="1">
-                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                            <MudText Typo="Typo.subtitle2" Class="mb-0">
-                                @day.Date.ToString("dddd, dd.MM.yyyy", _culture)
-                            </MudText>
-                            @if (day.Events.Count > 0)
-                            {
-                                <MudChip T="string" Color="Color.Secondary" Variant="Variant.Filled" Size="Size.Small">
-                                    @day.Events.Count @(day.Events.Count == 1 ? "Eintrag" : "Einträge")
-                                </MudChip>
-                            }
-                        </MudStack>
-
-                        @if (day.Events.Count == 0)
-                        {
-                            <MudText Typo="Typo.caption" Class="opacity-50">Keine Einträge</MudText>
-                        }
-                        else
-                        {
-                            <MudList Dense T="DayEvent">
-                                @foreach (var ev in day.Events.OrderBy(e => e.SortKey))
+                var avatarColor = day.IsToday ? Color.Primary : day.IsPast ? Color.Secondary : Color.Tertiary;
+                <MudItem xs="12" sm="6" md="6" lg="4">
+                    <MudCard Elevation="0">
+                        <MudCardHeader>
+                            <CardHeaderAvatar>
+                                <MudAvatar Color="@avatarColor">@day.Day</MudAvatar>
+                            </CardHeaderAvatar>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.body1" Class="fw-bold">@day.Date.ToLongDateString()</MudText>
+                                <MudText Typo="Typo.body2">@day.Events.Count @(day.Events.Count == 1 ? "Eintrag" : "Einträge")</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent Class="pa-0">
+                            <MudStack Spacing="1">
+                                @if (day.Events.Count == 0)
                                 {
-                                    <MudListItem Href="@ev.Url" Class="py-1"
-                                                 Text="@(@ev.TimeHint + " " + ev.Label)"
-                                                 SecondaryText="@ev.Subtitle">
-                                    </MudListItem>
+                                    <MudText Typo="Typo.caption" Class="opacity-50 ma-4">Keine Einträge</MudText>
                                 }
-                            </MudList>
-                        }
-                    </MudStack>
-                </MudPaper>
+                                else
+                                {
+                                    <MudList Dense T="DayEvent">
+                                        @foreach (var ev in day.Events.OrderBy(e => e.SortKey))
+                                        {
+                                            <MudListItem Href="@ev.Url" Class="py-1"
+                                                         Icon="@ev.Icon"
+                                                         Text="@(@ev.TimeHint + " " + ev.Label)"
+                                                         SecondaryText="@ev.Subtitle">
+                                            </MudListItem>
+                                        }
+                                    </MudList>
+                                }
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
             }
-        </MudStack>
+        </MudGrid>
     }
 }
 
@@ -112,26 +115,14 @@ else
             }))
             .ToList();
 
+        var dayCnt = 0;
         _days = Enumerable.Range(0, totalDays)
             .Select(i => start.AddDays(i))
-            .Select(date => new DayInfo(date))
+            .Select(i => new DayInfo(++dayCnt, i))
             .ToList();
 
         foreach (var day in _days)
         {
-
-            // Aktivitäten
-            foreach (var act in allActivities.Where(a => a.Activity.Date!.Value.Date == day.Date))
-            {
-                day.Events.Add(new DayEvent(
-                    Label: act.Activity.Name,
-                    Subtitle: act.Destination.Name,
-                    Url: $"/trips/{TripId}/travelsegments/{act.Activity.TravelSegmentId}/destinations/{act.Activity.DestinationId}/activities/{act.Activity.Id}/edit",
-                    TimeHint: act.Activity.Date?.ToString("HH:mm", _culture),
-                    SortKey: 103 + (act.Activity.Date?.Hour ?? 0)
-                ));
-            }
-
             // Accommodation Check-In
             foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckIn?.Date == day.Date))
             {
@@ -140,7 +131,8 @@ else
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckIn?.ToString("HH:mm", _culture),
-                    SortKey: 102 + (acc.Accommodation.CheckIn?.Hour ?? 0)
+                    SortKey: 102 + (acc.Accommodation.CheckIn?.Hour ?? 0),
+                    Icon: IconHelper.AccommodationTwoTone
                 ));
             }
 
@@ -152,7 +144,21 @@ else
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckOut?.ToString("HH:mm", _culture),
-                    SortKey: 101 + (acc.Accommodation.CheckOut?.Hour ?? 0)
+                    SortKey: 101 + (acc.Accommodation.CheckOut?.Hour ?? 0),
+                    Icon: IconHelper.AccommodationOutlined
+                ));
+            }
+
+            // Aktivitäten
+            foreach (var act in allActivities.Where(a => a.Activity.Date!.Value.Date == day.Date))
+            {
+                day.Events.Add(new DayEvent(
+                    Label: act.Activity.Name,
+                    Subtitle: act.Destination.Name,
+                    Url: $"/trips/{TripId}/travelsegments/{act.Activity.TravelSegmentId}/destinations/{act.Activity.DestinationId}/activities/{act.Activity.Id}/edit",
+                    TimeHint: act.Activity.Date?.ToString("HH:mm", _culture),
+                    SortKey: 103 + (act.Activity.Date?.Hour ?? 0),
+                    Icon: IconHelper.ActivityFilled
                 ));
             }
             // (Optional) Transport
@@ -164,12 +170,14 @@ else
     private string BuildAccommodationEditUrl(Guid segmentId, Guid destinationId, Guid accommodationId)
         => $"/trips/{TripId}/travelsegments/{segmentId}/destinations/{destinationId}/accommodations/{accommodationId}/edit";
 
-    private sealed class DayInfo
+    private sealed class DayInfo(int day, DateTime date)
     {
-        public DateTime Date { get; }
+        public DateTime Date { get; } = date;
+        public int Day { get; } = day;
+        public bool IsToday => Date == DateTime.Today;
+        public bool IsPast => Date < DateTime.Today;
+        public bool IsFuture => Date > DateTime.Today;
         public List<DayEvent> Events { get; } = [];
-
-        public DayInfo(DateTime date) => Date = date;
     }
 
     private sealed record DayEvent(
@@ -177,6 +185,7 @@ else
         string? Subtitle,
         string Url,
         string? TimeHint,
-        int SortKey
+        int SortKey,
+        string Icon
     );
 }
