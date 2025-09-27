@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject NavigationManager Navigation
 
 @* Required *@
 <MudThemeProvider Theme="@MyCustomTheme" @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
@@ -8,7 +10,10 @@
 
 <MudLayout>
     <MudAppBar Dense="true" Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />        
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       OnClick="@((e) => DrawerToggle())" />
         <MudAvatar Size="Size.Small" Class="me-2 bg-light">
             <MudImage Src="icon-192.png" Alt="Travelnize"></MudImage>
         </MudAvatar>
@@ -18,11 +23,23 @@
         <MudSpacer />
         <LoginDisplay />
     </MudAppBar>
+
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent>
-        @Body
+
+    <MudMainContent Class="main-content-wrapper">
+        @if (_showProgress)
+        {
+            <MudProgressLinear Indeterminate="true"
+                               Color="Color.Tertiary"
+                               Size="Size.Small"
+                               Class="navigation-progress" />
+        }
+
+        <div class="@(_showProgress ? "content-blurred" : null)">
+            @Body
+        </div>
     </MudMainContent>
 </MudLayout>
 
@@ -31,9 +48,53 @@
     private bool _isDarkMode = false;
     private MudThemeProvider _mudThemeProvider = default!;
 
-    void DrawerToggle()
+    // Navigation Loading
+    private bool _showProgress;
+    private DateTime _navLoadingStartUtc;
+    private readonly TimeSpan _minLoadingDuration = TimeSpan.FromMilliseconds(500);
+    private IDisposable? _locationChangingReg;
+
+    void DrawerToggle() => _drawerOpen = !_drawerOpen;
+
+    protected override void OnInitialized()
     {
-        _drawerOpen = !_drawerOpen;
+        _locationChangingReg = Navigation.RegisterLocationChangingHandler(LocationChangingAsync);
+        Navigation.LocationChanged += NavigationOnLocationChanged;
+    }
+
+    private ValueTask LocationChangingAsync(LocationChangingContext ctx)
+    {
+        StartProgress();
+        return ValueTask.CompletedTask;
+    }
+
+    private void NavigationOnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _ = EndProgressAsync();
+    }
+
+    private void StartProgress()
+    {
+        _navLoadingStartUtc = DateTime.UtcNow;
+        if (!_showProgress)
+        {
+            _showProgress = true;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task EndProgressAsync()
+    {
+        var elapsed = DateTime.UtcNow - _navLoadingStartUtc;
+        var remaining = _minLoadingDuration - elapsed;
+        if (remaining > TimeSpan.Zero)
+            await Task.Delay(remaining);
+
+        if (_showProgress)
+        {
+            _showProgress = false;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -51,6 +112,12 @@
         _isDarkMode = newValue;
         StateHasChanged();
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= NavigationOnLocationChanged;
+        _locationChangingReg?.Dispose();
     }
 
     private MudTheme MyCustomTheme = new MudTheme()
@@ -86,3 +153,24 @@
         }
     };
 }
+
+<style>
+    .main-content-wrapper {
+        position: relative;
+    }
+
+    .navigation-progress {
+        position: absolute;
+        z-index: 1100;
+    }
+
+    .main-content-wrapper > div {
+        transition: filter .300s ease;
+    }
+
+    .content-blurred {
+        filter: blur(4px);
+        transition: none;
+        pointer-events: none;
+    }
+</style>
