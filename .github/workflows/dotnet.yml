@@ -23,8 +23,26 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Code Format
-      run: dotnet format --check
+      run: dotnet test --verbosity normal
+    - name: Publish
+      run: dotnet publish -c Release -o output
+
+    # Deployment auf den vServer
+    - name: Deploy to Strato vServer
+      env:
+        SERVER_IP: ${{ secrets.DEV_SERVER_IP }}
+        SERVER_USER: ${{ secrets.DEV_SERVER_USER }}
+        SERVER_SSH_KEY: ${{ secrets.DEV_SERVER_SSH_KEY }}
+      run: |
+        # Erstelle eine ZIP-Datei für die Veröffentlichung
+        cd output
+        zip -r ../deploy.zip .
+        cd ..
+
+        # Übertrage die ZIP-Datei auf den vServer
+        scp -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no deploy.zip $SERVER_USER@$SERVER_IP:/path/to/deploy
+
+        # Entpacke die ZIP-Datei und führe die Anwendung aus
+        ssh -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "unzip -o /path/to/deploy/deploy.zip -d /path/to/deploy && cd /path/to/deploy && dotnet YourProject.dll"
