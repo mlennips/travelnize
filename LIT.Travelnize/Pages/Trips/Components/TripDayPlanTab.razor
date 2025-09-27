@@ -1,0 +1,182 @@
+@using System.Globalization
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Helpers
+
+@if (Trip is null)
+{
+    <MudText Typo="Typo.caption">Keine Daten.</MudText>
+}
+else if (Trip.Slot.Start is null || Trip.Slot.End is null)
+{
+    <MudText Typo="Typo.caption">Der Trip hat kein gültiges Start- oder Enddatum.</MudText>
+}
+else
+{
+    @if (_days.Count == 0)
+    {
+        <MudText Typo="Typo.caption">Keine Einträge vorhanden.</MudText>
+    }
+    else
+    {
+        <MudStack Spacing="2">
+            @foreach (var day in _days)
+            {
+                <MudPaper Class="pa-3 mb-0" Elevation="0">
+                    <MudStack Spacing="1">
+                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.subtitle2" Class="mb-0">
+                                @day.Date.ToString("dddd, dd.MM.yyyy", _culture)
+                            </MudText>
+                            @if (day.Events.Count > 0)
+                            {
+                                <MudChip T="string" Color="Color.Secondary" Variant="Variant.Filled" Size="Size.Small">
+                                    @day.Events.Count @(day.Events.Count == 1 ? "Eintrag" : "Einträge")
+                                </MudChip>
+                            }
+                        </MudStack>
+
+                        @if (day.Events.Count == 0)
+                        {
+                            <MudText Typo="Typo.caption" Class="opacity-50">Keine Einträge</MudText>
+                        }
+                        else
+                        {
+                            <MudList Dense T="DayEvent">
+                                @foreach (var ev in day.Events.OrderBy(e => e.SortKey))
+                                {
+                                    <MudListItem Href="@ev.Url" Class="py-1"
+                                                 Text="@(@ev.TimeHint + " " + ev.Label)"
+                                                 SecondaryText="@ev.Subtitle">
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        }
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudStack>
+    }
+}
+
+@code {
+    [Parameter] public GetTripResponse? Trip { get; set; }
+    [Parameter] public Guid TripId { get; set; }
+
+    private readonly CultureInfo _culture = CultureInfo.GetCultureInfo("de-DE");
+
+    private List<DayInfo> _days = [];
+
+    protected override void OnParametersSet()
+    {
+        if (Trip?.Slot.Start is null || Trip.Slot.End is null)
+        {
+            _days = [];
+            return;
+        }
+
+        BuildDayModel();
+    }
+
+    private void BuildDayModel()
+    {
+        var start = Trip!.Slot.Start!.Value.Date;
+        var end = Trip.Slot.End!.Value.Date;
+        var totalDays = (int)(end - start).TotalDays + 1;
+
+        // Alle relevanten Daten strukturieren
+        var segments = Trip.TravelSegments;
+
+        var allDestinations = segments.SelectMany(s => s.Destinations.Select(d => new
+        {
+            Segment = s,
+            Destination = d
+        })).ToList();
+
+        var allActivities = allDestinations
+            .SelectMany(x => x.Destination.Activities.Select(a => new
+            {
+                Activity = a,
+                x.Segment,
+                x.Destination
+            }))
+            .Where(x => x.Activity.Date.HasValue)
+            .ToList();
+
+        var allAccommodations = allDestinations
+            .SelectMany(x => x.Destination.Accommodations.Select(a => new
+            {
+                Accommodation = a,
+                x.Segment,
+                x.Destination
+            }))
+            .ToList();
+
+        _days = Enumerable.Range(0, totalDays)
+            .Select(i => start.AddDays(i))
+            .Select(date => new DayInfo(date))
+            .ToList();
+
+        foreach (var day in _days)
+        {
+
+            // Aktivitäten
+            foreach (var act in allActivities.Where(a => a.Activity.Date!.Value.Date == day.Date))
+            {
+                day.Events.Add(new DayEvent(
+                    Label: act.Activity.Name,
+                    Subtitle: act.Destination.Name,
+                    Url: $"/trips/{TripId}/travelsegments/{act.Activity.TravelSegmentId}/destinations/{act.Activity.DestinationId}/activities/{act.Activity.Id}/edit",
+                    TimeHint: act.Activity.Date?.ToString("HH:mm", _culture),
+                    SortKey: 103 + (act.Activity.Date?.Hour ?? 0)
+                ));
+            }
+
+            // Accommodation Check-In
+            foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckIn?.Date == day.Date))
+            {
+                day.Events.Add(new DayEvent(
+                    Label: $"Check-In {acc.Accommodation.Name}",
+                    Subtitle: acc.Destination.Name,
+                    Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
+                    TimeHint: acc.Accommodation.CheckIn?.ToString("HH:mm", _culture),
+                    SortKey: 102 + (acc.Accommodation.CheckIn?.Hour ?? 0)
+                ));
+            }
+
+            // Accommodation Check-Out
+            foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckOut?.Date == day.Date))
+            {
+                day.Events.Add(new DayEvent(
+                    Label: $"Check-Out {acc.Accommodation.Name}",
+                    Subtitle: acc.Destination.Name,
+                    Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
+                    TimeHint: acc.Accommodation.CheckOut?.ToString("HH:mm", _culture),
+                    SortKey: 101 + (acc.Accommodation.CheckOut?.Hour ?? 0)
+                ));
+            }
+            // (Optional) Transport
+            // foreach (var t in Trip.Transportations.Where(t => t.DepartureDate.Date == day.Date)) { ... }
+            // foreach (var t in Trip.Transportations.Where(t => t.ArrivalDate.Date == day.Date)) { ... }
+        }
+    }
+
+    private string BuildAccommodationEditUrl(Guid segmentId, Guid destinationId, Guid accommodationId)
+        => $"/trips/{TripId}/travelsegments/{segmentId}/destinations/{destinationId}/accommodations/{accommodationId}/edit";
+
+    private sealed class DayInfo
+    {
+        public DateTime Date { get; }
+        public List<DayEvent> Events { get; } = [];
+
+        public DayInfo(DateTime date) => Date = date;
+    }
+
+    private sealed record DayEvent(
+        string Label,
+        string? Subtitle,
+        string Url,
+        string? TimeHint,
+        int SortKey
+    );
+}

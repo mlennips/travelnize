@@ -9,7 +9,7 @@
     )
     {
         public static ParticipantDto From(Participant p) =>
-            new(p.Id, p.UserId, p.Name, p.Email?.Value, p.PermissionLevel.ToString());
+            new(p.Id, p.UserId, p.Name, p.Email?.Value, p.PermissionLevel.Value);
 
         public string Initials
         {

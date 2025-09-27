@@ -1,0 +1,184 @@
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Domain.Trips.ValueObjects
+@using LIT.Travelnize.Helpers
+@using LIT.Travelnize.Shared.Map
+
+@if (Trip is not null)
+{
+    <MudGrid Spacing="4" Class="my-0">
+        @foreach (var travelSegment in Trip.TravelSegments)
+        {
+            <MudItem xs="12" id="@travelSegment.Id">
+                <MudPaper Elevation="5" Class="bg-soft-travelsegment pa-4 d-flex align-items-center bg">
+                    <MudIcon Icon="@IconHelper.TravelSegmentOutlined" Class="me-2 text-travelsegment" />
+                    <MudLink Typo="Typo.body2"
+                             Class="text-travelsegment"
+                             Underline="Underline.Hover"
+                             Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/edit")">
+                        @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
+                    </MudLink>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" sm="12" lg="4" xl="4">
+                <MudPaper Elevation="0" Square Class="border-destination-bottom">
+                    <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                        <MudText Typo="Typo.subtitle1" Class="mb-0 text-destination fw-bold">Reiseziele</MudText>
+                        <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/create")" Class="text-destination">
+                            <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-destination" />
+                        </MudLink>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+            <MudHidden Breakpoint="Breakpoint.MdAndDown">
+                <MudItem xs="12" sm="6" lg="4" xl="4">
+                    <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
+                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                            <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">Unterkünfte</MudText>
+                            <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/accommodations/create")" Class="text-accommodation">
+                                <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-accommodation" />
+                            </MudLink>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" sm="6" lg="4" xl="4">
+                    <MudPaper Elevation="0" Square Class="border-activity-bottom">
+                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                            <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">Aktivitäten</MudText>
+                            <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/activites/create")" Class="text-activity">
+                                <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-activity" />
+                            </MudLink>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+            </MudHidden>
+
+            @foreach (var destination in travelSegment.Destinations)
+            {
+                <MudItem xs="12" sm="12" lg="4" xl="4" id="@destination.Id">
+                    <MudCard Elevation="0" Class="card-destination" Outlined="true">
+                        <MudCardHeader Class="pb-0">
+                            <CardHeaderAvatar>
+                                <MudAvatar Color="Color.Default" Class="bg-destination">
+                                    @if (destination.Image != null)
+                                    {
+                                        <MudImage Src="@destination.Image?.Thumbnail" />
+                                    }
+                                    else
+                                    {
+                                        <MudIcon Icon="@IconHelper.DestinationOutlined" />
+                                    }
+                                </MudAvatar>
+                            </CardHeaderAvatar>
+                            <CardHeaderContent>
+                                <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/edit")">
+                                    <MudText Typo="Typo.body1">
+                                        <PlanningSlotDisplay Slot="@destination.Slot" ShowDays></PlanningSlotDisplay>
+                                    </MudText>
+                                    <MudText Typo="Typo.body2">@destination.Name</MudText>
+                                </MudLink>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Typo="Typo.body2">@destination.Description</MudText>
+                        </MudCardContent>
+                        @if (destination.Location.Coordinates.Latitude != 0 && destination.Location.Coordinates.Longitude != 0)
+                        {
+                            <MudCardContent Class="pa-0">
+                                <StaticMap Latitude="@(destination.Location.Coordinates.Latitude)"
+                                           Longitude="@(destination.Location.Coordinates.Longitude)"
+                                           Zoom="4"
+                                           PixelHeight="120"
+                                           MarkerColor="red" />
+                            </MudCardContent>
+                        }
+                    </MudCard>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" lg="4" xl="4">
+                    <MudPaper Elevation="0" Class="mud-width-full">
+                        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+                            <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
+                                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                                    <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">Unterkünfte</MudText>
+                                    <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/accommodations/create")" Class="text-accommodation">
+                                        <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-accommodation" />
+                                    </MudLink>
+                                </MudStack>
+                            </MudPaper>
+                        </MudHidden>
+                        <MudList T="AccommodationDto">
+                            @foreach (var accommodation in destination.Accommodations)
+                            {
+                                <MudListItem Icon="@IconHelper.AccommodationOutlined"
+                                             id="@accommodation.Id"
+                                             Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/{accommodation.Id}/edit")">
+                                    <PlanningSlotDisplay Slot="@accommodation.Slot"></PlanningSlotDisplay>
+                                    <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
+                                </MudListItem>
+                            }
+                            <MudHidden Breakpoint="Breakpoint.MdAndDown">
+                                <MudListItem T="string"
+                                             Icon="@Icons.Material.Filled.Add"
+                                             Class="text-accommodation"
+                                             Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/create")">
+                                </MudListItem>
+                            </MudHidden>
+                        </MudList>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" lg="4" xl="4">
+                    <MudPaper Elevation="0" Class="mud-width-full">
+                        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+                            <MudPaper Elevation="0" Square Class="border-activity-bottom">
+                                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                                    <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">Aktivitäten</MudText>
+                                    <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/activites/create")" Class="text-activity">
+                                        <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-activity" />
+                                    </MudLink>
+                                </MudStack>
+                            </MudPaper>
+                        </MudHidden>
+                        <MudList T="ActivityDto">
+                            @foreach (var activity in destination.Activities)
+                            {
+                                <MudListItem Icon="@IconHelper.ActivityOutlined"
+                                             id="@activity.Id"
+                                             Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/{activity.Id}/edit")">
+                                    <MudText Typo="Typo.caption" Class="mb-0">@activity.Date?.ToShortDateString()</MudText>
+                                    <MudText Typo="Typo.caption" Class="mb-0">@activity.Name</MudText>
+                                </MudListItem>
+                            }
+                            <MudHidden Breakpoint="Breakpoint.MdAndDown">
+                                <MudListItem T="string"
+                                             Icon="@Icons.Material.Filled.Add"
+                                             Class="text-activity"
+                                             Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/create")">
+                                </MudListItem>
+                            </MudHidden>
+                        </MudList>
+                    </MudPaper>
+                </MudItem>
+            }
+        }
+
+        <MudItem xs="12">
+            <MudStack Row>
+                <MudButton Variant="Variant.Text"
+                           FullWidth
+                           StartIcon="@Icons.Material.Filled.Add"
+                           Class="text-travelsegment"
+                           Href="@($"/trips/{TripId}/travelsegments/create")">
+                    Neuen Reiseabschnitt hinzufügen
+                </MudButton>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [Parameter] public GetTripResponse? Trip { get; set; }
+    [Parameter] public Guid TripId { get; set; }
+}

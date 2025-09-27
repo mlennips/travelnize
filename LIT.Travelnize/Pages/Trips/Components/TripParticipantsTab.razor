@@ -1,0 +1,37 @@
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.Queries
+
+@if (Trip is null)
+{
+    <MudText Typo="Typo.caption">Keine Daten.</MudText>
+}
+else
+{
+    <MudStack Spacing="2" Class="ma-2">
+        <MudSimpleTable Dense="true" Hover="true" Elevation="2" Class="width-full">
+            <thead>
+                <tr>
+                    <th style="width:56px;"></th>
+                    <th>Name</th>
+                    <th>Rolle</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var p in Trip.Participants.OrderBy(p => p.Name))
+            {
+                <tr>
+                    <td>
+                        <MudAvatar Size="Size.Small">@p.Initials</MudAvatar>
+                    </td>
+                    <td>@p.Name</td>
+                    <td>@p.PermissionLevel</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudStack>
+}
+
+@code {
+    [Parameter] public GetTripResponse? Trip { get; set; }
+}
