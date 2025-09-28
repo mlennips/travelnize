@@ -40,7 +40,10 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
       run: |
+        echo "Setting up SSH access"
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        scp -o StrictHostKeyChecking=no travelnize.zip ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:~/travelnize/
+
+        echo "Copying files to server"
+        scp -o StrictHostKeyChecking=no output.zip ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:~/travelnize/
