@@ -30,15 +30,15 @@ jobs:
         ls -l
         
         # Überprüfe, ob die ZIP-Datei heruntergeladen wurde
-        if [ -f deploy.zip ]; then
-            echo "deploy.zip gefunden."
+        if [ -f artifact.zip ]; then
+            echo "artifact.zip gefunden."
         else
-            echo "deploy.zip nicht gefunden."
+            echo "artifact.zip nicht gefunden."
             exit 1
         fi
   
         # Übertrage die ZIP-Datei auf den vServer
-        scp -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no deploy.zip $SERVER_USER@$SERVER_IP:/
+        scp -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no artifact.zip $SERVER_USER@$SERVER_IP:/
   
         # Entpacke die ZIP-Datei und führe die Anwendung aus
-        ssh -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "unzip -o /path/to/deploy/deploy.zip -d /path/to/deploy && cd /path/to/deploy && dotnet YourProject.dll"
+        ssh -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "unzip -o /artifact.zip -d /travelnize"
