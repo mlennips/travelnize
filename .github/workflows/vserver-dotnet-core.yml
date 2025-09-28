@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: [Build]
     types: [completed]
+    branches: [ "dev" ]
 
 jobs:
   deploy:
