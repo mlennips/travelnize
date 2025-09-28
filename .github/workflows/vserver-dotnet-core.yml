@@ -36,14 +36,12 @@ jobs:
     - name: Zip output
       run: zip -r travelnize.zip output
 
-    - name: Copy files to server
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-      run: |
-        echo "Setting up SSH access"
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-
-        echo "Copying files to server"
-        scp -o StrictHostKeyChecking=no travelnize.zip ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:~/travelnize/
+    - name: Copy files via SSH
+      uses: appleboy/scp-action@v1
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}  # SSH key anstelle von Passwort
+        port: 22  # Standardport für SSH, passe dies an, wenn du einen anderen Port verwendest
+        source: "travelnize.zip"  # Pfad zur ZIP-Datei
+        target: "/travelnize"  # Ersetze dies durch den Zielpfad auf deinem Server
