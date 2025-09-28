@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download Build Artifact
-      uses: actions/download-artifact@v4.6.2
+      uses: actions/download-artifact@v4
       with:
         name: artifact
 
@@ -22,14 +22,11 @@ jobs:
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
       run: |
-        # Überprüfe den Inhalt des aktuellen Verzeichnisses
-        ls -l
-        
-        # Überprüfe, ob die ZIP-Datei heruntergeladen wurde
-        if [ -f artifact.zip ]; then
-            echo "artifact.zip gefunden."
+        # Überprüfe, ob das output-Verzeichnis heruntergeladen wurde
+        if [ -d output ]; then
+            echo "output-Verzeichnis gefunden."
         else
-            echo "artifact.zip nicht gefunden."
+            echo "output-Verzeichnis nicht gefunden."
             exit 1
         fi
   
