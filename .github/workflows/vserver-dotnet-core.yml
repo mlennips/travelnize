@@ -1,10 +1,6 @@
 name: Deploy
 
-on:
-  workflow_run:
-    workflows: [Build]
-    types: [completed]
-    branches: [ "dev" ]
+on: workflow_dispatch
 
 jobs:
   deploy:
