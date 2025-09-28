@@ -38,7 +38,7 @@ jobs:
         fi
   
         # Übertrage die ZIP-Datei auf den vServer
-        scp -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no deploy.zip $SERVER_USER@$SERVER_IP:/path/to/deploy
+        scp -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no deploy.zip $SERVER_USER@$SERVER_IP:/
   
         # Entpacke die ZIP-Datei und führe die Anwendung aus
         ssh -i $SERVER_SSH_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "unzip -o /path/to/deploy/deploy.zip -d /path/to/deploy && cd /path/to/deploy && dotnet YourProject.dll"
