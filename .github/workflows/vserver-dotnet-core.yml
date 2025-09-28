@@ -46,4 +46,4 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
 
         echo "Copying files to server"
-        scp -o StrictHostKeyChecking=no output.zip ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:~/travelnize/
+        scp -o StrictHostKeyChecking=no travelnize.zip ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:~/travelnize/
