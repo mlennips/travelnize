@@ -30,7 +30,7 @@ jobs:
       run: dotnet publish -c Release -o output
 
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.6.2
+      uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: artifact # optional, default is artifact
