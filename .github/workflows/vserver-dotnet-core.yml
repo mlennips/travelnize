@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SERVER_IP: ${{ secrets.SERVER_IP }}
-      SERVER_USER: ${{ secrets.SERVER_USER }}
-      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      SERVER_IP: ${{ secrets.DEV_SERVER_IP }}
+      SERVER_USER: ${{ secrets.DEV_SERVER_SSH_KEY }}
+      SERVER_SSH_KEY: ${{ secrets.DEV_SERVER_USER }}
 
     steps:
     - name: Checkout code
