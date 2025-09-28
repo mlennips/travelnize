@@ -35,6 +35,7 @@ jobs:
         # Artifact name
         name: artifact # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: /
-        # The desired behavior if no files are found using the provided path.
-              
+        path: /home/runner/work/
+        compression-level: 1
+        overwrite: true
+                  
