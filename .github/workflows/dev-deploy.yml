@@ -1,8 +1,6 @@
 name: DEV Deploy (Remote Build)
 
 on:
-  # push:
-  #   branches: ["dev"]
   workflow_dispatch:
 
 jobs:
@@ -12,43 +10,56 @@ jobs:
       - name: (Optional) Show commit info
         run: echo "Deploying commit $GITHUB_SHA to DEV"
 
-      - name: Deploy via SSH (Remote build & restart)
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Archiv erzeugen (git archive)
+        run: |
+          git archive --format=tar.gz --output app.tar.gz HEAD
+          ls -lh app.tar.gz
+
+      - name: Upload Code
+        uses: appleboy/scp-action@v0.1.7
         with:
             host: ${{ secrets.DEV_SERVER_IP }}
             username: ${{ secrets.DEV_SERVER_USER }}
             key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-            script: |
-              set -e
-              TARGET_DIR=/opt/travelnize
+            source: "app.tar.gz"
+            target: "/opt/travelnize"
 
-              # Initial clone oder Update
-              if [ ! -d "$TARGET_DIR/.git" ]; then
-                sudo mkdir -p "$TARGET_DIR"
-                sudo chown -R $USER:$USER "$TARGET_DIR"
-                git clone --branch dev --depth 1 https://github.com/${{ github.repository }} "$TARGET_DIR"
-              else
+      - name: Remote Entpacken & Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_SERVER_IP }}
+          username: ${{ secrets.DEV_SERVER_USER }}
+          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+          script: |
+                set -e
+                TARGET_DIR=/opt/travelnize
                 cd "$TARGET_DIR"
-                git fetch origin dev --depth 1
-                git reset --hard origin/dev
-              fi
 
-              cd "$TARGET_DIR"
+                echo "Entpacke neues Release (atomar mit temp + rsync)..."
+                TMP_DIR=$(mktemp -d)
+                tar xzf app.tar.gz -C "$TMP_DIR"
+                rsync -a --delete "$TMP_DIR"/ .
+                rm -rf "$TMP_DIR"
 
-              # .env überschreiben (keine Historie)
-              cat > .env <<EOF
-              POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-              POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-              POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-              API_BASE_URL=${{ secrets.API_BASE_URL }}
-              EOF
+                echo "Schreibe .env (Secrets)..."
+                cat > .env <<EOF
+                POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+                POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+                POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+                API_BASE_URL=${{ secrets.API_BASE_URL }}
+                EOF
 
-              echo "Docker Compose Build & Up..."
-              docker compose down
-              docker compose up -d --build --remove-orphans
+                echo "Docker Compose Build & Up..."
+                docker compose down
+                docker compose up -d --build --remove-orphans
 
-              echo "Verwaiste Images bereinigen..."
-              docker image prune -f
+                echo "Verwaiste Images bereinigen..."
+                docker image prune -f
 
-              echo "Aktive Container:"
-              docker compose ps
+                echo "Aktive Container:"
+                docker compose ps
