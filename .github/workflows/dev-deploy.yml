@@ -36,54 +36,66 @@ jobs:
 
       - name: Remote Deploy (Pull aus GHCR)
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          IMAGE_TAG: ${{ inputs.image_tag }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USERNAME: ${{ github.repository_owner }}
         with:
           host: ${{ secrets.DEV_SERVER_IP }}
           username: ${{ secrets.DEV_SERVER_USER }}
           key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+          # WICHTIG: Variablen, die an den Remote-Host gehen sollen
+          envs: IMAGE_TAG,GHCR_TOKEN,GHCR_USERNAME,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,API_BASE_URL,JWT_KEY
           script: |
             set -euo pipefail
             TARGET_DIR=/opt/travelnize
             cd "$TARGET_DIR"
+
+            # Fallback falls IMAGE_TAG leer (sollte nicht nötig sein, aber defensiv)
+            IMAGE_TAG="${IMAGE_TAG:-dev}"
 
             echo "Entpacke aktualisierte Compose-Dateien..."
             tar xzf deploy.tar.gz || true
 
             echo "Schreibe .env..."
             cat > .env <<EOF
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-            API_BASE_URL=${{ secrets.API_BASE_URL }}
-            JWT_KEY=${{ secrets.JWT_KEY }}
+            POSTGRES_USER=${POSTGRES_USER}
+            POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            POSTGRES_DB=${POSTGRES_DB}
+            API_BASE_URL=${API_BASE_URL}
+            JWT_KEY=${JWT_KEY}
             IMAGE_TAG=${IMAGE_TAG}
             EOF
 
-            echo "Prüfe Docker/Podman..."
+            echo "Prüfe Docker..."
             docker --version || true
-            if ! command -v docker >/dev/null 2>&1; then
-              echo "docker nicht gefunden"; exit 1
-            fi
+            command -v docker >/dev/null || { echo 'docker nicht gefunden'; exit 1; }
 
             if [ -z "${GHCR_TOKEN:-}" ]; then
-              echo "ERROR: GHCR_TOKEN ist leer / Secret fehlt"; exit 1
+              echo "ERROR: GHCR_TOKEN ist leer"; exit 1
+            fi
+            if [ -z "${GHCR_USERNAME:-}" ]; then
+              echo "ERROR: GHCR_USERNAME ist leer"; exit 1
             fi
 
-            echo "Login bei GHCR (non-interactive)..."
+            echo "Login bei GHCR..."
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 
             echo "Pull Images (Tag=${IMAGE_TAG})..."
             docker compose pull
 
-            echo "Restart (ohne Rebuild)..."
+            echo "Restart..."
             docker compose down
             docker compose up -d --remove-orphans
 
             echo "Aufräumen..."
-            docker image prune -f
+            docker image prune -f || true
 
             echo "Status:"
             docker compose ps
+        env:
+          # Diese Werte stehen der Action zur Verfügung und werden via envs: selektiv durchgereicht
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ github.repository_owner }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          JWT_KEY: ${{ secrets.JWT_KEY }}
