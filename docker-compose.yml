@@ -22,7 +22,6 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://0.0.0.0:8080
-      # komplette ConnectionStrings überschreiben (ersetzen Platzhalter __ENV__)
       ConnectionStrings__travelnize: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       ConnectionStrings__identity: Host=db;Port=5432;Database=identity;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       Jwt__Key: ${JWT_KEY}
@@ -35,8 +34,6 @@ services:
       dockerfile: LIT.Travelnize/Frontend.Dockerfile
     depends_on:
       - api
-    environment:
-      API_BASE_URL: ${API_BASE_URL:-http://localhost:8080}
     ports:
       - "8081:80"
 

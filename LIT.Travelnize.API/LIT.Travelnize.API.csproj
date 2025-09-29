@@ -15,6 +15,7 @@
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <NeutralLanguage>en</NeutralLanguage>
+    <UserSecretsId>cbb2f956-f253-48cb-ae3a-312dbac0231c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
