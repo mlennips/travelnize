@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       image_tag:
-        description: "Docker Image Tag (z.B. dev, SHA, v1.2.3)"
+        description: "Docker Image Tag (z.B. dev, sha-..., v1.2.3)"
         required: false
         default: "dev"
 
@@ -30,7 +30,6 @@ jobs:
         with:
           host: ${{ secrets.DEV_SERVER_IP }}
           username: ${{ secrets.DEV_SERVER_USER }}
-            # SSH Key muss read/write erlauben
           key: ${{ secrets.DEV_SERVER_SSH_KEY }}
           source: "deploy.tar.gz"
           target: "/opt/travelnize"
@@ -39,19 +38,21 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ github.repository_owner }}
         with:
           host: ${{ secrets.DEV_SERVER_IP }}
           username: ${{ secrets.DEV_SERVER_USER }}
           key: ${{ secrets.DEV_SERVER_SSH_KEY }}
           script: |
-            set -e
+            set -euo pipefail
             TARGET_DIR=/opt/travelnize
             cd "$TARGET_DIR"
 
             echo "Entpacke aktualisierte Compose-Dateien..."
             tar xzf deploy.tar.gz || true
 
-            echo "Schreibe .env (ersetzen)..."
+            echo "Schreibe .env..."
             cat > .env <<EOF
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
@@ -61,17 +62,27 @@ jobs:
             IMAGE_TAG=${IMAGE_TAG}
             EOF
 
-            echo "Login bei GHCR..."
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            echo "Prüfe Docker/Podman..."
+            docker --version || true
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "docker nicht gefunden"; exit 1
+            fi
 
-            echo "Compose Pull (API + Web + evtl. DB)..."
-            docker compose pull || true
+            if [ -z "${GHCR_TOKEN:-}" ]; then
+              echo "ERROR: GHCR_TOKEN ist leer / Secret fehlt"; exit 1
+            fi
 
-            echo "Container Neustart..."
+            echo "Login bei GHCR (non-interactive)..."
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+
+            echo "Pull Images (Tag=${IMAGE_TAG})..."
+            docker compose pull
+
+            echo "Restart (ohne Rebuild)..."
             docker compose down
             docker compose up -d --remove-orphans
 
-            echo "Ungelesene / alte Images bereinigen..."
+            echo "Aufräumen..."
             docker image prune -f
 
             echo "Status:"
