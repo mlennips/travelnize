@@ -31,7 +31,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: LIT.Travelnize/Frontend.Dockerfile
+      dockerfile: LIT.Travelnize/Dockerfile
     depends_on:
       - api
     ports:
