@@ -30,6 +30,19 @@ jobs:
             fi
             echo "ID=$DISTRO CODENAME=$CODENAME"
 
+            echo "[Check] rsync..."
+            if command -v rsync >/dev/null 2>&1; then
+              echo "rsync vorhanden: $(rsync --version 2>/dev/null | head -n1)"
+            else
+              if [ -f /etc/debian_version ]; then
+                echo "Installiere rsync..."
+                sudo apt-get update -y
+                sudo apt-get install -y rsync
+              else
+                echo "rsync Installation für dieses OS nicht automatisiert."
+              fi
+            fi
+
             echo "[Check] Docker vorhanden?"
             if command -v docker >/dev/null 2>&1; then
               echo "Docker bereits installiert:"
@@ -43,7 +56,7 @@ jobs:
                 sudo apt-get install -y ca-certificates curl gnupg lsb-release
                 sudo install -m 0755 -d /etc/apt/keyrings
                 if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
-                  curl -fsSL https://download.docker.com/linux/${DISTRO} /gpg || curl -fsSL https://download.docker.com/linux/${DISTRO}/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+                  curl -fsSL https://download.docker.com/linux/${DISTRO}/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
                   sudo chmod a+r /etc/apt/keyrings/docker.gpg
                 fi
                 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${DISTRO} ${CODENAME} stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
