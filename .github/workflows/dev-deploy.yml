@@ -52,6 +52,7 @@ jobs:
                 POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
                 POSTGRES_DB=${{ secrets.POSTGRES_DB }}
                 API_BASE_URL=${{ secrets.API_BASE_URL }}
+                JWT_KEY=${{ secrets.JWT_KEY }}
                 EOF
 
                 echo "Docker Compose Build & Up..."
