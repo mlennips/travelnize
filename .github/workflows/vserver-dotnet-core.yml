@@ -1,0 +1,47 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:  # Ermöglicht das manuelle Auslösen des Workflows
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      SERVER_IP: ${{ secrets.DEV_SERVER_IP }}
+      SERVER_USER: ${{ secrets.DEV_SERVER_SSH_KEY }}
+      SERVER_SSH_KEY: ${{ secrets.DEV_SERVER_USER }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build
+
+    - name: Test
+      run: dotnet test --verbosity normal
+
+    - name: Publish
+      run: dotnet publish -c Release -o output
+
+    - name: Zip output
+      run: zip -r travelnize.zip output
+
+    - name: Copy files via SSH
+      uses: appleboy/scp-action@v1
+      with:
+        host: ${{ secrets.DEV_SERVER_IP }}
+        username: ${{ secrets.DEV_SERVER_USER }}
+        key: ${{ secrets.DEV_SERVER_SSH_KEY }}  # SSH key anstelle von Passwort
+        port: 22  # Standardport für SSH, passe dies an, wenn du einen anderen Port verwendest
+        source: "travelnize.zip"  # Pfad zur ZIP-Datei
+        target: "/travelnize"  # Ersetze dies durch den Zielpfad auf deinem Server
