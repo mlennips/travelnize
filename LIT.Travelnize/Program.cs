@@ -19,25 +19,37 @@ internal class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         builder.Services.AddScoped<IAuthService, JwtAuthenticationStateProvider>();
-        builder.Services.AddScoped<AuthenticationStateProvider>((p) => (JwtAuthenticationStateProvider)p.GetRequiredService<IAuthService>());
+        builder.Services.AddScoped<AuthenticationStateProvider>(p => (JwtAuthenticationStateProvider)p.GetRequiredService<IAuthService>());
         builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
         builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 
-        var backendBaseUrl = builder.Configuration["Backend:BaseUrl"]!;
-        builder.Services.AddHttpClient<ApiClient>(string.Empty, client => { client.BaseAddress = new Uri(backendBaseUrl); });
-        builder.Services.AddHttpClient<AuthApiClient>(string.Empty, client => { client.BaseAddress = new Uri(backendBaseUrl); });
-        builder.Services.AddHttpClient<TripsApiClient>(client =>
+        // Backend Base URL robust ermitteln
+        var backendBaseUrl = builder.Configuration["Backend:BaseUrl"];
+        if (string.IsNullOrWhiteSpace(backendBaseUrl))
         {
-            client.BaseAddress = new Uri(backendBaseUrl);
-        })
-        .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
+            // Fallback: Development Default oder Fehler
+            if (builder.HostEnvironment.IsDevelopment())
+            {
+                backendBaseUrl = "http://localhost:5005";
+            }
+            else
+            {
+                throw new InvalidOperationException("Backend:BaseUrl ist nicht konfiguriert (appsettings.json / appsettings.<Environment>.json).");
+            }
+        }
+
+        var backendUri = new Uri(backendBaseUrl);
+
+        builder.Services.AddHttpClient<ApiClient>(client => client.BaseAddress = backendUri);
+        builder.Services.AddHttpClient<AuthApiClient>(client => client.BaseAddress = backendUri);
+        builder.Services.AddHttpClient<TripsApiClient>(client => client.BaseAddress = backendUri)
+            .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
-        builder.Services.AddMudServices(); 
+        builder.Services.AddMudServices();
         builder.Services.AddScoped<ScrollService>();
         builder.Services.AddScoped<IWikipediaApiClient, WikipediaApiClient>();
-
         builder.Services.AddSingleton<TripsState>();
 
         await builder.Build().RunAsync();
