@@ -1,66 +1,78 @@
-name: DEV Deploy (Remote Build)
+name: DEV Deploy (Pull from GHCR)
 
 on:
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker Image Tag (z.B. dev, SHA, v1.2.3)"
+        required: false
+        default: "dev"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: (Optional) Show commit info
-        run: echo "Deploying commit $GITHUB_SHA to DEV"
+      - name: Commit Info
+        run: echo "Deploying $GITHUB_SHA with image tag '${{ inputs.image_tag }}'"
 
-      - name: Checkout
+      - name: Checkout (nur für Compose/Configs)
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Archiv erzeugen (git archive)
+      - name: Archiv erstellen
         run: |
-          git archive --format=tar.gz --output app.tar.gz HEAD
-          ls -lh app.tar.gz
+          tar czf deploy.tar.gz docker-compose.yml
+          ls -lh deploy.tar.gz
 
-      - name: Upload Code
+      - name: Upload Compose/Config
         uses: appleboy/scp-action@v0.1.7
         with:
-            host: ${{ secrets.DEV_SERVER_IP }}
-            username: ${{ secrets.DEV_SERVER_USER }}
-            key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-            source: "app.tar.gz"
-            target: "/opt/travelnize"
+          host: ${{ secrets.DEV_SERVER_IP }}
+          username: ${{ secrets.DEV_SERVER_USER }}
+            # SSH Key muss read/write erlauben
+          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/opt/travelnize"
 
-      - name: Remote Entpacken & Deploy
+      - name: Remote Deploy (Pull aus GHCR)
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
         with:
           host: ${{ secrets.DEV_SERVER_IP }}
           username: ${{ secrets.DEV_SERVER_USER }}
           key: ${{ secrets.DEV_SERVER_SSH_KEY }}
           script: |
-                set -e
-                TARGET_DIR=/opt/travelnize
-                cd "$TARGET_DIR"
+            set -e
+            TARGET_DIR=/opt/travelnize
+            cd "$TARGET_DIR"
 
-                echo "Entpacke neues Release (atomar mit temp + rsync)..."
-                TMP_DIR=$(mktemp -d)
-                tar xzf app.tar.gz -C "$TMP_DIR"
-                rsync -a --delete "$TMP_DIR"/ .
-                rm -rf "$TMP_DIR"
+            echo "Entpacke aktualisierte Compose-Dateien..."
+            tar xzf deploy.tar.gz || true
 
-                echo "Schreibe .env (Secrets)..."
-                cat > .env <<EOF
-                POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-                POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-                POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-                API_BASE_URL=${{ secrets.API_BASE_URL }}
-                JWT_KEY=${{ secrets.JWT_KEY }}
-                EOF
+            echo "Schreibe .env (ersetzen)..."
+            cat > .env <<EOF
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            API_BASE_URL=${{ secrets.API_BASE_URL }}
+            JWT_KEY=${{ secrets.JWT_KEY }}
+            IMAGE_TAG=${IMAGE_TAG}
+            EOF
 
-                echo "Docker Compose Build & Up..."
-                docker compose down
-                docker compose up -d --build --remove-orphans
+            echo "Login bei GHCR..."
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
-                echo "Verwaiste Images bereinigen..."
-                docker image prune -f
+            echo "Compose Pull (API + Web + evtl. DB)..."
+            docker compose pull || true
 
-                echo "Aktive Container:"
-                docker compose ps
+            echo "Container Neustart..."
+            docker compose down
+            docker compose up -d --remove-orphans
+
+            echo "Ungelesene / alte Images bereinigen..."
+            docker image prune -f
+
+            echo "Status:"
+            docker compose ps
