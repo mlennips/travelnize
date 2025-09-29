@@ -1,16 +1,13 @@
-name: Server Docker Setup
+name: Server Setup (Debian 12)
 
 on:
   workflow_dispatch:
 
 jobs:
-  setup-docker:
+  setup-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Show commit (informativ)
-        run: echo "Triggered by $GITHUB_SHA"
-
-      - name: Install / Verify Docker & Compose on remote
+      - name: Remote Setup (Docker & rsync)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEV_SERVER_IP }}
@@ -19,95 +16,41 @@ jobs:
           script: |
             set -euo pipefail
 
-            echo "[Detect] Distribution..."
-            if [ -f /etc/os-release ]; then
-              . /etc/os-release
-              DISTRO="$ID"
-              CODENAME="${VERSION_CODENAME:-}"
-            else
-              echo "Kann /etc/os-release nicht lesen." >&2
-              exit 1
-            fi
-            echo "ID=$DISTRO CODENAME=$CODENAME"
+            echo "[1/6] Paketquellen aktualisieren + Basis-Tools"
+            sudo apt-get update -y
+            sudo apt-get install -y ca-certificates curl gnupg lsb-release rsync
 
-            echo "[Check] rsync..."
-            if command -v rsync >/dev/null 2>&1; then
-              echo "rsync vorhanden: $(rsync --version 2>/dev/null | head -n1)"
-            else
-              if [ -f /etc/debian_version ]; then
-                echo "Installiere rsync..."
-                sudo apt-get update -y
-                sudo apt-get install -y rsync
-              else
-                echo "rsync Installation für dieses OS nicht automatisiert."
-              fi
+            echo "[2/6] Docker GPG Key"
+            sudo install -m 0755 -d /etc/apt/keyrings
+            if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
+              curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+              sudo chmod a+r /etc/apt/keyrings/docker.gpg
             fi
 
-            echo "[Check] Docker vorhanden?"
-            if command -v docker >/dev/null 2>&1; then
-              echo "Docker bereits installiert:"
-              docker version --format '{{.Server.Version}}' || docker version || true
-            else
-              echo "[Install] Entferne Alt-Pakete falls vorhanden..."
-              if [ -f /etc/debian_version ]; then
-                sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
-                echo "[Install] Voraussetzungspakete..."
-                sudo apt-get update -y
-                sudo apt-get install -y ca-certificates curl gnupg lsb-release
-                sudo install -m 0755 -d /etc/apt/keyrings
-                if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
-                  curl -fsSL https://download.docker.com/linux/${DISTRO}/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-                  sudo chmod a+r /etc/apt/keyrings/docker.gpg
-                fi
-                echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${DISTRO} ${CODENAME} stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-                sudo apt-get update -y
-                echo "[Install] Docker Engine + Plugins..."
-                sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-              else
-                echo "Nicht-Debian/Ubuntu erkannt – fallback auf get.docker.com Script."
-                curl -fsSL https://get.docker.com | sh
-              fi
+            echo "[3/6] Docker Repository (Debian 12 / bookworm)"
+            if [ ! -f /etc/apt/sources.list.d/docker.list ]; then
+              echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
             fi
+            sudo apt-get update -y
 
-            echo "[Service] Aktiviere & starte docker..."
-            if command -v systemctl >/dev/null 2>&1; then
-              sudo systemctl enable docker || true
-              sudo systemctl start docker || true
-            fi
+            echo "[4/6] Docker Engine + Plugins installieren/aktualisieren"
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-            echo "[Group] Füge Benutzer zur docker Gruppe (wirkt nach Re-Login)..."
+            echo "[5/6] Docker Dienst aktivieren"
+            sudo systemctl enable docker
+            sudo systemctl restart docker
+
+            echo "[6/6] Benutzer zu Gruppe 'docker' hinzufügen (wirksam nach erneutem Login)"
             if getent group docker >/dev/null 2>&1; then
               sudo usermod -aG docker "$USER" || true
             fi
 
-            echo "[Verify] Docker Version:"
-            sudo docker version || true
+            echo "[Verify] Versionen:"
+            docker --version || sudo docker --version
+            docker compose version || echo "Compose Plugin unerwartet nicht verfügbar."
 
-            echo "[Check] Compose (Plugin bevorzugt)..."
-            if docker compose version >/dev/null 2>&1; then
-              echo "Compose Plugin OK:"
-              docker compose version
-            elif command -v docker-compose >/dev/null 2>&1; then
-              echo "Legacy docker-compose gefunden:"
-              docker-compose version
-            else
-              echo "Compose fehlt – versuche Nachinstallation (Debian/Ubuntu)..."
-              if [ -f /etc/debian_version ]; then
-                sudo apt-get update -y
-                sudo apt-get install -y docker-compose-plugin
-                docker compose version
-              else
-                echo "Compose Installation nicht automatisiert für dieses OS." >&2
-                exit 1
-              fi
-            fi
-
-            echo "[Test] Pull hello-world..."
+            echo "[Test] hello-world (optional)"
             sudo docker pull hello-world:latest
-            sudo docker run --rm hello-world || echo "hello-world run fehlgeschlagen (evtl. rootless Thema)."
+            sudo docker run --rm hello-world || echo "Warnung: Testlauf fehlgeschlagen."
 
-            echo "[Cleanup] Entferne test image (optional)..."
-            sudo docker image rm hello-world:latest || true
-
-            echo "[Result] Setup abgeschlossen."
-            echo "Hinweis: Gruppenänderung aktiv nach erneutem Login / neuem SSH – danach Deployment-Workflow starten."
+            echo "Fertig. Nach erneutem SSH-Login ohne sudo 'docker' nutzbar."
