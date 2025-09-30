@@ -1,9 +1,10 @@
 {
   email admin@lennips.de
   # Verwende die Staging-CA nur für Tests
-  acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+  # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
+# TLS-Site (automatisches HTTPS)
 travelnize.lennips.de {
   encode zstd gzip
 
@@ -23,6 +24,31 @@ travelnize.lennips.de {
       path_regexp assets \.(dll|pdb|wasm|js|mjs|css|json|png|jpg|jpeg|gif|svg|ico|woff2?)$
     }
     Cache-Control @assets "public, max-age=3600"
+  }
+
+  log {
+    output stdout
+    level INFO
+  }
+}
+
+# Parallele reine HTTP-Instanz (kein TLS) auf Port 8081
+:8081 {
+  encode gzip
+
+  handle /api/* {
+    reverse_proxy api:8080
+  }
+
+  root * /srv
+  try_files {path} /index.html
+  file_server
+
+  # Weniger aggressives Caching für Dev/Debug
+  header {
+    Cache-Control "no-cache, no-store, must-revalidate"
+    Pragma "no-cache"
+    Expires "0"
   }
 
   log {
