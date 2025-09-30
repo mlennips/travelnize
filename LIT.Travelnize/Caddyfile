@@ -1,7 +1,6 @@
 {
   email admin@lennips.de
-  # NICHT auf Staging umstellen, solange du produktiv testen willst.
-  # Für Tests (unsicher): acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+  # Verwende die Staging-CA nur für Tests
   acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
