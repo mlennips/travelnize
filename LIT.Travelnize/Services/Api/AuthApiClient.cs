@@ -6,7 +6,7 @@ namespace LIT.Travelnize.Services.Api
     public class AuthApiClient(HttpClient httpClient)
     {
         public async Task<HttpResponseMessage> RegisterAsync(RegisterCommand command)
-            => await httpClient.PostAsJsonAsync("api/auth/register", command);
+            => await httpClient.PostAsJsonAsync("auth/register", command);
 
         public async Task<LoginDto?> LoginAsync(string emailOrUserName, string password)
         {
@@ -15,7 +15,7 @@ namespace LIT.Travelnize.Services.Api
                 EmailOrUserName = emailOrUserName,
                 Password = password
             };
-            var response = await httpClient.PostAsJsonAsync("api/auth/login", command);
+            var response = await httpClient.PostAsJsonAsync("auth/login", command);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadFromJsonAsync<LoginDto>();
             return null;
@@ -23,16 +23,16 @@ namespace LIT.Travelnize.Services.Api
 
         public async Task<LoginDto?> RefreshTokenAsync(RefreshCommand command)
         {
-            var response = await httpClient.PostAsJsonAsync("api/auth/refresh", command);
+            var response = await httpClient.PostAsJsonAsync("auth/refresh", command);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadFromJsonAsync<LoginDto>();
             return null;
         }
 
         public async Task<HttpResponseMessage> LogoutAsync()
-            => await httpClient.PostAsync("api/auth/logout", null);
+            => await httpClient.PostAsync("auth/logout", null);
 
         public async Task<HttpResponseMessage> ForgotPasswordAsync(ForgotPasswordCommand command)
-            => await httpClient.PostAsJsonAsync("api/auth/forgot-password", command);
+            => await httpClient.PostAsJsonAsync("auth/forgot-password", command);
     }
 }

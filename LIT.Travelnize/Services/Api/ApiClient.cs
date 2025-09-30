@@ -6,7 +6,7 @@
 
         public async Task<string> GetWelcomeAsync()
         {
-            return await httpClient.GetStringAsync("api/welcome");
+            return await httpClient.GetStringAsync("welcome");
         }
     }
 }
