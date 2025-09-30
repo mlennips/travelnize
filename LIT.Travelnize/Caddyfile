@@ -3,25 +3,28 @@
   # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory  # nur falls wieder Staging
 }
 
-# HTTPS
+# HTTPS (Domain)
 travelnize.lennips.de {
   encode zstd gzip
 
-  @api path /api/*
-  reverse_proxy @api api:8080
+  handle /api/* {
+    reverse_proxy api:8080
+  }
 
-  root * /srv
-  try_files {path} /index.html
-  file_server
+  handle {
+    root * /srv
+    try_files {path} /index.html
+    file_server
 
-  header {
-    @fw path /_framework/*
-    Cache-Control @fw "public, max-age=31536000, immutable"
+    header {
+      @fw path /_framework/*
+      Cache-Control @fw "public, max-age=31536000, immutable"
 
-    @assets {
-      path_regexp assets \.(dll|pdb|wasm|js|mjs|css|json|png|jpg|jpeg|gif|svg|ico|woff2?)$
+      @assets {
+        path_regexp assets \.(dll|pdb|wasm|js|mjs|css|json|png|jpg|jpeg|gif|svg|ico|woff2?)$
+      }
+      Cache-Control @assets "public, max-age=3600"
     }
-    Cache-Control @assets "public, max-age=3600"
   }
 
   log {
