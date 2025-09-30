@@ -36,6 +36,14 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    # (Optional) Vorübergehend erzwingen, dass NUR Production-CA genutzt wird (Standard reicht i.d.R.)
+    # environment:
+    #   - CADDY_ADMIN=disabled
 
 volumes:
   dbdata:
+  caddy_data:
+  caddy_config:
