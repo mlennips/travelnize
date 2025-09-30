@@ -1,7 +1,7 @@
 travelnize.lennips.de {
   encode zstd gzip
 
-  handle_path /api/* {
+  handle /api/* {
     reverse_proxy api:8080
   }
 
@@ -17,5 +17,10 @@ travelnize.lennips.de {
       path_regexp assets \.(dll|pdb|wasm|js|mjs|css|json|png|jpg|jpeg|gif|svg|ico|woff2?)$
     }
     Cache-Control @assets "public, max-age=3600"
+  }
+
+  log {
+    output stdout
+    level INFO
   }
 }

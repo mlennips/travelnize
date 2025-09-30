@@ -7,7 +7,7 @@ using LIT.Travelnize.ServiceDefaults;
 using LIT.Travelnize.UseCases;
 using Microsoft.AspNetCore.Routing.Constraints;
 
-var builder = WebApplication.CreateSlimBuilder(args); 
+var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -34,11 +34,15 @@ builder.Services.AddCors(policy =>
 var app = builder.Build();
 
 app.UseCors("CorsPolicy");
-app.MapDefaultEndpoints();
+
+// Alle API-Endpunkte unter /api
+var api = app.MapGroup("/api");
 app.MapHomeEndpoints();
-app.MapAuthEndpoints();
-app.MapTripsEndpoints();
-app.MapWikipediaEndpoints();
+api.MapAuthEndpoints();
+api.MapTripsEndpoints();
+api.MapWikipediaEndpoints();
+app.MapDefaultEndpoints();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
