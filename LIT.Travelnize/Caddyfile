@@ -1,6 +1,7 @@
 travelnize.lennips.de {
   encode zstd gzip
 
+  # Proxy ohne Prefix-Stripping
   handle /api/* {
     reverse_proxy api:8080
   }
