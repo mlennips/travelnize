@@ -19,15 +19,33 @@ internal class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
+        // Einmalige Auflösung der Backend BaseAddress
+        var resolvedBackendBase = ResolveBackendBaseAddress(
+            builder.Configuration,
+            builder.HostEnvironment.BaseAddress,
+            builder.HostEnvironment.IsDevelopment());
+
+        builder.Services.AddSingleton(resolvedBackendBase);
+
         builder.Services.AddScoped<IAuthService, JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider>(p => (JwtAuthenticationStateProvider)p.GetRequiredService<IAuthService>());
         builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
         builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 
-        builder.Services.AddHttpClient<ApiClient>((sp, c) => c.BaseAddress = ResolveBackendBaseAddress(sp));
-        builder.Services.AddHttpClient<AuthApiClient>((sp, c) => c.BaseAddress = ResolveBackendBaseAddress(sp));
-        builder.Services.AddHttpClient<TripsApiClient>((sp, c) => c.BaseAddress = ResolveBackendBaseAddress(sp))
-            .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
+        builder.Services.AddHttpClient<ApiClient>((sp, c) =>
+        {
+            c.BaseAddress = sp.GetRequiredService<Uri>();
+        });
+
+        builder.Services.AddHttpClient<AuthApiClient>((sp, c) =>
+        {
+            c.BaseAddress = sp.GetRequiredService<Uri>();
+        });
+
+        builder.Services.AddHttpClient<TripsApiClient>((sp, c) =>
+        {
+            c.BaseAddress = sp.GetRequiredService<Uri>();
+        }).AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
@@ -36,46 +54,50 @@ internal class Program
         builder.Services.AddScoped<IWikipediaApiClient, WikipediaApiClient>();
         builder.Services.AddSingleton<TripsState>();
 
+        Console.WriteLine($"[BackendBase] final(once) = {resolvedBackendBase}");
+
         await builder.Build().RunAsync();
     }
 
-    private static Uri ResolveBackendBaseAddress(IServiceProvider sp)
+    private static Uri ResolveBackendBaseAddress(WebAssemblyHostConfiguration config, string hostEnvironmentBaseAddress, bool isDev)
     {
-        var config = sp.GetRequiredService<IConfiguration>();
-        var nav = sp.GetRequiredService<NavigationManager>();
-        var env = sp.GetRequiredService<IWebAssemblyHostEnvironment>();
-
         var raw = config["Backend:BaseUrl"];
-
         if (string.IsNullOrWhiteSpace(raw))
-        {
-            raw = env.IsDevelopment() ? "http://localhost:5005/" : "/api/";
-        }
+            raw = isDev ? "http://localhost:5005/" : "/api/";
+        raw = raw.Trim();
 
-        var baseUri = nav.BaseUri; // z.B. http://localhost:8081/ oder file:///
-        var isFileOrigin = baseUri.StartsWith("file://", StringComparison.OrdinalIgnoreCase);
+        static string EnsureTrailingSlash(string s) => s.EndsWith('/') ? s : s + "/";
 
-        // Wenn per file:// geöffnet → relative /api nicht nutzbar → erzwungen absolute URL
-        if (isFileOrigin && raw.StartsWith("/"))
-        {
-            // Debug-Fallback (anpassen falls andere Dev-URL)
-            raw = "http://localhost:8080/api/";
-        }
-
-        static Uri EnsureTrailingSlash(Uri u) =>
-            u.AbsoluteUri.EndsWith('/') ? u : new Uri(u.AbsoluteUri + "/");
-
+        // Absolute?
         if (Uri.TryCreate(raw, UriKind.Absolute, out var abs))
         {
-            Console.WriteLine($"[BackendBase] (abs) {abs}");
-            return EnsureTrailingSlash(abs);
+            abs = new Uri(EnsureTrailingSlash(abs.AbsoluteUri));
+            if (abs.Scheme == Uri.UriSchemeFile) // FIX: Uri.UriSchemeFile statt Uri.UriScheme.File
+            {
+                abs = BuildFromOrigin(hostEnvironmentBaseAddress, "api/");
+                Console.WriteLine($"[BackendBase] WARN absolute file:// korrigiert -> {abs}");
+            }
+            return abs;
         }
 
-        // Relativ → an Origin anhängen
-        var origin = new Uri(baseUri);
-        var combined = new Uri(origin, raw.TrimStart('/'));
-        combined = EnsureTrailingSlash(combined);
-        Console.WriteLine($"[BackendBase] (rel) {combined}");
-        return combined;
+        // Relativ
+        var origin = BuildFromOrigin(hostEnvironmentBaseAddress, raw.TrimStart('/'));
+        origin = new Uri(EnsureTrailingSlash(origin.AbsoluteUri));
+        if (origin.Scheme == Uri.UriSchemeFile) // FIX: Uri.UriSchemeFile statt Uri.UriScheme.File
+        {
+            var fixedUri = BuildFromOrigin("http://localhost:8081/", "api/");
+            Console.WriteLine($"[BackendBase] WARN relative file:// korrigiert -> {fixedUri}");
+            return fixedUri;
+        }
+
+        return origin;
+
+        static Uri BuildFromOrigin(string baseAddress, string append)
+        {
+            if (!baseAddress.EndsWith('/'))
+                baseAddress += "/";
+            var u = new Uri(baseAddress);
+            return new Uri(u, append);
+        }
     }
 }
