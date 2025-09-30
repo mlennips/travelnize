@@ -59,48 +59,44 @@ internal class Program
 
     private static Uri ResolveBackendBaseAddress(WebAssemblyHostConfiguration config, string hostEnvironmentBaseAddress, bool isDev)
     {
-        // Optional Konfiguration (z.B. wwwroot/appsettings.Development.json):
-        // "Backend": { "BaseUrl": "https://localhost:5005/api/" }
         var configured = config["Backend:BaseUrl"]?.Trim();
+        string EnsureSlash(string v) => v.EndsWith('/') ? v : v + "/";
 
-        string EnsureTrailingSlash(string v) => v.EndsWith('/') ? v : v + "/";
+        Uri MakeAbsolute(string value) => new(EnsureSlash(value), UriKind.Absolute);
 
-        Uri MakeAbsolute(string value)
-        {
-            value = EnsureTrailingSlash(value);
-            return new Uri(value, UriKind.Absolute);
-        }
+        // Helper: Origin
+        var origin = new Uri(hostEnvironmentBaseAddress);
 
-        // Falls konfiguriert:
+        // 1. Konfig explizit?
         if (!string.IsNullOrWhiteSpace(configured))
         {
-            // Absolute URL?
+            // Absolute?
             if (Uri.TryCreate(configured, UriKind.Absolute, out var abs))
+            {
+                // Schutz: interne / Docker-only Hosts (kein Punkt) in Produktion ignorieren
+                if (!isDev && abs.Host.IndexOf('.') < 0)
+                {
+                    var corrected = new Uri(origin, "api/");
+                    Console.WriteLine($"[BackendBase] WARN ignoring internal host '{abs.Host}' in production -> {corrected}");
+                    return corrected;
+                }
+
                 return MakeAbsolute(abs.AbsoluteUri);
+            }
 
-            // Relativ (beginnt mit '/'): an Origin anhängen
+            // Relativ mit führendem /
             if (configured.StartsWith('/'))
-            {
-                var origin = new Uri(hostEnvironmentBaseAddress);
-                return new Uri(origin, EnsureTrailingSlash(configured.TrimStart('/')));
-            }
+                return new Uri(origin, EnsureSlash(configured.TrimStart('/')));
 
-            // Relativ ohne '/': ebenfalls an Origin
-            {
-                var origin = new Uri(hostEnvironmentBaseAddress);
-                return new Uri(origin, EnsureTrailingSlash(configured));
-            }
+            // Relativ ohne /
+            return new Uri(origin, EnsureSlash(configured));
         }
 
-        // Standard ohne Konfiguration
+        // 2. Fallbacks
         if (isDev)
-        {
-            // Lokales Dev-API (anpassen falls anderer Port)
             return MakeAbsolute("https://localhost:5005/api/");
-        }
 
         // Produktion: gleiche Origin + /api/
-        var siteOrigin = new Uri(hostEnvironmentBaseAddress);
-        return new Uri(siteOrigin, "api/");
+        return new Uri(origin, "api/");
     }
 }
