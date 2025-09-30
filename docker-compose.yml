@@ -14,7 +14,6 @@ services:
 
   api:
     image: ghcr.io/mlennips/travelnize-api:${IMAGE_TAG:-dev}
-    # optional: erzwingt erneutes Holen (Compose v2.21+)
     pull_policy: always
     depends_on:
       db:
@@ -39,7 +38,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-    # (Optional) Vorübergehend erzwingen, dass NUR Production-CA genutzt wird (Standard reicht i.d.R.)
+    # (Optional) Voruebergehend erzwingen, dass NUR Production-CA genutzt wird (Standard reicht i.d.R.)
     # environment:
     #   - CADDY_ADMIN=disabled
 
