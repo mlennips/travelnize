@@ -4,7 +4,7 @@
     {
         public async Task<string> GetWelcomeAsync()
         {
-            return await httpClient.GetStringAsync("/welcome");
+            return await httpClient.GetStringAsync("welcome");
         }
     }
 }
