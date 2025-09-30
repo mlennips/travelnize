@@ -2,6 +2,8 @@
 {
     public class ApiClient(HttpClient httpClient)
     {
+        public Uri? BaseAddress => httpClient.BaseAddress;
+
         public async Task<string> GetWelcomeAsync()
         {
             return await httpClient.GetStringAsync("welcome");

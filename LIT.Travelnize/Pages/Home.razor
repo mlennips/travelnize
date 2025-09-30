@@ -7,13 +7,12 @@
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthService
 @inject TripsState TripsState
-@inject HttpClient HttpClient
+@inject ApiClient ApiClient
 
 <PageTitle>Travelnize</PageTitle>
 
 <h3>API Debug</h3>
-<p>BaseAddress: @HttpClient.BaseAddress</p>
-<p>DefaultProxy: @HttpClient.DefaultProxy</p>
+<p>BaseAddress: @ApiClient.BaseAddress</p>
 
 <h3>Navigation Debug</h3>
 <p>BaseUri: @NavigationManager.BaseUri</p>
