@@ -52,50 +52,55 @@ internal class Program
         builder.Services.AddScoped<IWikipediaApiClient, WikipediaApiClient>();
         builder.Services.AddSingleton<TripsState>();
 
-        Console.WriteLine($"[BackendBase] final(once) = {resolvedBackendBase}");
+        Console.WriteLine($"[BackendBase] resolved = {resolvedBackendBase}");
 
         await builder.Build().RunAsync();
     }
 
     private static Uri ResolveBackendBaseAddress(WebAssemblyHostConfiguration config, string hostEnvironmentBaseAddress, bool isDev)
     {
-        var raw = config["Backend:BaseUrl"];
-        if (string.IsNullOrWhiteSpace(raw))
-            raw = isDev ? "http://localhost:5005/" : "/api/";
-        raw = raw.Trim();
+        // Optional Konfiguration (z.B. wwwroot/appsettings.Development.json):
+        // "Backend": { "BaseUrl": "https://localhost:5005/api/" }
+        var configured = config["Backend:BaseUrl"]?.Trim();
 
-        static string EnsureTrailingSlash(string s) => s.EndsWith('/') ? s : s + "/";
+        string EnsureTrailingSlash(string v) => v.EndsWith('/') ? v : v + "/";
 
-        // Absolute?
-        if (Uri.TryCreate(raw, UriKind.Absolute, out var abs))
+        Uri MakeAbsolute(string value)
         {
-            abs = new Uri(EnsureTrailingSlash(abs.AbsoluteUri));
-            if (abs.Scheme == Uri.UriSchemeFile)
+            value = EnsureTrailingSlash(value);
+            return new Uri(value, UriKind.Absolute);
+        }
+
+        // Falls konfiguriert:
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            // Absolute URL?
+            if (Uri.TryCreate(configured, UriKind.Absolute, out var abs))
+                return MakeAbsolute(abs.AbsoluteUri);
+
+            // Relativ (beginnt mit '/'): an Origin anhängen
+            if (configured.StartsWith('/'))
             {
-                abs = BuildFromOrigin(hostEnvironmentBaseAddress, "api/");
-                Console.WriteLine($"[BackendBase] WARN absolute file:// korrigiert -> {abs}");
+                var origin = new Uri(hostEnvironmentBaseAddress);
+                return new Uri(origin, EnsureTrailingSlash(configured.TrimStart('/')));
             }
-            return abs;
+
+            // Relativ ohne '/': ebenfalls an Origin
+            {
+                var origin = new Uri(hostEnvironmentBaseAddress);
+                return new Uri(origin, EnsureTrailingSlash(configured));
+            }
         }
 
-        // Relativ
-        var origin = BuildFromOrigin(hostEnvironmentBaseAddress, raw.TrimStart('/'));
-        origin = new Uri(EnsureTrailingSlash(origin.AbsoluteUri));
-        if (origin.Scheme == Uri.UriSchemeFile)
+        // Standard ohne Konfiguration
+        if (isDev)
         {
-            var fixedUri = BuildFromOrigin("http://localhost:8081/", "api/");
-            Console.WriteLine($"[BackendBase] WARN relative file:// korrigiert -> {fixedUri}");
-            return fixedUri;
+            // Lokales Dev-API (anpassen falls anderer Port)
+            return MakeAbsolute("https://localhost:5005/api/");
         }
 
-        return origin;
-
-        static Uri BuildFromOrigin(string baseAddress, string append)
-        {
-            if (!baseAddress.EndsWith('/'))
-                baseAddress += "/";
-            var u = new Uri(baseAddress);
-            return new Uri(u, append);
-        }
+        // Produktion: gleiche Origin + /api/
+        var siteOrigin = new Uri(hostEnvironmentBaseAddress);
+        return new Uri(siteOrigin, "api/");
     }
 }
