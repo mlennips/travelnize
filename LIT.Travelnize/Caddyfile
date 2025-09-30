@@ -1,0 +1,26 @@
+travelnize.lennips.de {
+  encode zstd gzip
+
+  # API Proxy
+  handle_path /api/* {
+    reverse_proxy api:8080
+  }
+
+  # Statische Dateien + SPA Fallback
+  root * /srv
+  try_files {path} /index.html
+  file_server
+
+  # Caching-Header ähnlich deiner Nginx-Konfiguration
+  header {
+    # Framework / langfristig
+    @fw path /_framework/*
+    Cache-Control @fw "public, max-age=31536000, immutable"
+
+    # Moderate Caches für typische Assets
+    @assets {
+      path_regexp assets \.(dll|pdb|wasm|js|mjs|css|json|png|jpg|jpeg|gif|svg|ico|woff2?)$
+    }
+    Cache-Control @assets "public, max-age=3600"
+  }
+}

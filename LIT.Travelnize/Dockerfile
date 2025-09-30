@@ -3,7 +3,8 @@ WORKDIR /src
 COPY . .
 RUN dotnet publish LIT.Travelnize/LIT.Travelnize.csproj -c Release -o /dist
 
-FROM nginx:alpine
-RUN rm -f /etc/nginx/conf.d/default.conf
-COPY LIT.Travelnize/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /dist/wwwroot /usr/share/nginx/html
+FROM caddy:alpine
+# Caddyfile hinein kopieren
+COPY LIT.Travelnize/Caddyfile /etc/caddy/Caddyfile
+# Statische Blazor Files
+COPY --from=build /dist/wwwroot /srv

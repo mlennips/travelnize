@@ -14,7 +14,6 @@ services:
 
   api:
     image: ghcr.io/mlennips/travelnize-api:${IMAGE_TAG:-dev}
-    # optional: erzwingt erneutes Holen (Compose v2.21+)
     pull_policy: always
     depends_on:
       db:
@@ -25,16 +24,17 @@ services:
       ConnectionStrings__travelnize: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       ConnectionStrings__identity: Host=db;Port=5432;Database=identity;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       Jwt__Key: ${JWT_KEY}
-    ports:
-      - "8080:8080"
 
   frontend:
-    image: ghcr.io/mlennips/travelnize-web:${IMAGE_TAG:-dev}
-    pull_policy: always
+    build:
+      context: .
+      dockerfile: LIT.Travelnize/Dockerfile
+    pull_policy: never
     depends_on:
       - api
     ports:
-      - "8081:80"
+      - "80:80"
+      - "443:443"
 
 volumes:
   dbdata:
