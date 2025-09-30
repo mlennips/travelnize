@@ -49,23 +49,33 @@ internal class Program
 
         if (string.IsNullOrWhiteSpace(raw))
         {
-            if (env.IsDevelopment())
-                raw = "http://localhost:5005/";
-            else
-                raw = "/api/"; // Prod Fallback
+            raw = env.IsDevelopment() ? "http://localhost:5005/" : "/api/";
         }
 
-        // Normalisieren: trailing slash erzwingen
+        var baseUri = nav.BaseUri; // z.B. http://localhost:8081/ oder file:///
+        var isFileOrigin = baseUri.StartsWith("file://", StringComparison.OrdinalIgnoreCase);
+
+        // Wenn per file:// geöffnet → relative /api nicht nutzbar → erzwungen absolute URL
+        if (isFileOrigin && raw.StartsWith("/"))
+        {
+            // Debug-Fallback (anpassen falls andere Dev-URL)
+            raw = "http://localhost:8080/api/";
+        }
+
         static Uri EnsureTrailingSlash(Uri u) =>
             u.AbsoluteUri.EndsWith('/') ? u : new Uri(u.AbsoluteUri + "/");
 
-        // Absolute URL?
         if (Uri.TryCreate(raw, UriKind.Absolute, out var abs))
+        {
+            Console.WriteLine($"[BackendBase] (abs) {abs}");
             return EnsureTrailingSlash(abs);
+        }
 
         // Relativ → an Origin anhängen
-        var baseUri = new Uri(nav.BaseUri); // endet bereits mit '/'
-        var combined = new Uri(baseUri, raw.TrimStart('/'));
-        return EnsureTrailingSlash(combined);
+        var origin = new Uri(baseUri);
+        var combined = new Uri(origin, raw.TrimStart('/'));
+        combined = EnsureTrailingSlash(combined);
+        Console.WriteLine($"[BackendBase] (rel) {combined}");
+        return combined;
     }
 }
