@@ -8,7 +8,7 @@ namespace LIT.Travelnize.Services.External;
 
 public sealed class WikipediaApiClient(HttpClient http) : IWikipediaApiClient
 {
-    private const string BasePath = "external/wikipedia";
+    private static string BasePath => "external/wikipedia";
 
     public async Task<WikipediaSummaryDto?> GetSummaryAsync(string title, string? lang = null, CancellationToken ct = default)
     {
