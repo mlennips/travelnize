@@ -82,25 +82,21 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             }
 
             // Default users
-
-            if (env == "Development")
+            var demoUser = new User
             {
-                var demoUser = new User
-                {
-                    UserName = "demo@localhost",
-                    Email = "demo@localhost",
-                    Id = Guid.NewGuid(),
-                    FirstName = "Dee",
-                    LastName = "Moo"
-                };
+                UserName = "demo",
+                Email = "demo@travelnize.de",
+                Id = Guid.NewGuid(),
+                FirstName = "Dee",
+                LastName = "Moo"
+            };
 
-                if (userManager.Users.All(u => u.UserName != demoUser.UserName))
+            if (userManager.Users.All(u => u.UserName != demoUser.UserName))
+            {
+                await userManager.CreateAsync(demoUser, "Demo%2025");
+                if (!string.IsNullOrWhiteSpace(userRole.Name))
                 {
-                    await userManager.CreateAsync(demoUser, "Demo%2025");
-                    if (!string.IsNullOrWhiteSpace(userRole.Name))
-                    {
-                        await userManager.AddToRolesAsync(demoUser, [userRole.Name]);
-                    }
+                    await userManager.AddToRolesAsync(demoUser, [userRole.Name]);
                 }
             }
         }
@@ -110,7 +106,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             //// Default data
             //// Seed, if necessary
 
-            if (env == "Development")
+            if (env == "Development" || env == "Production")
             {
                 var hasData = !appContext.Trips.Any();
                 if (hasData)
@@ -127,7 +123,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip1Async()
         {
             var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(0), DateTime.UtcNow.AddDays(36)); // 26 Tage
-            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Europa-Roadtrip",
@@ -307,7 +303,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip2Async()
         {
             var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(40), DateTime.UtcNow.AddDays(61)); // 21 Tage
-            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Amerika-Roadtrip",
@@ -449,7 +445,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip3Async()
         {
             var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(70), DateTime.UtcNow.AddDays(82)); // 12 Tage
-            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Großbritannien-Rundreise",
@@ -542,7 +538,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         private async Task AddDemoTrip4Async()
         {
             var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(90), DateTime.UtcNow.AddDays(104)); // 14 Tage
-            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Kanada-Abenteuer",
@@ -648,7 +644,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var tripEnd = tripStart.AddDays(19); 
 
             var tripSlot = PlanningSlot.Create(tripStart, tripEnd);
-            var user = await userManager.FindByEmailAsync("demo@localhost");
+            var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Elternzeit " + tripStart.Year,

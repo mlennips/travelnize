@@ -5,7 +5,6 @@ using LIT.Travelnize.Services.Api;
 using LIT.Travelnize.Services.Auth;
 using LIT.Travelnize.Services.External;
 using LIT.Travelnize.States;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -19,7 +18,6 @@ internal class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        // Einmalige Auflösung der Backend BaseAddress
         var resolvedBackendBase = ResolveBackendBaseAddress(
             builder.Configuration,
             builder.HostEnvironment.BaseAddress,
@@ -72,7 +70,7 @@ internal class Program
         if (Uri.TryCreate(raw, UriKind.Absolute, out var abs))
         {
             abs = new Uri(EnsureTrailingSlash(abs.AbsoluteUri));
-            if (abs.Scheme == Uri.UriSchemeFile) // FIX: Uri.UriSchemeFile statt Uri.UriScheme.File
+            if (abs.Scheme == Uri.UriSchemeFile)
             {
                 abs = BuildFromOrigin(hostEnvironmentBaseAddress, "api/");
                 Console.WriteLine($"[BackendBase] WARN absolute file:// korrigiert -> {abs}");
@@ -83,7 +81,7 @@ internal class Program
         // Relativ
         var origin = BuildFromOrigin(hostEnvironmentBaseAddress, raw.TrimStart('/'));
         origin = new Uri(EnsureTrailingSlash(origin.AbsoluteUri));
-        if (origin.Scheme == Uri.UriSchemeFile) // FIX: Uri.UriSchemeFile statt Uri.UriScheme.File
+        if (origin.Scheme == Uri.UriSchemeFile)
         {
             var fixedUri = BuildFromOrigin("http://localhost:8081/", "api/");
             Console.WriteLine($"[BackendBase] WARN relative file:// korrigiert -> {fixedUri}");
