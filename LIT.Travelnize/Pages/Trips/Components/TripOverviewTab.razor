@@ -60,10 +60,10 @@
                     <MudCard Elevation="0" Class="card-destination" Outlined="true">
                         <MudCardHeader Class="pb-0">
                             <CardHeaderAvatar>
-                                <MudAvatar Color="Color.Default" Class="bg-destination">
+                                <MudAvatar Color="Color.Transparent" Size="Size.Large" Class="bg-destination border-destination">
                                     @if (destination.Image != null)
                                     {
-                                        <MudImage Src="@destination.Image?.Thumbnail" />
+                                        <MudImage Src="@destination.Image?.Thumbnail" Class="opacity-75" />
                                     }
                                     else
                                     {
@@ -85,12 +85,12 @@
                         </MudCardContent>
                         @if (destination.Location.Coordinates.Latitude != 0 && destination.Location.Coordinates.Longitude != 0)
                         {
-                            <MudCardContent Class="pa-0">
+                            <MudCardContent Class="pa-0 opacity-100">
                                 <StaticMap Latitude="@(destination.Location.Coordinates.Latitude)"
                                            Longitude="@(destination.Location.Coordinates.Longitude)"
-                                           Zoom="4"
+                                           Zoom="6"
                                            PixelHeight="120"
-                                           MarkerColor="red" />
+                                           MarkerColor="orange" />
                             </MudCardContent>
                         }
                     </MudCard>
