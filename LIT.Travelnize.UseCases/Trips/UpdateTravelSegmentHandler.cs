@@ -14,8 +14,7 @@ namespace LIT.Travelnize.UseCases.Trips
                 return TripErrors.TripNotFound;
             }
 
-            var slot = PlanningSlot.Create(request.Start, request.End);
-            var result = trip.UpdateTravelSegment(request.SegmentId, slot, request.Description);
+            var result = trip.UpdateTravelSegment(request.SegmentId, request.Name, request.Description, request.Slot);
 
             if (result.IsSuccess)
             {

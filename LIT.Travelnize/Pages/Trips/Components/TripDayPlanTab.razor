@@ -19,11 +19,11 @@ else
     }
     else
     {
-        <MudGrid Class="my-2" Spacing="2">
+        <MudGrid Class="my-4" Spacing="0">
             @foreach (var day in _days)
             {
-                var avatarColor = day.IsToday ? Color.Primary : day.IsPast ? Color.Secondary : Color.Tertiary;
-                <MudItem xs="12" sm="6" md="6" lg="4">
+                var avatarColor = day.IsToday ? Color.Primary : day.IsPast ? Color.Transparent : Color.Tertiary;
+                <MudItem xs="12" sm="6" md="6" lg="4" Class="mb-12">
                     <MudCard Elevation="0">
                         <MudCardHeader>
                             <CardHeaderAvatar>
@@ -124,27 +124,27 @@ else
         foreach (var day in _days)
         {
             // Accommodation Check-In
-            foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckIn?.Date == day.Date))
+            foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckInOut.Start?.Date == day.Date))
             {
                 day.Events.Add(new DayEvent(
                     Label: $"Check-In {acc.Accommodation.Name}",
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
-                    TimeHint: acc.Accommodation.CheckIn?.ToString("HH:mm", _culture),
-                    SortKey: 102 + (acc.Accommodation.CheckIn?.Hour ?? 0),
+                    TimeHint: acc.Accommodation.CheckInOut.Start?.ToString("HH:mm", _culture),
+                    SortKey: 102 + (acc.Accommodation.CheckInOut.Start?.Hour ?? 0),
                     Icon: IconHelper.AccommodationTwoTone
                 ));
             }
 
             // Accommodation Check-Out
-            foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckOut?.Date == day.Date))
+            foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckInOut.End?.Date == day.Date))
             {
                 day.Events.Add(new DayEvent(
                     Label: $"Check-Out {acc.Accommodation.Name}",
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
-                    TimeHint: acc.Accommodation.CheckOut?.ToString("HH:mm", _culture),
-                    SortKey: 101 + (acc.Accommodation.CheckOut?.Hour ?? 0),
+                    TimeHint: acc.Accommodation.CheckInOut.End?.ToString("HH:mm", _culture),
+                    SortKey: 101 + (acc.Accommodation.CheckInOut.End?.Hour ?? 0),
                     Icon: IconHelper.AccommodationOutlined
                 ));
             }

@@ -9,25 +9,28 @@ namespace LIT.Travelnize.Domain.Trips
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
 
+        public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
         public PlanningSlot Slot { get; private set; } = default!;
         public IEnumerable<Destination> Destinations => _destinations.OrderBy(x => x.Slot);
 
-        internal static TravelSegment Create(Guid tripId, string description, PlanningSlot slot)
+        internal static TravelSegment Create(Guid tripId, string name, string description, PlanningSlot slot)
         {
             return new TravelSegment()
             {
                 Id = Guid.NewGuid(),
                 TripId = tripId,
+                Name = name,
                 Description = description,
                 Slot = slot
             };
         }
 
-        internal void Update(PlanningSlot slot, string description)
+        internal void Update(string name, string description, PlanningSlot slot)
         {
-            Slot = slot;
+            Name = name;
             Description = description;
+            Slot = slot;
         }
 
         internal Result AddDestination(Destination destination)

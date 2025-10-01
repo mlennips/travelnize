@@ -37,10 +37,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 await appIdentityContext.Database.EnsureDeletedAsync(); // early development
                 await appIdentityContext.Database.EnsureCreatedAsync();
 
-#pragma warning disable S125 // Sections of code should not be commented out
+#pragma warning disable S125
                 //await appContext.Database.MigrateAsync();
                 //await appIdentityContext.Database.MigrateAsync();
-#pragma warning restore S125 // Sections of code should not be commented out
+#pragma warning restore S125
             }
             catch (Exception ex)
             {
@@ -103,9 +103,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         public async Task TrySeedAsync()
         {
-            //// Default data
-            //// Seed, if necessary
-
             if (env == "Development" || env == "Production")
             {
                 var hasData = !appContext.Trips.Any();
@@ -122,7 +119,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip1Async()
         {
-            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(0), DateTime.UtcNow.AddDays(36)); // 26 Tage
+            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(24));
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
@@ -131,10 +128,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 tripSlot
             );
 
-            // TravelSegment 1: Skandinavien (14 Tage)
             var travelSegment1 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(14)),
-                "Skandinavien – Natur, Fjorde und nordische Städte"
+                "Skandinavien",
+                "Natur, Fjorde und nordische Städte",
+                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(14))
             ).Value!;
 
             var destination1_1 = trip.AddDestinationToTravelSegment(
@@ -161,10 +158,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(tripSlot.Start?.AddDays(8), tripSlot.Start?.AddDays(14))
             ).Value!;
 
-            // TravelSegment 2: WestEuropa (5 Tage)
             var travelSegment2 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(19)),
-                "Westeuropa"
+                "Westeuropa",
+                "",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(19))
             ).Value!;
 
             var destination2_1 = trip.AddDestinationToTravelSegment(
@@ -191,10 +188,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(tripSlot.Start?.AddDays(17), tripSlot.Start?.AddDays(19))
             ).Value!;
 
-            // TravelSegment 3: Südeuropa (7 Tage)
             var travelSegment3 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(26)),
-                "Südeuropa – Sonne, Meer und mediterranes Flair"
+                "Südeuropa",
+                "Sonne, Meer und mediterranes Flair",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(26))
             ).Value!;
 
             var destination3_1 = trip.AddDestinationToTravelSegment(
@@ -212,51 +209,46 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 Location.WithCoordinates(41.88333333, 12.48333333),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(26))
             ).Value!;
-            
-            // 4 Participants
+
             trip.AddParticipantAsGuest("Anna Müller", new Email("anna.mueller@travelnize.de"));
             trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
             trip.AddParticipantAsGuest("Lisa Schmidt", new Email("lisa.schmidt@travelnize.de"));
             trip.AddParticipantAsGuest("Tom Becker", new Email("tom.becker@travelnize.de"));
 
-            // Accommodations für alle Zeiträume
-            // Skandinavien
+            // Accommodations (angepasst: PlanningSlot statt Start/Ende einzeln)
             trip.AddAccommodationToDestination(destination1_1.Id, "Copenhagen City Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2)));
             trip.AddAccommodationToDestination(destination1_1.Id, "Nyhavn Boutique Hostel", AccommodationType.Hostel,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(3));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(3)));
 
             trip.AddAccommodationToDestination(destination1_2.Id, "Stockholm Waterfront Hotel", AccommodationType.Hotel,
-                Address.Empty, tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(6));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(6)));
             trip.AddAccommodationToDestination(destination1_2.Id, "Gamla Stan Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, tripSlot.Start?.AddDays(6), tripSlot.Start?.AddDays(8));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(6), tripSlot.Start?.AddDays(8)));
 
             trip.AddAccommodationToDestination(destination1_3.Id, "Oslo Fjord Apartments", AccommodationType.Apartment,
-                Address.Empty, tripSlot.Start?.AddDays(8), tripSlot.Start?.AddDays(11));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(8), tripSlot.Start?.AddDays(11)));
             trip.AddAccommodationToDestination(destination1_3.Id, "Bergen Mountain Lodge", AccommodationType.Lodge,
-                Address.Empty, tripSlot.Start?.AddDays(11), tripSlot.Start?.AddDays(14));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(11), tripSlot.Start?.AddDays(14)));
 
-            // Westeuropa
             trip.AddAccommodationToDestination(destination2_1.Id, "Hamburg Hafen Hotel", AccommodationType.Hotel,
-                Address.Empty, tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(15));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(15)));
 
             trip.AddAccommodationToDestination(destination2_2.Id, "Amsterdam Canal Apartments", AccommodationType.Apartment,
-                Address.Empty, tripSlot.Start?.AddDays(15), tripSlot.Start?.AddDays(17));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(15), tripSlot.Start?.AddDays(17)));
 
             trip.AddAccommodationToDestination(destination2_3.Id, "Paris Montmartre Hostel", AccommodationType.Hostel,
-                Address.Empty, tripSlot.Start?.AddDays(17), tripSlot.Start?.AddDays(19));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(17), tripSlot.Start?.AddDays(19)));
 
-            // Südeuropa
             trip.AddAccommodationToDestination(destination3_1.Id, "Barcelona Beach Hotel", AccommodationType.Hotel,
-                Address.Empty, tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(22));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(22)));
 
             trip.AddAccommodationToDestination(destination3_2.Id, "Rome Colosseum Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(24));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(24)));
             trip.AddAccommodationToDestination(destination3_2.Id, "Trastevere Boutique Hotel", AccommodationType.Hotel,
-                Address.Empty, tripSlot.Start?.AddDays(24), tripSlot.Start?.AddDays(26));
+                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(24), tripSlot.Start?.AddDays(26)));
 
-            // Activities
-            // Dänemark
+            // Activities (unverändert)
             trip.AddActivity(destination1_1.Id, "Stadtrundgang Kopenhagen", "Geführte Tour durch die Altstadt und den Nyhavn.", Location.Empty, travelSegment1.Slot.Start, TimeSpan.FromHours(3));
             trip.AddActivity(destination1_1.Id, "Besuch im Tivoli", "Erlebe den berühmten Freizeitpark Tivoli mit Fahrgeschäften und Shows.", Location.Empty, travelSegment1.Slot.Start?.AddDays(1), TimeSpan.FromHours(5));
             trip.AddActivity(destination1_1.Id, "Fahrradtour", "Entdecke Kopenhagen auf dem Rad – vorbei an moderner Architektur und Parks.", Location.Empty, travelSegment1.Slot.Start?.AddDays(2), TimeSpan.FromHours(2));
@@ -302,7 +294,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip2Async()
         {
-            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(40), DateTime.UtcNow.AddDays(61)); // 21 Tage
+            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(40), DateTime.UtcNow.AddDays(61));
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
@@ -311,10 +303,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 tripSlot
             );
 
-            // TravelSegment 1: Westküste (7 Tage)
             var travelSegment1 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(7)),
-                "Westküste – Kalifornische Highlights"
+                "Westküste",
+                "Kalifornische Highlights",
+                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(7))
             ).Value!;
 
             var destination1_1 = trip.AddDestinationToTravelSegment(
@@ -333,10 +325,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(3), travelSegment1.Slot.Start?.AddDays(7))
             ).Value!;
 
-            // TravelSegment 2: Central (7 Tage)
             var travelSegment2 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(7), tripSlot.Start?.AddDays(14)),
-                "Central – Nationalparks & Route 66"
+                "Central Nationalparks & Route 66",
+                "",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(7), tripSlot.Start?.AddDays(14))
             ).Value!;
 
             var destination2_1 = trip.AddDestinationToTravelSegment(
@@ -355,7 +347,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(3), travelSegment2.Slot.Start?.AddDays(7))
             ).Value!;
 
-            // Neue Destination: Texas (3 Tage, im Central-Segment)
             var destination2_3 = trip.AddDestinationToTravelSegment(
                 travelSegment2.Id,
                 "Texas",
@@ -364,10 +355,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(5), travelSegment2.Slot.Start?.AddDays(7))
             ).Value!;
 
-            // TravelSegment 3: Ostküste (7 Tage)
             var travelSegment3 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(21)),
-                "Ostküste – Metropolen & Geschichte"
+                "Ostküste",
+                "Metropolen & Geschichte",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(21))
             ).Value!;
 
             var destination3_1 = trip.AddDestinationToTravelSegment(
@@ -386,7 +377,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(4), travelSegment3.Slot.Start?.AddDays(7))
             ).Value!;
 
-            // Neue Destination: Boston (2 Tage, im Ostküsten-Segment)
             var destination3_3 = trip.AddDestinationToTravelSegment(
                 travelSegment3.Id,
                 "Boston",
@@ -395,47 +385,40 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(5), travelSegment3.Slot.Start?.AddDays(7))
             ).Value!;
 
-            // Teilnehmer
             trip.AddParticipantAsGuest("John Miller", new Email("john.miller@travelnize.de"));
             trip.AddParticipantAsGuest("Emily Clark", new Email("emily.clark@travelnize.de"));
             trip.AddParticipantAsGuest("Sarah Lee", new Email("sarah.lee@travelnize.de"));
             trip.AddParticipantAsGuest("David Smith", new Email("david.smith@travelnize.de"));
 
-            // Accommodations
-            // Westküste
             trip.AddAccommodationToDestination(destination1_1.Id, "San Francisco Downtown Hostel", AccommodationType.Hostel,
-                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2)));
             trip.AddAccommodationToDestination(destination1_1.Id, "Golden Gate Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(3));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(3)));
 
             trip.AddAccommodationToDestination(destination1_2.Id, "LA Beach Apartments", AccommodationType.Apartment,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(3), travelSegment1.Slot.Start?.AddDays(6));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(3), travelSegment1.Slot.Start?.AddDays(6)));
             trip.AddAccommodationToDestination(destination1_2.Id, "Hollywood Inn", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(6), travelSegment1.Slot.Start?.AddDays(7));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(6), travelSegment1.Slot.Start?.AddDays(7)));
 
-            // Central
             trip.AddAccommodationToDestination(destination2_1.Id, "Grand Canyon Lodge", AccommodationType.Lodge,
-                Address.Empty, travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(3));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(3)));
 
             trip.AddAccommodationToDestination(destination2_2.Id, "Vegas Strip Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment2.Slot.Start?.AddDays(3), travelSegment2.Slot.Start?.AddDays(5));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(3), travelSegment2.Slot.Start?.AddDays(5)));
 
-            // Unterkunft für Texas
             trip.AddAccommodationToDestination(destination2_3.Id, "Texas Ranch Motel", AccommodationType.Motel,
-                Address.Empty, travelSegment2.Slot.Start?.AddDays(5), travelSegment2.Slot.Start?.AddDays(7));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(5), travelSegment2.Slot.Start?.AddDays(7)));
 
-            // Ostküste
             trip.AddAccommodationToDestination(destination3_1.Id, "NYC Central Hostel", AccommodationType.Hostel,
-                Address.Empty, travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(2)));
             trip.AddAccommodationToDestination(destination3_1.Id, "Manhattan Suites", AccommodationType.Hotel,
-                Address.Empty, travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4)));
 
             trip.AddAccommodationToDestination(destination3_2.Id, "Capitol Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, travelSegment3.Slot.Start?.AddDays(4), travelSegment3.Slot.Start?.AddDays(5));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(4), travelSegment3.Slot.Start?.AddDays(5)));
 
-            // Unterkunft für Boston
             trip.AddAccommodationToDestination(destination3_3.Id, "Boston Harbor Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment3.Slot.Start?.AddDays(5), travelSegment3.Slot.Start?.AddDays(7));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(5), travelSegment3.Slot.Start?.AddDays(7)));
 
             appContext.Trips.Add(trip);
 
@@ -444,7 +427,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip3Async()
         {
-            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(70), DateTime.UtcNow.AddDays(82)); // 12 Tage
+            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(70), DateTime.UtcNow.AddDays(82));
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
@@ -453,10 +436,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 tripSlot
             );
 
-            // TravelSegment 1: London & Umgebung (4 Tage)
             var travelSegment1 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(4)),
-                "London & Umgebung"
+                "London & Umgebung",
+                "",
+                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(4))
             ).Value!;
 
             var destination1_1 = trip.AddDestinationToTravelSegment(
@@ -467,10 +450,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4))
             ).Value!;
 
-            // TravelSegment 2: Schottland (5 Tage)
             var travelSegment2 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(9)),
-                "Schottland – Highlands & Edinburgh"
+                "Schottland",
+                "Highlands & Edinburgh",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(9))
             ).Value!;
 
             var destination2_1 = trip.AddDestinationToTravelSegment(
@@ -489,10 +472,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(2), travelSegment2.Slot.Start?.AddDays(5))
             ).Value!;
 
-            // TravelSegment 3: Wales (3 Tage)
             var travelSegment3 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(9), tripSlot.Start?.AddDays(12)),
-                "Wales – Küste & Nationalparks"
+                "Wales",
+                "Küste & Nationalparks",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(9), tripSlot.Start?.AddDays(12))
             ).Value!;
 
             var destination3_1 = trip.AddDestinationToTravelSegment(
@@ -503,32 +486,26 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(3))
             ).Value!;
 
-            // Teilnehmer
             trip.AddParticipantAsGuest("Oliver Brown", new Email("oliver.brown@travelnize.de"));
             trip.AddParticipantAsGuest("Sophie Evans", new Email("sophie.evans@travelnize.de"));
             trip.AddParticipantAsGuest("Mia Wilson", new Email("mia.wilson@travelnize.de"));
             trip.AddParticipantAsGuest("Jack Taylor", new Email("jack.taylor@travelnize.de"));
 
-            // Accommodations
-            // London
             trip.AddAccommodationToDestination(destination1_1.Id, "London City Hostel", AccommodationType.Hostel,
-                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2)));
             trip.AddAccommodationToDestination(destination1_1.Id, "Westminster Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(4));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(4)));
 
-            // Edinburgh
             trip.AddAccommodationToDestination(destination2_1.Id, "Edinburgh Old Town Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(2)));
 
-            // Highlands
             trip.AddAccommodationToDestination(destination2_2.Id, "Highland Lodge", AccommodationType.Lodge,
-                Address.Empty, travelSegment2.Slot.Start?.AddDays(2), travelSegment2.Slot.Start?.AddDays(5));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(2), travelSegment2.Slot.Start?.AddDays(5)));
 
-            // Cardiff
             trip.AddAccommodationToDestination(destination3_1.Id, "Cardiff Bay Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(2)));
             trip.AddAccommodationToDestination(destination3_1.Id, "Welsh Coast Apartments", AccommodationType.Apartment,
-                Address.Empty, travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(3));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(3)));
 
             appContext.Trips.Add(trip);
 
@@ -537,7 +514,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip4Async()
         {
-            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(90), DateTime.UtcNow.AddDays(104)); // 14 Tage
+            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(90), DateTime.UtcNow.AddDays(104));
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
@@ -546,10 +523,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 tripSlot
             );
 
-            // TravelSegment 1: Westkanada (6 Tage)
             var travelSegment1 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(6)),
-                "Westkanada – Vancouver & Rockies"
+                "Westkanada",
+                "Vancouver & Rockies",
+                PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(6))
             ).Value!;
 
             var destination1_1 = trip.AddDestinationToTravelSegment(
@@ -568,10 +545,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(6))
             ).Value!;
 
-            // TravelSegment 2: Zentral-Kanada (4 Tage)
             var travelSegment2 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(6), tripSlot.Start?.AddDays(10)),
-                "Zentral-Kanada – Prärien & Winnipeg"
+                "Zentral-Kanada", 
+                "Prärien & Winnipeg",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(6), tripSlot.Start?.AddDays(10))
             ).Value!;
 
             var destination2_1 = trip.AddDestinationToTravelSegment(
@@ -582,10 +559,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(4))
             ).Value!;
 
-            // TravelSegment 3: Ostkanada (4 Tage)
             var travelSegment3 = trip.AddTravelSegment(
-                PlanningSlot.Create(tripSlot.Start?.AddDays(10), tripSlot.Start?.AddDays(14)),
-                "Ostkanada – Toronto & Montreal"
+                "Ostkanada", 
+                "Toronto & Montreal",
+                PlanningSlot.Create(tripSlot.Start?.AddDays(10), tripSlot.Start?.AddDays(14))
             ).Value!;
 
             var destination3_1 = trip.AddDestinationToTravelSegment(
@@ -604,32 +581,25 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4))
             ).Value!;
 
-            // Teilnehmer
             trip.AddParticipantAsGuest("Marie Tremblay", new Email("marie.tremblay@travelnize.de"));
             trip.AddParticipantAsGuest("Lucas Dubois", new Email("lucas.dubois@travelnize.de"));
             trip.AddParticipantAsGuest("Sophie Martin", new Email("sophie.martin@travelnize.de"));
             trip.AddParticipantAsGuest("Noah Lefevre", new Email("noah.lefevre@travelnize.de"));
 
-            // Accommodations
-            // Vancouver
             trip.AddAccommodationToDestination(destination1_1.Id, "Vancouver Downtown Hostel", AccommodationType.Hostel,
-                Address.Empty, travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2)));
 
-            // Banff
             trip.AddAccommodationToDestination(destination1_2.Id, "Banff Mountain Lodge", AccommodationType.Lodge,
-                Address.Empty, travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(6));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(6)));
 
-            // Winnipeg
             trip.AddAccommodationToDestination(destination2_1.Id, "Winnipeg City Hotel", AccommodationType.Hotel,
-                Address.Empty, travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(4));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start, travelSegment2.Slot.Start?.AddDays(4)));
 
-            // Toronto
             trip.AddAccommodationToDestination(destination3_1.Id, "Toronto Central Apartments", AccommodationType.Apartment,
-                Address.Empty, travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(2));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start, travelSegment3.Slot.Start?.AddDays(2)));
 
-            // Montreal
             trip.AddAccommodationToDestination(destination3_2.Id, "Montreal Old Town Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4)));
 
             appContext.Trips.Add(trip);
 
@@ -638,10 +608,9 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip5Async()
         {
-            // Start: 1. Juni nächsten Jahres, 7 Nächte Kreuzfahrt + 10 Nächte Dänemmark + 2 Nächte Hamburg
             var nextYear = DateTime.UtcNow.Year + 1;
             var tripStart = new DateTime(nextYear, 6, 6, 14, 0, 0, DateTimeKind.Utc);
-            var tripEnd = tripStart.AddDays(19); 
+            var tripEnd = tripStart.AddDays(19);
 
             var tripSlot = PlanningSlot.Create(tripStart, tripEnd);
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
@@ -652,15 +621,12 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 tripSlot
             );
 
-            #region Cruise
-
-            // Ein TravelSegment für die gesamte Kreuzfahrt
             var cruiseSegment = trip.AddTravelSegment(
-                PlanningSlot.Create(tripStart, tripEnd),
-                "Kreuzfahrt"
+                "Kreuzfahrt",
+                "",
+                PlanningSlot.Create(tripStart, tripEnd)
             ).Value!;
 
-            // Eine Destination: "AIDA Kreuzfahrt"
             var cruiseDestination = trip.AddDestinationToTravelSegment(
                 cruiseSegment.Id,
                 "AIDA Kreuzfahrt - Nordeuropa",
@@ -669,33 +635,18 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(tripStart, tripStart.AddDays(7))
             ).Value!;
 
-            // Accommodation: AIDA Nova für die gesamte Reise
             trip.AddAccommodationToDestination(
                 cruiseDestination.Id,
                 "AIDA Nova",
                 AccommodationType.Cruise,
                 Address.Empty,
-                tripStart,
-                tripEnd
+                PlanningSlot.Create(tripStart, tripEnd)
             );
 
-            // Activities pro Tag
-            trip.AddActivity(cruiseDestination.Id, "Abfahrt Kiel", "Start der Kreuzfahrt in Kiel", Location.Empty, tripStart, TimeSpan.FromHours(4));
-            trip.AddActivity(cruiseDestination.Id, "Seetag", "Entspannung und Aktivitäten an Bord", Location.Empty, tripStart.AddDays(1), TimeSpan.FromHours(24));
-            trip.AddActivity(cruiseDestination.Id, "Oslo", "Landgang in Oslo, Norwegen", Location.Empty, tripStart.AddDays(2), TimeSpan.FromHours(10));
-            trip.AddActivity(cruiseDestination.Id, "Kristiansand", "Landgang in Kristiansand, Norwegen", Location.Empty, tripStart.AddDays(3), TimeSpan.FromHours(8));
-            trip.AddActivity(cruiseDestination.Id, "Skagen", "Landgang in Skagen, Dänemark", Location.Empty, tripStart.AddDays(4), TimeSpan.FromHours(8));
-            trip.AddActivity(cruiseDestination.Id, "Kopenhagen", "Landgang in Kopenhagen, Dänemark", Location.Empty, tripStart.AddDays(5), TimeSpan.FromHours(10));
-            trip.AddActivity(cruiseDestination.Id, "Arhus", "Landgang in Arhus, Dänemark", Location.Empty, tripStart.AddDays(6), TimeSpan.FromHours(8));
-            trip.AddActivity(cruiseDestination.Id, "Ankunft Kiel", "Ende der Kreuzfahrt in Kiel", Location.Empty, tripStart.AddDays(7), TimeSpan.FromHours(2));
-
-            #endregion
-
-            #region Denmark
-
             var denmarkSegment = trip.AddTravelSegment(
-                PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2)),
-                "Dänemark"
+                "Dänemark",
+                "",
+                PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2))
             ).Value!;
 
             var denmarkDestination = trip.AddDestinationToTravelSegment(
@@ -711,18 +662,13 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 "Ferienhaus am Meer",
                 AccommodationType.Villa,
                 Address.Empty,
-                tripStart.AddDays(7),
-                tripEnd.AddDays(-2)
+                PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2))
             );
 
-            #endregion
-
-
-            #region Hamburg
-
             var hamburgSegment = trip.AddTravelSegment(
-                PlanningSlot.Create(tripEnd.AddDays(-2), tripEnd),
-                "Rückreise"
+                "Rückreise",
+                "",
+                PlanningSlot.Create(tripEnd.AddDays(-2), tripEnd)
             ).Value!;
 
             var hamburgDestination = trip.AddDestinationToTravelSegment(
@@ -738,14 +684,9 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 "Hotel in Hamburg",
                 AccommodationType.Hotel,
                 Address.Empty,
-                tripEnd.AddDays(-2),
-                tripEnd
+                PlanningSlot.Create(tripEnd.AddDays(-2), tripEnd)
             );
 
-            #endregion
-
-
-            // Teilnehmer
             trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
             trip.AddParticipantAsGuest("Ute Mustermann", new Email("ute.mustermann@travelnize.de"));
             trip.AddParticipantAsGuest("Anton Mustermann", new Email("max.mustermann@travelnize.de"));

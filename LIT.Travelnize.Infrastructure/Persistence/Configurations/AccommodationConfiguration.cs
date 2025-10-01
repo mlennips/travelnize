@@ -14,7 +14,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
                 builder.ComplexProperty(a => a.Type);
                 builder.ComplexProperty(a => a.Address);
-                builder.ComplexProperty(a => a.Slot); 
+                builder.ComplexProperty(a => a.CheckInOut); 
             }
         }
     }

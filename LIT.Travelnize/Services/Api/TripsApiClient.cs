@@ -105,5 +105,8 @@ namespace LIT.Travelnize.Services.Api
 
         public async Task<bool> UpdateActivityAsync(Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command)
             => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}", command)).IsSuccessStatusCode;
+
+        public async Task<bool> UpdateAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId, UpdateAccommodationCommand command)
+            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", command)).IsSuccessStatusCode;
     }
 }

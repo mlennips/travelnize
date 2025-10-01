@@ -270,6 +270,17 @@ namespace LIT.Travelnize.States
             }
             return id;
         }
+
+        public async Task<bool> UpdateAccommodationAsync(Guid tripId, UpdateAccommodationCommand command, bool reloadTrip = true)
+        {
+            var result = await _tripsApiClient.UpdateAccommodationAsync(tripId, command.DestinationId, command.AccommodationId, command);
+            if (result)
+            {
+                _needsRefresh = true;
+                if (reloadTrip) await LoadTripIfCurrentlySelected(tripId);
+            }
+            return result;
+        }
         #endregion
 
         #region Activities

@@ -10,13 +10,13 @@
         @foreach (var travelSegment in Trip.TravelSegments)
         {
             <MudItem xs="12" id="@travelSegment.Id">
-                <MudPaper Elevation="5" Class="bg-soft-travelsegment pa-4 d-flex align-items-center bg">
+                <MudPaper Elevation="25" Class="bg-soft-travelsegment pa-4 my-0 d-flex align-items-center bg">
                     <MudIcon Icon="@IconHelper.TravelSegmentOutlined" Class="me-2 text-travelsegment" />
                     <MudLink Typo="Typo.body2"
                              Class="text-travelsegment"
                              Underline="Underline.Hover"
                              Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/edit")">
-                        @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Description</b>
+                        @travelSegment.Slot.ToShortDateString() <b>@travelSegment.Name</b> @travelSegment.Description
                     </MudLink>
                 </MudPaper>
             </MudItem>
@@ -114,7 +114,7 @@
                                 <MudListItem Icon="@IconHelper.AccommodationOutlined"
                                              id="@accommodation.Id"
                                              Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/{accommodation.Id}/edit")">
-                                    <PlanningSlotDisplay Slot="@accommodation.Slot"></PlanningSlotDisplay>
+                                    <PlanningSlotDisplay Slot="@accommodation.CheckInOut"></PlanningSlotDisplay>
                                     <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
                                 </MudListItem>
                             }
@@ -160,6 +160,11 @@
                             </MudHidden>
                         </MudList>
                     </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudDivider DividerType="DividerType.FullWidth" 
+                                Class="my-2 border-destination opacity-25"
+                                Style="border-width: 3px !important;border-top-width: 0 !important;border-style: dotted !important;" />
                 </MudItem>
             }
         }

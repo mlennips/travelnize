@@ -11,7 +11,7 @@ namespace LIT.Travelnize.UseCases.Trips
             if (trip is null) return TripErrors.TripNotFound;
 
             var result = trip.AddAccommodationToDestination(request.DestinationId, request.Name,
-                request.Type, request.Address, request.CheckIn, request.CheckOut);
+                request.Type, request.Address, request.CheckInOut);
 
             if (!result.IsSuccess) return result.Error;
 

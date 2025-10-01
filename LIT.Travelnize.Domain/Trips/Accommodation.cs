@@ -9,12 +9,10 @@
         public string Name { get; private set; } = default!;
         public AccommodationType Type { get; private set; } = default!;
         public Address Address { get; private set; } = default!;
-        public PlanningSlot Slot { get; private set; } = default!;
-        public DateTime? CheckIn => Slot.Start;
-        public DateTime? CheckOut => Slot.End;
+        public PlanningSlot CheckInOut { get; private set; } = default!;
 
         internal static Accommodation Create(Guid tripId, Guid travelSegmentId, string name, AccommodationType type, 
-            Address address, DateTime? checkIn, DateTime? checkOut)
+            Address address, PlanningSlot checkInOut)
         {
             return new Accommodation()
             {
@@ -24,21 +22,16 @@
                 Name = name,
                 Type = type,
                 Address = address,
-                Slot = PlanningSlot.Create(checkIn, checkOut)
+                CheckInOut = checkInOut
             };
         }
 
-        internal Result Update(string name, AccommodationType type, Address address, DateTime checkIn, DateTime checkOut)
+        internal Result Update(string name, AccommodationType type, Address address, PlanningSlot checkInOut)
         {
-            if (CheckIn >= CheckOut)
-            {
-                return TripErrors.InvalidAccommodationDates;
-            }
-
             Name = name;
             Type = type;
             Address = address;
-            Slot = PlanningSlot.Create(checkIn, checkOut);
+            CheckInOut = checkInOut;
 
             return Result.Success();
         }

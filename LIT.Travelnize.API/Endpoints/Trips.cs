@@ -31,6 +31,13 @@ namespace LIT.Travelnize.API.Endpoints
                         onFailure: Results.BadRequest))
                 .Produces<Guid>(StatusCodes.Status200OK)
                 .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
+
+            api.MapPut("/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", async (IMediator mediator, Guid tripId, Guid destinationId, Guid accommodationId, UpdateAccommodationCommand command) =>
+                    await mediator.SendAndMatchAsync(command,
+                        onSuccess: Results.NoContent,
+                        onFailure: Results.BadRequest))
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
         }
 
         private static void MapTrips(RouteGroupBuilder api)

@@ -44,9 +44,9 @@ namespace LIT.Travelnize.Domain.Trips
             return Result.Success();
         }
 
-        public Result<TravelSegment> AddTravelSegment(PlanningSlot slot, string description)
+        public Result<TravelSegment> AddTravelSegment(string name, string description, PlanningSlot slot)
         {
-            var newSegment = TravelSegment.Create(Id, description, slot);
+            var newSegment = TravelSegment.Create(Id, name, description, slot);
             _travelSegments.Add(newSegment);
 
             return newSegment;
@@ -65,7 +65,7 @@ namespace LIT.Travelnize.Domain.Trips
             return Result.Success();
         }
 
-        public Result UpdateTravelSegment(Guid segmentId, PlanningSlot slot, string description)
+        public Result UpdateTravelSegment(Guid segmentId, string name, string description, PlanningSlot slot)
         {
             var segment = _travelSegments.FirstOrDefault(s => s.Id == segmentId);
             if (segment == null)
@@ -73,7 +73,7 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripErrors.TravelSegmentNotFound;
             }
 
-            segment.Update(slot, description);
+            segment.Update(name, description, slot);
 
             return Result.Success();
         }
@@ -234,7 +234,7 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
         public Result<Accommodation> AddAccommodationToDestination(Guid destinationId, string name, AccommodationType accommodationType,
-            Address address, DateTime? checkIn, DateTime? checkOut)
+            Address address, PlanningSlot checkInOut)
         {
             var destination = _travelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
             if (destination == null)
@@ -243,11 +243,26 @@ namespace LIT.Travelnize.Domain.Trips
             }
 
             var accommodation = Accommodation.Create(Id, destinationId, name, accommodationType,
-                address, checkIn, checkOut);
+                address, checkInOut);
 
             var result = destination.AddAccommodation(accommodation);
 
             return result.IsSuccess ? accommodation : result.Error;
+        }
+
+        public Result UpdateAccommodation(Guid destinationId, Guid accommodationId, string name,
+            AccommodationType type, Address address, PlanningSlot checkInOut)
+        {
+            var destination = _travelSegments
+                .SelectMany(s => s.Destinations)
+                .FirstOrDefault(d => d.Id == destinationId);
+            if (destination is null) return TripErrors.DestinationNotFound;
+
+            var accommodation = destination.Accommodations.FirstOrDefault(a => a.Id == accommodationId);
+            if (accommodation is null) return TripErrors.AccommodationNotFound;
+
+            var result = accommodation.Update(name, type, address, checkInOut);
+            return result;
         }
     }
 }

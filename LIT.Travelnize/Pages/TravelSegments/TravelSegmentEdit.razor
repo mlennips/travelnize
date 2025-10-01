@@ -1,0 +1,216 @@
+﻿@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/edit"
+@using LIT.Travelnize.Domain.Trips.Commands
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Domain.Trips.ValueObjects
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Layout
+@inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Travelnize - Reiseabschnitt bearbeiten</PageTitle>
+
+<EditPageLayout TModel="TravelSegmentEditFormModel"
+                Title="Reiseabschnitt bearbeiten"
+                Subtitle="Passe Zeitraum und Beschreibung des Abschnitts an."
+                ContainerClass="my-6"
+                Model="FormModel"
+                IsLoading="IsLoading"
+                LoadError="LoadError"
+                CancelHref="@($"/trips/{TripId}")"
+                OnValidSubmit="HandleValidSubmit">
+    <FormContent>
+        <MudGrid Spacing="4">
+            <MudItem xs="12">
+                <MudTextField @bind-Value="FormModel!.Name"
+                              Label="Name"
+                              For="@(() => FormModel!.Name)"
+                              Required="true"
+                              Placeholder="Name des Reiseabschnitts" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="FormModel!.Description"
+                              Label="Beschreibung"
+                              For="@(() => FormModel!.Description)"
+                              Lines="1"
+                              Placeholder="Kurze Beschreibung des Reiseabschnitts" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudDatePicker @bind-Date="FormModel!.Start"
+                               Label="Startdatum"
+                               For="@(()=>FormModel!.Start)"
+                               MaxDate="FormModel!.End"
+                               Clearable="true" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudDatePicker @bind-Date="FormModel!.End"
+                               Label="Enddatum"
+                               For="@(()=>FormModel!.End)"
+                               MinDate="FormModel!.Start"
+                               Clearable="true" />
+            </MudItem>
+        </MudGrid>
+    </FormContent>
+</EditPageLayout>
+
+@code {
+    [Parameter] public Guid TripId { get; set; }
+    [Parameter] public Guid TravelSegmentId { get; set; }
+
+    internal TravelSegmentEditFormModel? FormModel;
+    internal bool IsLoading;
+    internal string? LoadError;
+
+    private TravelSegmentDto? _segment;
+    private DateTime? _tripSlotStart;
+    private DateTime? _tripSlotEnd;
+
+    protected override void OnInitialized()
+    {
+        TripsState.OnChange += StateChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await EnsureTripLoadedAsync();
+        InitializeModel();
+    }
+
+    private async Task EnsureTripLoadedAsync()
+    {
+        if (TripsState.SelectedTrip == null || TripsState.SelectedTrip.Id != TripId)
+        {
+            await LoadTripAsync();
+        }
+    }
+
+    private async Task LoadTripAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            LoadError = null;
+            await TripsState.LoadTripAsync(TripId);
+            if (TripsState.SelectedTrip == null)
+            {
+                LoadError = "Reise wurde nicht gefunden.";
+            }
+        }
+        catch (Exception ex)
+        {
+            LoadError = "Fehler beim Laden: " + ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void InitializeModel()
+    {
+        if (TripsState.SelectedTrip == null) return;
+
+        _tripSlotStart = TripsState.SelectedTrip.Slot.Start;
+        _tripSlotEnd = TripsState.SelectedTrip.Slot.End;
+
+        _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
+        if (_segment == null)
+        {
+            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            return;
+        }
+
+        FormModel = new TravelSegmentEditFormModel
+        {
+            TripId = TripId,
+            SegmentId = TravelSegmentId,
+            Name = _segment.Name,
+            Description = _segment.Description,
+            Start = _segment.Slot.Start?.Date,
+            End = _segment.Slot.End?.Date
+        };
+    }
+
+    private async Task HandleValidSubmit(EditContext _)
+    {
+        if (FormModel == null) return;
+
+        try
+        {
+            var command = new UpdateTravelSegmentCommand(
+                FormModel.TripId,
+                FormModel.SegmentId,
+                PlanningSlot.Create(FormModel.Start, FormModel.End),
+                FormModel.Name!.Trim(),
+                FormModel.Description!.Trim()
+            );
+
+            var ok = await TripsState.UpdateTravelSegmentAsync(FormModel.TripId, FormModel.SegmentId, command);
+            if (ok)
+            {
+                Snackbar.Add("Reiseabschnitt aktualisiert.", Severity.Success);
+                Navigation.NavigateTo($"/trips/{TripId}");
+            }
+            else
+            {
+                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private void StateChanged()
+    {
+        InvokeAsync(() =>
+        {
+            if (TripsState.SelectedTrip?.Id == TripId)
+            {
+                InitializeModel();
+            }
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= StateChanged;
+    }
+
+    internal class TravelSegmentEditFormModel : IValidatableObject
+    {
+        public Guid TripId { get; set; }
+        public Guid SegmentId { get; set; }
+
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(100, ErrorMessage = "Maximal 100 Zeichen.")]
+        public string Name { get; set; } = default!;
+
+        [StringLength(500, ErrorMessage = "Maximal 500 Zeichen.")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Startdatum ist erforderlich.")]
+        public DateTime? Start { get; set; }
+
+        [Required(ErrorMessage = "Enddatum ist erforderlich.")]
+        public DateTime? End { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // ToDo Validate with PlanningSlot-Functions
+            if (Start.HasValue && End.HasValue && End.Value.Date < Start.Value.Date)
+            {
+                yield return new ValidationResult("Enddatum darf nicht vor dem Startdatum liegen.", new[] { nameof(End) });
+            }
+            if (Start.HasValue && End.HasValue && (End.Value.Date - Start.Value.Date).TotalDays > 365)
+            {
+                yield return new ValidationResult("Abschnitt darf maximal 365 Tage dauern.", new[] { nameof(End) });
+            }
+        }
+    }
+}

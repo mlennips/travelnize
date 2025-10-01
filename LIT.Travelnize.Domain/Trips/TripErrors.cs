@@ -13,5 +13,6 @@
         public static readonly ErrorDetail InvalidAccommodationDates = new("Accommodation.InvalidDates", "Check-in date must be before check-out date.");
         public static readonly ErrorDetail InvalidTransportationDates = new("Transportation.InvalidDates", "Departure date must be before arrival date.");
         public static readonly ErrorDetail ActivityNotFound = new("Activity.NotFound", "Activity not found.");
+        public static readonly ErrorDetail AccommodationNotFound = new("Accommodation.NotFound", "Accommodation not found.");
     }
 }
