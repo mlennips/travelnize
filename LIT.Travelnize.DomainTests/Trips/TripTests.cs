@@ -64,18 +64,21 @@ namespace LIT.Travelnize.DomainTests.Trips
             // Arrange
 
             // Act
-            var result = _trip.AddTravelSegment(_tripSlot, "Segment");
+            var result = _trip.AddTravelSegment("Segment", "Beschreibung", _tripSlot);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual(1, _trip.TravelSegments.Count());
+            Assert.AreEqual("Segment", _trip.TravelSegments.First().Name);
+            Assert.AreEqual("Beschreibung", _trip.TravelSegments.First().Description);
+            Assert.AreEqual(_tripSlot, _trip.TravelSegments.First().Slot);
         }
 
         [TestMethod]
         public void RemoveTravelSegment_ShouldRemoveSegment()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
+            var segment = _trip.AddTravelSegment("Segment", "", _tripSlot).Value!;
 
             // Act
             var result = _trip.RemoveTravelSegment(segment.Id);
@@ -102,23 +105,24 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void UpdateTravelSegment_ShouldUpdateSegment()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
+            var segment = _trip.AddTravelSegment("Segment", "", _tripSlot).Value!;
             var newSlot = PlanningSlot.Create(DateTime.Today.AddDays(2), DateTime.Today.AddDays(7));
 
             // Act
-            var result = _trip.UpdateTravelSegment(segment.Id, newSlot, "Neu");
+            var result = _trip.UpdateTravelSegment(segment.Id, "Neu", "Neu 2", newSlot); 
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual(newSlot, segment.Slot);
-            Assert.AreEqual("Neu", segment.Description);
+            Assert.AreEqual("Neu", segment.Name);
+            Assert.AreEqual("Neu 2", segment.Description);
         }
 
         [TestMethod]
         public void AddDestinationToTravelSegment_ShouldAddDestination()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
+            var segment = _trip.AddTravelSegment("Segment", "", _tripSlot).Value!;
 
             // Act
             var result = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location);
@@ -132,7 +136,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void RemoveDestinationFromTravelSegment_ShouldRemoveDestination()
         {
             // Arrange
-            var segment= _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
+            var segment= _trip.AddTravelSegment("Segment", "", _tripSlot).Value!;
             var destination = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location).Value!;
 
             // Act
@@ -147,7 +151,7 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void UpdateDestinationInTravelSegment_ShouldUpdateDestination()
         {
             // Arrange
-            var segment = _trip.AddTravelSegment(_tripSlot, "Segment").Value!;
+            var segment = _trip.AddTravelSegment("Segment", "", _tripSlot).Value!;
             var destination = _trip.AddDestinationToTravelSegment(segment.Id, "Berlin", "Beschreibung", _location).Value!;
 
             // Act
