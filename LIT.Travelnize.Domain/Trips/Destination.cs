@@ -2,8 +2,8 @@
 {
     public class Destination : IEntity
     {
-        private readonly List<Accommodation> _accommodations = [];
-        private readonly List<Activity> _activities = [];
+        private List<Accommodation> _accommodations = [];
+        private List<Activity> _activities = [];
 
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
@@ -40,7 +40,7 @@
 
         internal Result Update(string name, string description, Location location, ResourceReference? image, ResourceReference? website)
         {
-            Name = name; 
+            Name = name;
             Description = description;
             Location = location;
             Image = image?.VerifyKind(ResourceKind.Image);
@@ -54,9 +54,25 @@
             return Result.Success();
         }
 
+        internal Result RemoveAccommodation(Guid accommodationId)
+        {
+            var acc = _accommodations.FirstOrDefault(a => a.Id == accommodationId);
+            if (acc is null) return TripErrors.AccommodationNotFound;
+            _accommodations.Remove(acc);
+            return Result.Success();
+        }
+
         internal Result AddActivity(Activity activity)
         {
             _activities.Add(activity);
+            return Result.Success();
+        }
+
+        internal Result RemoveActivity(Guid activityId)
+        {
+            var act = _activities.FirstOrDefault(a => a.Id == activityId);
+            if (act is null) return TripErrors.ActivityNotFound;
+            _activities.Remove(act);
             return Result.Success();
         }
     }

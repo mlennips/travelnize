@@ -6,7 +6,7 @@
 
 @if (Trip is not null)
 {
-    <MudGrid Spacing="4" Class="my-0">
+    <MudGrid Spacing="4" Class="mt-2">
         @foreach (var travelSegment in Trip.TravelSegments)
         {
             <MudItem xs="12" id="@travelSegment.Id">
@@ -60,7 +60,7 @@
                     <MudCard Elevation="0" Class="card-destination" Outlined="true">
                         <MudCardHeader Class="pb-0">
                             <CardHeaderAvatar>
-                                <MudAvatar Color="Color.Transparent" Size="Size.Large" Class="bg-destination border-destination">
+                                <MudAvatar Color="Color.Transparent" Size="Size.Medium" Class="bg-destination border-destination">
                                     @if (destination.Image != null)
                                     {
                                         <MudImage Src="@destination.Image?.Thumbnail" Class="opacity-75" />

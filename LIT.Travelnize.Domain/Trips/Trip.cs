@@ -189,34 +189,6 @@ namespace LIT.Travelnize.Domain.Trips
             return Result.Success();
         }
 
-        public Result<Activity> AddActivity(Guid destinationId, string name, string description, Location location, DateTime? date, TimeSpan? duration)
-        {
-            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
-            if (destination == null)
-            {
-                return TripErrors.DestinationNotFound;
-            }
-            var activity = Activity.Create(Id, destination.TravelSegmentId, destinationId, name, description, date, duration, location);
-            var result = destination.AddActivity(activity);
-            return result.IsSuccess ? activity : result.Error;
-        }
-
-        public Result UpdateActivity(Guid destinationId, Guid activityId, string name, string description, Location location, DateTime? date, TimeSpan? duration)
-        {
-            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
-            if (destination == null)
-            {
-                return TripErrors.DestinationNotFound;
-            }
-            var activity = destination.Activities.FirstOrDefault(a => a.Id == activityId);
-            if (activity == null)
-            {
-                return TripErrors.ActivityNotFound;
-            }
-            activity.Update(name, description, location, date, duration);
-            return Result.Success();
-        }
-
         public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
             Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference routeWebsite,
             TransportationType type)
@@ -231,6 +203,33 @@ namespace LIT.Travelnize.Domain.Trips
             _transportations.Add(transportation);
 
             return transportation;
+        }
+
+        public Result UpdateTransportation(Guid transportationId, string name, string description, string identifier,
+            Location departure, Location arrival, DateTime departureDate, DateTime arrivalDate,
+            ResourceReference routeWebsite, TransportationType type, Guid[] passengerIds)
+        {
+            var transportation = _transportations.FirstOrDefault(t => t.Id == transportationId);
+            if (transportation is null) return TripErrors.TransportationNotFound;
+
+            var passengers = passengerIds.Select(id => _participants.FirstOrDefault(p => p.Id == id))
+                                         .ToArray();
+            if (passengers.Any(p => p is null))
+            {
+                return TripErrors.ParticipantNotFound;
+            }
+
+            return transportation.Update(name, description, identifier, departure, arrival,
+                departureDate, arrivalDate, routeWebsite, type, passengers!);
+        }
+
+        public Result RemoveTransportation(Guid transportationId)
+        {
+            var transportation = _transportations.FirstOrDefault(t => t.Id == transportationId);
+            if (transportation is null) return TripErrors.TransportationNotFound;
+
+            _transportations.Remove(transportation);
+            return Result.Success();
         }
 
         public Result<Accommodation> AddAccommodationToDestination(Guid destinationId, string name, AccommodationType accommodationType,
@@ -262,6 +261,52 @@ namespace LIT.Travelnize.Domain.Trips
             if (accommodation is null) return TripErrors.AccommodationNotFound;
 
             var result = accommodation.Update(name, type, address, checkInOut);
+            return result;
+        }
+
+        public Result RemoveAccommodation(Guid destinationId, Guid accommodationId)
+        {
+            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
+            if (destination is null) return TripErrors.DestinationNotFound;
+
+            var result = destination.RemoveAccommodation(accommodationId);
+            return result;
+        }
+
+        public Result<Activity> AddActivity(Guid destinationId, string name, string description, Location location, DateTime? date, TimeSpan? duration)
+        {
+            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
+            if (destination == null)
+            {
+                return TripErrors.DestinationNotFound;
+            }
+            var activity = Activity.Create(Id, destination.TravelSegmentId, destinationId, name, description, date, duration, location);
+            var result = destination.AddActivity(activity);
+            return result.IsSuccess ? activity : result.Error;
+        }
+
+        public Result UpdateActivity(Guid destinationId, Guid activityId, string name, string description, Location location, DateTime? date, TimeSpan? duration)
+        {
+            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
+            if (destination == null)
+            {
+                return TripErrors.DestinationNotFound;
+            }
+            var activity = destination.Activities.FirstOrDefault(a => a.Id == activityId);
+            if (activity == null)
+            {
+                return TripErrors.ActivityNotFound;
+            }
+            activity.Update(name, description, location, date, duration);
+            return Result.Success();
+        }
+
+        public Result RemoveActivity(Guid destinationId, Guid activityId)
+        {
+            var destination = TravelSegments.SelectMany(s => s.Destinations).FirstOrDefault(d => d.Id == destinationId);
+            if (destination is null) return TripErrors.DestinationNotFound;
+
+            var result = destination.RemoveActivity(activityId);
             return result;
         }
     }
