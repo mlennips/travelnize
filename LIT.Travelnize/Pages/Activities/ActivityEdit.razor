@@ -8,6 +8,7 @@
 @using LIT.Travelnize.Domain.External.Wikipedia
 @using LIT.Travelnize.Shared.External
 @using LIT.Travelnize.Layout
+@using LIT.Travelnize.Components
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -76,43 +77,8 @@
                 <MudDivider Class="my-2" />
                 <MudText Typo="Typo.subtitle2">Adresse</MudText>
             </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="FormModel!.AddressLine1"
-                              Label="Adresszeile 1"
-                              For="@(() => FormModel!.AddressLine1)" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="FormModel!.AddressLine2"
-                              Label="Adresszeile 2"
-                              For="@(() => FormModel!.AddressLine2)" />
-            </MudItem>
-
-            <MudItem xs="12" sm="5">
-                <MudTextField @bind-Value="FormModel!.Street"
-                              Label="Straße"
-                              For="@(() => FormModel!.Street)" />
-            </MudItem>
-            <MudItem xs="6" sm="2">
-                <MudTextField @bind-Value="FormModel!.HouseNumber"
-                              Label="Nr."
-                              For="@(() => FormModel!.HouseNumber)" />
-            </MudItem>
-            <MudItem xs="6" sm="2">
-                <MudTextField @bind-Value="FormModel!.PostalCode"
-                              Label="PLZ"
-                              For="@(() => FormModel!.PostalCode)" />
-            </MudItem>
-            <MudItem xs="12" sm="3">
-                <MudTextField @bind-Value="FormModel!.City"
-                              Label="Stadt"
-                              For="@(() => FormModel!.City)" />
-            </MudItem>
-
-            <MudItem xs="12" sm="4">
-                <MudTextField @bind-Value="FormModel!.Country"
-                              Label="Land"
-                              For="@(() => FormModel!.Country)" />
+            <MudItem xs="12">
+                <AddressEdit Model="AddressModel" />
             </MudItem>
 
             <MudItem xs="12">
@@ -147,6 +113,7 @@
     [Parameter] public Guid ActivityId { get; set; }
 
     private ActivityEditFormModel? FormModel;
+    private AddressEdit.AddressEditModel AddressModel { get; set; } = new();
     private bool IsLoading;
     private string? LoadError;
 
@@ -224,6 +191,17 @@
         var addr = _activity.Location?.Address ?? Address.Empty;
         var coords = _activity.Location?.Coordinates;
 
+        AddressModel = new AddressEdit.AddressEditModel
+        {
+            Line1 = addr.Line1,
+            Line2 = addr.Line2,
+            Street = addr.Street,
+            HouseNumber = addr.HouseNumber,
+            PostalCode = addr.PostalCode,
+            City = addr.City,
+            Country = addr.Country
+        };
+
         FormModel = new ActivityEditFormModel
         {
             TripId = TripId,
@@ -235,13 +213,6 @@
             Date = _activity.Date,
             DurationHours = _activity.Duration?.Hours,
             DurationMinutes = _activity.Duration?.Minutes % 60,
-            AddressLine1 = addr.Line1,
-            AddressLine2 = addr.Line2,
-            Street = addr.Street,
-            HouseNumber = addr.HouseNumber,
-            PostalCode = addr.PostalCode,
-            City = addr.City,
-            Country = addr.Country,
             Latitude = coords?.Latitude,
             Longitude = coords?.Longitude
         };
@@ -262,13 +233,13 @@
             }
 
             var address = new Address(
-                FormModel.AddressLine1 ?? string.Empty,
-                FormModel.AddressLine2 ?? string.Empty,
-                FormModel.Street ?? string.Empty,
-                FormModel.HouseNumber ?? string.Empty,
-                FormModel.PostalCode ?? string.Empty,
-                FormModel.City ?? string.Empty,
-                FormModel.Country ?? string.Empty
+                AddressModel.Line1 ?? string.Empty,
+                AddressModel.Line2 ?? string.Empty,
+                AddressModel.Street ?? string.Empty,
+                AddressModel.HouseNumber ?? string.Empty,
+                AddressModel.PostalCode ?? string.Empty,
+                AddressModel.City ?? string.Empty,
+                AddressModel.Country ?? string.Empty
             );
 
             var coordinates = new Coordinates
@@ -343,15 +314,6 @@
         public DateTime? Date { get; set; }
         public int? DurationHours { get; set; }
         public int? DurationMinutes { get; set; }
-
-        // Adresse
-        [StringLength(200)] public string? AddressLine1 { get; set; }
-        [StringLength(200)] public string? AddressLine2 { get; set; }
-        [StringLength(150)] public string? Street { get; set; }
-        [StringLength(30)] public string? HouseNumber { get; set; }
-        [StringLength(20)] public string? PostalCode { get; set; }
-        [StringLength(100)] public string? City { get; set; }
-        [StringLength(100)] public string? Country { get; set; }
 
         // Koordinaten
         public double? Latitude { get; set; }

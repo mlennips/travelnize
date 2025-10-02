@@ -1,7 +1,4 @@
-﻿using LIT.Travelnize.Domain.Base;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace LIT.Travelnize.Domain.Common
+﻿namespace LIT.Travelnize.Domain.Common
 {
     public record Address : ValueObject
     {
@@ -21,13 +18,13 @@ namespace LIT.Travelnize.Domain.Common
             Country = country;
         }
 
-        public string Line1 { get; private init; }
-        public string Line2 { get; private init; }
-        public string Street { get; private init; }
-        public string HouseNumber { get; private init; }
-        public string PostalCode { get; private init; }
-        public string City { get; private init; }
-        public string Country { get; private init; }
+        public string Line1 { get; init; }
+        public string Line2 { get; init; }
+        public string Street { get; init; }
+        public string HouseNumber { get; init; }
+        public string PostalCode { get; init; }
+        public string City { get; init; }
+        public string Country { get; init; }
 
         public override string ToString()
         {

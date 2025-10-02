@@ -6,7 +6,6 @@ namespace LIT.Travelnize.Domain.Trips.Commands
         string Name,
         string Description,
         Location Location,
-        DateTime? Start,
-        DateTime? End
+        PlanningSlot Slot
     ) : ICommand<Guid>;
 }

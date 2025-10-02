@@ -5,6 +5,7 @@
 @using LIT.Travelnize.Domain.Common
 @using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Layout
+@using LIT.Travelnize.Components
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -57,40 +58,8 @@
                 <MudDivider Class="my-2" />
                 <MudText Typo="Typo.subtitle2">Ort</MudText>
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="FormModel!.AddressLine1"
-                              Label="Adresszeile 1"
-                              For="@(()=>FormModel!.AddressLine1)" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="FormModel!.AddressLine2"
-                              Label="Adresszeile 2"
-                              For="@(()=>FormModel!.AddressLine2)" />
-            </MudItem>
-            <MudItem xs="12" sm="5">
-                <MudTextField @bind-Value="FormModel!.Street"
-                              Label="Straße"
-                              For="@(()=>FormModel!.Street)" />
-            </MudItem>
-            <MudItem xs="6" sm="2">
-                <MudTextField @bind-Value="FormModel!.HouseNumber"
-                              Label="Nr."
-                              For="@(()=>FormModel!.HouseNumber)" />
-            </MudItem>
-            <MudItem xs="6" sm="2">
-                <MudTextField @bind-Value="FormModel!.PostalCode"
-                              Label="PLZ"
-                              For="@(()=>FormModel!.PostalCode)" />
-            </MudItem>
-            <MudItem xs="12" sm="3">
-                <MudTextField @bind-Value="FormModel!.City"
-                              Label="Stadt"
-                              For="@(()=>FormModel!.City)" />
-            </MudItem>
-            <MudItem xs="12" sm="4">
-                <MudTextField @bind-Value="FormModel!.Country"
-                              Label="Land"
-                              For="@(()=>FormModel!.Country)" />
+            <MudItem xs="12">
+                <AddressEdit Model="AddressModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -102,6 +71,7 @@
     [Parameter] public Guid DestinationId { get; set; }
 
     internal ActivityCreateFormModel? FormModel;
+    internal AddressEdit.AddressEditModel AddressModel { get; set; } = new();
     internal bool IsLoading;
     internal string? LoadError;
     internal DateTime? MinDate;
@@ -177,8 +147,10 @@
             Name = string.Empty,
             Description = string.Empty,
             Date = _destination.Slot.Start,
-            Duration = null
+            Duration = null,
+            Address = new AddressEdit.AddressEditModel()
         };
+        AddressModel = FormModel.Address;
 
         MinDate = _destination.Slot.Start;
         MaxDate = _destination.Slot.End;
@@ -191,13 +163,13 @@
         try
         {
             var address = new Address(
-                FormModel.AddressLine1 ?? string.Empty,
-                FormModel.AddressLine2 ?? string.Empty,
-                FormModel.Street ?? string.Empty,
-                FormModel.HouseNumber ?? string.Empty,
-                FormModel.PostalCode ?? string.Empty,
-                FormModel.City ?? string.Empty,
-                FormModel.Country ?? string.Empty
+                AddressModel.Line1 ?? string.Empty,
+                AddressModel.Line2 ?? string.Empty,
+                AddressModel.Street ?? string.Empty,
+                AddressModel.HouseNumber ?? string.Empty,
+                AddressModel.PostalCode ?? string.Empty,
+                AddressModel.City ?? string.Empty,
+                AddressModel.Country ?? string.Empty
             );
             var location = new Location(address, Coordinates.Empty);
 
@@ -263,13 +235,7 @@
 
         public TimeSpan? Duration { get; set; }
 
-        [StringLength(200)] public string? AddressLine1 { get; set; }
-        [StringLength(200)] public string? AddressLine2 { get; set; }
-        [StringLength(150)] public string? Street { get; set; }
-        [StringLength(30)]  public string? HouseNumber { get; set; }
-        [StringLength(20)]  public string? PostalCode { get; set; }
-        [StringLength(100)] public string? City { get; set; }
-        [StringLength(100)] public string? Country { get; set; }
+        public AddressEdit.AddressEditModel Address { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
