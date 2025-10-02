@@ -1,0 +1,204 @@
+@page "/trips/{TripId:guid}/travelsegments/create"
+@using LIT.Travelnize.Domain.Trips.Commands
+@using LIT.Travelnize.Domain.Trips.Dtos
+@using LIT.Travelnize.Domain.Trips.ValueObjects
+@using LIT.Travelnize.Domain.Common
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Layout
+@inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Travelnize - Reiseabschnitt hinzufügen</PageTitle>
+
+<EditPageLayout TModel="TravelSegmentCreateFormModel"
+                Title="Reiseabschnitt hinzufügen"
+                Subtitle="Lege einen neuen Reiseabschnitt für deine Reise an."
+                ContainerClass="my-6"
+                Model="FormModel"
+                IsLoading="IsLoading"
+                LoadError="LoadError"
+                CancelHref="@($"/trips/{TripId}")"
+                OnValidSubmit="HandleValidSubmit">
+    <FormContent>
+        <MudGrid Spacing="4">
+            <MudItem xs="12" sm="8">
+                <MudTextField @bind-Value="FormModel!.Name"
+                              Label="Name"
+                              For="@(()=>FormModel!.Name)"
+                              Required="true"
+                              Placeholder="Name des Reiseabschnitts" />
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField @bind-Value="FormModel!.Description"
+                              Label="Beschreibung"
+                              For="@(()=>FormModel!.Description)"
+                              Placeholder="Beschreibung"
+                              Lines="3"
+                              TextFieldStyle="MudBlazor.TextFieldStyle.Outlined" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudDatePicker @bind-Date="FormModel!.Start"
+                               Label="Start"
+                               For="@(()=>FormModel!.Start)"
+                               Required="true"
+                               MaxDate="FormModel!.End"
+                               Clearable="true" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudDatePicker @bind-Date="FormModel!.End"
+                               Label="Ende"
+                               For="@(()=>FormModel!.End)"
+                               Required="true"
+                               MinDate="FormModel!.Start"
+                               Clearable="true" />
+            </MudItem>
+        </MudGrid>
+    </FormContent>
+</EditPageLayout>
+
+@code {
+    [Parameter] public Guid TripId { get; set; }
+
+    internal TravelSegmentCreateFormModel? FormModel;
+    internal bool IsLoading;
+    internal string? LoadError;
+
+    protected override void OnInitialized()
+    {
+        TripsState.OnChange += StateChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await EnsureTripLoadedAsync();
+        InitializeFormModel();
+    }
+
+    private async Task EnsureTripLoadedAsync()
+    {
+        if (TripsState.SelectedTrip == null || TripsState.SelectedTrip.Id != TripId)
+        {
+            await LoadTripAsync();
+        }
+    }
+
+    private async Task LoadTripAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            LoadError = null;
+            await TripsState.LoadTripAsync(TripId);
+            if (TripsState.SelectedTrip == null)
+            {
+                LoadError = "Reise wurde nicht gefunden.";
+            }
+        }
+        catch (Exception ex)
+        {
+            LoadError = "Fehler beim Laden: " + ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void InitializeFormModel()
+    {
+        if (TripsState.SelectedTrip == null) return;
+
+        var start = TripsState.SelectedTrip.TravelSegments.LastOrDefault()?.Slot?.End;
+        if (start == null)
+        {
+            start = TripsState.SelectedTrip.Slot.Start;
+        }
+
+        FormModel ??= new TravelSegmentCreateFormModel
+        {
+            TripId = TripId,
+            Name = string.Empty,
+            Description = string.Empty,
+            Start = start,
+            End = TripsState.SelectedTrip.Slot.End
+        };
+    }
+
+    private async Task HandleValidSubmit(EditContext _)
+    {
+        if (FormModel == null) return;
+
+        try
+        {
+            var slot = PlanningSlot.Create(FormModel.Start, FormModel.End);
+
+            var command = new AddTravelSegmentCommand(
+                FormModel.TripId,
+                FormModel.Name!.Trim(),
+                FormModel.Description ?? string.Empty,
+                slot
+            );
+
+            var newId = await TripsState.AddTravelSegmentAsync(FormModel.TripId, command);
+            if (newId.HasValue)
+            {
+                Snackbar.Add("Reiseabschnitt erstellt.", Severity.Success);
+                Navigation.NavigateTo($"/trips/{TripId}");
+            }
+            else
+            {
+                Snackbar.Add("Erstellung fehlgeschlagen.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private void StateChanged()
+    {
+        InvokeAsync(() =>
+        {
+            if (TripsState.SelectedTrip != null &&
+                TripsState.SelectedTrip.Id == TripId)
+            {
+                InitializeFormModel();
+            }
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= StateChanged;
+    }
+
+    internal class TravelSegmentCreateFormModel : IValidatableObject
+    {
+        public Guid TripId { get; set; }
+
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
+        public string? Name { get; set; }
+
+        [StringLength(500, ErrorMessage = "Maximal 500 Zeichen.")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Start ist erforderlich.")]
+        public DateTime? Start { get; set; }
+
+        [Required(ErrorMessage = "Ende ist erforderlich.")]
+        public DateTime? End { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Start.HasValue && End.HasValue && Start.Value >= End.Value)
+            {
+                yield return new ValidationResult("Start muss vor Ende liegen.", new[] { nameof(End) });
+            }
+        }
+    }
+}
