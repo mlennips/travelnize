@@ -1,6 +1,6 @@
-﻿using LIT.Travelnize.Domain.Trips.Commands;
+﻿using System.Net.Http.Json;
+using LIT.Travelnize.Domain.Trips.Commands;
 using LIT.Travelnize.Domain.Trips.Queries;
-using System.Net.Http.Json;
 
 namespace LIT.Travelnize.Services.Api
 {
@@ -26,6 +26,7 @@ namespace LIT.Travelnize.Services.Api
         public async Task<bool> DeleteTripAsync(Guid tripId)
             => (await httpClient.DeleteAsync($"trips/{tripId}")).IsSuccessStatusCode;
 
+        #region Travel Segments
         public async Task<Guid?> AddTravelSegmentAsync(Guid tripId, AddTravelSegmentCommand command)
         {
             var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/segments", command);
@@ -39,7 +40,9 @@ namespace LIT.Travelnize.Services.Api
 
         public async Task<bool> RemoveTravelSegmentAsync(Guid tripId, Guid segmentId)
             => (await httpClient.DeleteAsync($"trips/{tripId}/segments/{segmentId}")).IsSuccessStatusCode;
+        #endregion
 
+        #region Destinations
         public async Task<Guid?> AddDestinationAsync(Guid tripId, Guid segmentId, AddDestinationCommand command)
         {
             var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/segments/{segmentId}/destinations", command);
@@ -53,7 +56,9 @@ namespace LIT.Travelnize.Services.Api
 
         public async Task<bool> RemoveDestinationAsync(Guid tripId, Guid segmentId, Guid destinationId)
             => (await httpClient.DeleteAsync($"trips/{tripId}/segments/{segmentId}/destinations/{destinationId}")).IsSuccessStatusCode;
+        #endregion
 
+        #region Participants
         public async Task<Guid?> AddParticipantAsync(Guid tripId, AddParticipantCommand command)
         {
             var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/participants", command);
@@ -78,7 +83,9 @@ namespace LIT.Travelnize.Services.Api
 
         public async Task<bool> RemoveParticipantAsync(Guid tripId, Guid participantId)
             => (await httpClient.DeleteAsync($"trips/{tripId}/participants/{participantId}")).IsSuccessStatusCode;
+        #endregion
 
+        #region Transportation
         public async Task<Guid?> AddTransportationAsync(Guid tripId, AddTransportationCommand command)
         {
             var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/transportations", command);
@@ -87,6 +94,14 @@ namespace LIT.Travelnize.Services.Api
             return null;
         }
 
+        public async Task<bool> UpdateTransportationAsync(Guid tripId, Guid transportationId, UpdateTransportationCommand command)
+            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/transportations/{transportationId}", command)).IsSuccessStatusCode;
+
+        public async Task<bool> RemoveTransportationAsync(Guid tripId, Guid transportationId)
+            => (await httpClient.DeleteAsync($"trips/{tripId}/transportations/{transportationId}")).IsSuccessStatusCode;
+        #endregion
+
+        #region Accommodation
         public async Task<Guid?> AddAccommodationAsync(Guid tripId, Guid destinationId, AddAccommodationCommand command)
         {
             var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations", command);
@@ -95,6 +110,14 @@ namespace LIT.Travelnize.Services.Api
             return null;
         }
 
+        public async Task<bool> UpdateAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId, UpdateAccommodationCommand command)
+            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", command)).IsSuccessStatusCode;
+
+        public async Task<bool> RemoveAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId)
+            => (await httpClient.DeleteAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}")).IsSuccessStatusCode;
+        #endregion
+
+        #region Activities
         public async Task<Guid?> AddActivityAsync(Guid tripId, Guid destinationId, AddActivityCommand command)
         {
             var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities", command);
@@ -106,7 +129,8 @@ namespace LIT.Travelnize.Services.Api
         public async Task<bool> UpdateActivityAsync(Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command)
             => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}", command)).IsSuccessStatusCode;
 
-        public async Task<bool> UpdateAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId, UpdateAccommodationCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", command)).IsSuccessStatusCode;
+        public async Task<bool> RemoveActivityAsync(Guid tripId, Guid destinationId, Guid activityId)
+            => (await httpClient.DeleteAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}")).IsSuccessStatusCode;
+        #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LIT.Travelnize.Domain.Base;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {
@@ -14,15 +15,23 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         public async Task<T?> GetByIdAsync<T>(Guid id) where T : class, IAggregateRoot
         {
-            return await appDbContext.Set<T>().FindAsync(id);
+            return await appDbContext.Set<T>().FindAsync(id);            
         }
 
         public async Task AddAsync<T>(T item) where T : class, IAggregateRoot
         {
             await appDbContext.Set<T>().AddAsync(item);
         }
+
         public Task UpdateAsync<T>(T item) where T : class, IAggregateRoot
         {
+            var entry = appDbContext.Entry(item);
+
+            if (entry.State == EntityState.Detached)
+            {
+                throw new InvalidOperationException($"Entity vom Typ {typeof(T).Name} ist nicht im DbContext getrackt. Laden Sie das Entity zuerst bevor es aktualisiert wird.");
+            }
+
             return Task.CompletedTask;
         }
 

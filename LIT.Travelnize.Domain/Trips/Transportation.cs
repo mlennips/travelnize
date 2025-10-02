@@ -1,5 +1,6 @@
 ﻿using LIT.Travelnize.Domain.Base;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIT.Travelnize.Domain.Trips
 {
@@ -7,6 +8,7 @@ namespace LIT.Travelnize.Domain.Trips
     {
         private List<Participant> _passengers = [];
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
 

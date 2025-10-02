@@ -1,7 +1,10 @@
-﻿namespace LIT.Travelnize.Domain.Trips
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LIT.Travelnize.Domain.Trips
 {
     public class Participant : IEntity
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
         public Guid? UserId { get; private set; }

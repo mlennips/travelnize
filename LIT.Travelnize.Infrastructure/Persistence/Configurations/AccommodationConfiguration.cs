@@ -12,6 +12,12 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             {
                 builder.HasKey(x => x.Id);
 
+                builder.Property(a => a.TripId).IsRequired();
+
+                builder.Property(a => a.TravelSegmentId).IsRequired();
+
+                builder.Property(a => a.DestinationId).IsRequired();
+
                 builder.ComplexProperty(a => a.Type);
                 builder.ComplexProperty(a => a.Address);
                 builder.ComplexProperty(a => a.CheckInOut); 

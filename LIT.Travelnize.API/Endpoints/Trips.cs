@@ -38,6 +38,13 @@ namespace LIT.Travelnize.API.Endpoints
                         onFailure: Results.BadRequest))
                 .Produces(StatusCodes.Status204NoContent)
                 .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
+
+            api.MapDelete("/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", async (IMediator mediator, Guid tripId, Guid destinationId, Guid accommodationId) =>
+                    await mediator.SendAndMatchAsync(new RemoveAccommodationCommand(tripId, destinationId, accommodationId),
+                        onSuccess: () => Results.NoContent(),
+                        onFailure: Results.BadRequest))
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
         }
 
         private static void MapTrips(RouteGroupBuilder api)
@@ -173,6 +180,20 @@ namespace LIT.Travelnize.API.Endpoints
                         onFailure: Results.BadRequest))
                 .Produces<Guid>(StatusCodes.Status200OK)
                 .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
+
+            api.MapPut("/{tripId}/transportations/{transportationId}", async (IMediator mediator, Guid tripId, Guid transportationId, UpdateTransportationCommand command) =>
+                    await mediator.SendAndMatchAsync(command,
+                        onSuccess: Results.NoContent,
+                        onFailure: Results.BadRequest))
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
+
+            api.MapDelete("/{tripId}/transportations/{transportationId}", async (IMediator mediator, Guid tripId, Guid transportationId) =>
+                    await mediator.SendAndMatchAsync(new RemoveTransportationCommand(tripId, transportationId),
+                        onSuccess: () => Results.NoContent(),
+                        onFailure: Results.BadRequest))
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
         }
 
         private static void MapActivities(RouteGroupBuilder api)
@@ -187,6 +208,13 @@ namespace LIT.Travelnize.API.Endpoints
             api.MapPut("/{tripId}/destinations/{destinationId}/activities/{activityId}", async (IMediator mediator, Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command) =>
                     await mediator.SendAndMatchAsync(command,
                         onSuccess: Results.NoContent,
+                        onFailure: Results.BadRequest))
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);
+
+            api.MapDelete("/{tripId}/destinations/{destinationId}/activities/{activityId}", async (IMediator mediator, Guid tripId, Guid destinationId, Guid activityId) =>
+                    await mediator.SendAndMatchAsync(new RemoveActivityCommand(tripId, destinationId, activityId),
+                        onSuccess: () => Results.NoContent(),
                         onFailure: Results.BadRequest))
                 .Produces(StatusCodes.Status204NoContent)
                 .Produces<ErrorDetail>(StatusCodes.Status400BadRequest);

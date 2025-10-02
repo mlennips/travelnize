@@ -1,4 +1,4 @@
-﻿using LIT.Travelnize.Domain.Trips.ValueObjects;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIT.Travelnize.Domain.Trips
 {
@@ -8,6 +8,7 @@ namespace LIT.Travelnize.Domain.Trips
         private readonly List<Participant> _participants = [];
         private readonly List<Transportation> _transportations = [];
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public override Guid Id { get; init; }
         public Guid UserId { get; init; }
 
@@ -241,7 +242,7 @@ namespace LIT.Travelnize.Domain.Trips
                 return TripErrors.DestinationNotFound;
             }
 
-            var accommodation = Accommodation.Create(Id, destinationId, name, accommodationType,
+            var accommodation = Accommodation.Create(Id, destination.TravelSegmentId, destinationId, name, accommodationType,
                 address, checkInOut);
 
             var result = destination.AddAccommodation(accommodation);

@@ -1,6 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Base;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
 {

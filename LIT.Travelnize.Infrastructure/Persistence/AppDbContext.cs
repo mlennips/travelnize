@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Common;
-using LIT.Travelnize.Domain.Trips;
-using LIT.Travelnize.Domain.Trips.ValueObjects;
+﻿using LIT.Travelnize.Domain.Trips;
 using Microsoft.EntityFrameworkCore;
 
 namespace LIT.Travelnize.Infrastructure.Persistence
