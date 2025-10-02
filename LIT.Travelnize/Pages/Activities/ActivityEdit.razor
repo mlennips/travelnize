@@ -85,22 +85,8 @@
                 <MudDivider Class="my-2" />
                 <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
             </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudNumericField T="double?" @bind-Value="FormModel!.Latitude"
-                                 Label="Breitengrad (Latitude)"
-                                 For="@(() => FormModel!.Latitude)"
-                                 Immediate="true"
-                                 Clearable="true"
-                                 Placeholder="z.B. 52.5200" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudNumericField T="double?" @bind-Value="FormModel!.Longitude"
-                                 Label="Längengrad (Longitude)"
-                                 For="@(() => FormModel!.Longitude)"
-                                 Immediate="true"
-                                 Clearable="true"
-                                 Placeholder="z.B. 13.4050" />
+            <MudItem xs="12">
+                <CoordinatesEdit Model="CoordinatesModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -114,6 +100,7 @@
 
     private ActivityEditFormModel? FormModel;
     private AddressEdit.AddressEditModel AddressModel { get; set; } = new();
+    private CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = new();
     private bool IsLoading;
     private string? LoadError;
 
@@ -202,6 +189,12 @@
             Country = addr.Country
         };
 
+        CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel
+        {
+            Latitude = coords?.Latitude,
+            Longitude = coords?.Longitude
+        };
+
         FormModel = new ActivityEditFormModel
         {
             TripId = TripId,
@@ -212,9 +205,7 @@
             Description = _activity.Description,
             Date = _activity.Date,
             DurationHours = _activity.Duration?.Hours,
-            DurationMinutes = _activity.Duration?.Minutes % 60,
-            Latitude = coords?.Latitude,
-            Longitude = coords?.Longitude
+            DurationMinutes = _activity.Duration?.Minutes % 60
         };
     }
 
@@ -244,8 +235,8 @@
 
             var coordinates = new Coordinates
             {
-                Latitude = FormModel.Latitude ?? 0,
-                Longitude = FormModel.Longitude ?? 0
+                Latitude = CoordinatesModel.Latitude ?? 0,
+                Longitude = CoordinatesModel.Longitude ?? 0
             };
 
             var location = new Location(address, coordinates);
@@ -315,17 +306,8 @@
         public int? DurationHours { get; set; }
         public int? DurationMinutes { get; set; }
 
-        // Koordinaten
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Latitude.HasValue && (Latitude < -90 || Latitude > 90))
-                yield return new ValidationResult("Latitude muss zwischen -90 und 90 liegen.", [nameof(Latitude)]);
-            if (Longitude.HasValue && (Longitude < -180 || Longitude > 180))
-                yield return new ValidationResult("Longitude muss zwischen -180 und 180 liegen.", [nameof(Longitude)]);
-
             if (DurationHours is < 0)
                 yield return new ValidationResult("Stunden dürfen nicht negativ sein.", [nameof(DurationHours)]);
             if (DurationMinutes is < 0 or > 59)
@@ -360,9 +342,9 @@
             if (string.IsNullOrWhiteSpace(FormModel.Description) && !string.IsNullOrWhiteSpace(summary.Extract))
                 FormModel.Description = summary.ShortDescription + ". " + summary.Extract;
             if (summary.Latitude.HasValue)
-                FormModel.Latitude = summary.Latitude;
+                CoordinatesModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
-                FormModel.Longitude = summary.Longitude;
+                CoordinatesModel.Longitude = summary.Longitude;
 
             Snackbar.Add("Wikipedia-Daten übernommen.", Severity.Success);
             StateHasChanged();

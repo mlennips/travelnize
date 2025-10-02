@@ -67,22 +67,8 @@
                 <MudDivider Class="my-2" />
                 <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
             </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudNumericField T="double?" @bind-Value="FormModel!.Latitude"
-                                 Label="Breitengrad (Latitude)"
-                                 For="@(() => FormModel!.Latitude)"
-                                 Immediate="true"
-                                 Clearable="true"
-                                 Placeholder="z.B. 52.5200" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudNumericField T="double?" @bind-Value="FormModel!.Longitude"
-                                 Label="Längengrad (Longitude)"
-                                 For="@(() => FormModel!.Longitude)"
-                                 Immediate="true"
-                                 Clearable="true"
-                                 Placeholder="z.B. 13.4050" />
+            <MudItem xs="12">
+                <CoordinatesEdit Model="CoordinatesModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -95,6 +81,7 @@
 
     private DestinationEditFormModel? FormModel;
     private AddressEdit.AddressEditModel AddressModel { get; set; } = new();
+    private CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = new();
     private bool IsLoading;
     private string? LoadError;
 
@@ -175,6 +162,12 @@
             Country = addr.Country
         };
 
+        CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel
+        {
+            Latitude = coords?.Latitude,
+            Longitude = coords?.Longitude
+        };
+
         FormModel = new DestinationEditFormModel
         {
             TripId = TripId,
@@ -182,8 +175,6 @@
             DestinationId = DestinationId,
             Name = _destination.Name,
             Description = _destination.Description,
-            Latitude = coords?.Latitude,
-            Longitude = coords?.Longitude,
             SlotStart = _destination.Slot.Start,
             SlotEnd = _destination.Slot.End,
             Image = _destination.Image?.Source,
@@ -209,8 +200,8 @@
 
             var coordinates = new Coordinates
             {
-                Latitude = FormModel.Latitude ?? 0,
-                Longitude = FormModel.Longitude ?? 0
+                Latitude = CoordinatesModel.Latitude ?? 0,
+                Longitude = CoordinatesModel.Longitude ?? 0
             };
 
             var location = new Location(address, coordinates);
@@ -283,23 +274,12 @@
         [StringLength(500)] public string? Image { get; set; }
         [StringLength(500)] public string? Thumbnail { get; set; }
 
-        // Koordinaten
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
-
         public DateTime? SlotStart { get; set; }
         public DateTime? SlotEnd { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Latitude.HasValue && (Latitude < -90 || Latitude > 90))
-            {
-                yield return new ValidationResult("Latitude muss zwischen -90 und 90 liegen.", new[] { nameof(Latitude) });
-            }
-            if (Longitude.HasValue && (Longitude < -180 || Longitude > 180))
-            {
-                yield return new ValidationResult("Longitude muss zwischen -180 und 180 liegen.", new[] { nameof(Longitude) });
-            }
+            return Array.Empty<ValidationResult>();
         }
     }
 
@@ -330,9 +310,9 @@
             if (string.IsNullOrWhiteSpace(FormModel.Description) && !string.IsNullOrWhiteSpace(summary.Extract))
                 FormModel.Description = summary.ShortDescription + ". " + summary.Extract;
             if (summary.Latitude.HasValue)
-                FormModel.Latitude = summary.Latitude;
+                CoordinatesModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
-                FormModel.Longitude = summary.Longitude;
+                CoordinatesModel.Longitude = summary.Longitude;
             if (string.IsNullOrWhiteSpace(FormModel!.Image))
             {
                 FormModel.Image = summary.OriginalImageUrl;

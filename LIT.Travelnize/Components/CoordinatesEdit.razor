@@ -1,0 +1,36 @@
+@using System.ComponentModel.DataAnnotations
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudNumericField T="double?" @bind-Value="Model.Latitude"
+                         Label="Breitengrad (Latitude)"
+                         For="@(() => Model.Latitude)"
+                         Immediate="true"
+                         Clearable="true"
+                         Placeholder="z.B. 52.5200"
+                         Min="-90" Max="90" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField T="double?" @bind-Value="Model.Longitude"
+                         Label="Längengrad (Longitude)"
+                         For="@(() => Model.Longitude)"
+                         Immediate="true"
+                         Clearable="true"
+                         Placeholder="z.B. 13.4050"
+                         Min="-180" Max="180" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public CoordinatesEditModel Model { get; set; } = new();
+
+    public class CoordinatesEditModel
+    {
+        [Range(-90, 90, ErrorMessage = "Latitude muss zwischen -90 und 90 liegen.")]
+        public double? Latitude { get; set; }
+
+        [Range(-180, 180, ErrorMessage = "Longitude muss zwischen -180 und 180 liegen.")]
+        public double? Longitude { get; set; }
+    }
+}
