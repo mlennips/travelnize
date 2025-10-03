@@ -1,11 +1,5 @@
 ﻿@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/edit"
-@using LIT.Travelnize.Domain.Trips.Commands
-@using LIT.Travelnize.Domain.Trips.Dtos
-@using LIT.Travelnize.Domain.Trips.Queries
-@using LIT.Travelnize.Domain.Trips.ValueObjects
 @using System.ComponentModel.DataAnnotations
-@using LIT.Travelnize.Layout
-@using LIT.Travelnize.Helpers
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar

@@ -1,11 +1,5 @@
 @page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/accommodations/create"
-@using LIT.Travelnize.Domain.Trips.Commands
-@using LIT.Travelnize.Domain.Trips.Dtos
-@using LIT.Travelnize.Domain.Trips.ValueObjects
-@using LIT.Travelnize.Domain.Common
 @using System.ComponentModel.DataAnnotations
-@using LIT.Travelnize.Layout
-@using LIT.Travelnize.Components
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
