@@ -1,5 +1,6 @@
 ﻿@page "/trips"
 @using LIT.Travelnize.Domain.Trips.Queries
+@using LIT.Travelnize.Helpers
 @inject IAuthService AuthService
 @inject TripsState TripsState
 
@@ -22,7 +23,7 @@
                         {
                             <MudTimelineItem Size="Size.Small" Class="align-items-center" Color="@(trip.Status == TripStatus.Ongoing ? Color.Success : Color.Default)">
                                 <ItemContent>
-                                    <MudLink Typo="Typo.caption" Href="@($"/trips/{trip.Id}")" Underline="Underline.None">
+                                    <MudLink Typo="Typo.caption" Href="@LinkHelper.TripLink(trip.Id)" Underline="Underline.None">
                                         @trip.Name
                                     </MudLink>
                                     <MudHidden Breakpoint="Breakpoint.Xs" Invert="false">
@@ -52,7 +53,7 @@
                                 <MudCardContent Class="pa-4">
                                     <MudStack Breakpoint="Breakpoint.Xs" Row="true" StretchItems="StretchItems.Start">
                                         <MudStack Row="false" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.Middle" Justify="Justify.FlexEnd"  Spacing="0">
-                                            <MudLink Href="@($"/trips/{trip.Id}")" Underline="Underline.None" Class="text-trip fw-semibold" Typo="Typo.h6">
+                                            <MudLink Href="@LinkHelper.TripLink(trip.Id)" Underline="Underline.None" Class="text-trip fw-semibold" Typo="Typo.h6">
                                                 @trip.Name
                                             </MudLink>
                                           
@@ -110,7 +111,7 @@
                                                        Class="mt-1"
                                                        Color="Color.Primary"
                                                        Size="Size.Small"
-                                                       Href="@($"/trips/{trip.Id}")"
+                                                       Href="@LinkHelper.TripLink(trip.Id)"
                                                        StartIcon="@Icons.Material.Filled.OpenInNew">
                                                 Öffnen
                                             </MudButton>

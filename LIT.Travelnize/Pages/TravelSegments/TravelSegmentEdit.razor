@@ -5,6 +5,7 @@
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Layout
+@using LIT.Travelnize.Helpers
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -18,7 +19,7 @@
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
-                CancelHref="@($"/trips/{TripId}")"
+                CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
         <MudGrid Spacing="4">
@@ -152,7 +153,7 @@
             if (ok)
             {
                 Snackbar.Add("Reiseabschnitt aktualisiert.", Severity.Success);
-                Navigation.NavigateTo($"/trips/{TripId}");
+                Navigation.NavigateTo(LinkHelper.TripLink(TripId));
             }
             else
             {

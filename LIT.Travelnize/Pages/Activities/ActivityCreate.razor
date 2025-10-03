@@ -6,6 +6,7 @@
 @using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Layout
 @using LIT.Travelnize.Components
+@using LIT.Travelnize.Helpers
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -19,7 +20,7 @@
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
-                CancelHref="@($"/trips/{TripId}")"
+                CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
         <MudGrid Spacing="4">
@@ -166,7 +167,7 @@
             if (newId.HasValue)
             {
                 Snackbar.Add("Aktivität erstellt.", Severity.Success);
-                Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{DestinationId}/activities/{newId}/edit");
+                Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
             }
             else
             {

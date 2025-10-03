@@ -32,7 +32,7 @@
                     </MudText>
                     <MudText Color="Color.Secondary" Class="opacity-75">
                         @TripsState.SelectedTrip?.Description
-                        <MudLink Href="@($"/trips/{TripId}/edit")" Typo="Typo.caption">
+                        <MudLink Href="@LinkHelper.TripLinkEdit(TripId)" Typo="Typo.caption">
                             (bearbeiten)
                         </MudLink>
                     </MudText>
