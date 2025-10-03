@@ -24,12 +24,12 @@ window.travelnizeLeaflet = {
         if (options.zoomControl === false && map.zoomControl) {
             map.zoomControl.remove();
         }
-
+        const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
         const layer = L.tileLayer(
             tileUrl || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
                 maxZoom: 19,
-                attribution: attribution || '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+                attribution: attribution || '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> | <a target="_blank" href="' + googleMapsUrl + '">Google Maps</a>'
             });
         layer.addTo(map);
 

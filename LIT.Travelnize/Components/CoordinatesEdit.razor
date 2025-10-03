@@ -58,6 +58,7 @@
             _mapInitialized = true;
             _lastLat = Model.Latitude;
             _lastLon = Model.Longitude;
+            StateHasChanged();
         }
     }
 
@@ -78,6 +79,7 @@
             _lastLat = Model.Latitude;
             _lastLon = Model.Longitude;
         }
+        StateHasChanged();
     }
 
     [JSInvokable]
