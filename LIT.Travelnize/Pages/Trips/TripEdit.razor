@@ -3,6 +3,7 @@
 @using LIT.Travelnize.Domain.Trips.Commands
 @using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Layout
+@using LIT.Travelnize.Components
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
@@ -39,20 +40,8 @@
                               Lines="4" />
             </MudItem>
 
-            <MudItem xs="12" sm="6">
-                <MudDatePicker @bind-Date="FormModel!.TravelStart"
-                               Label="Startdatum"
-                               For="@(() => FormModel!.TravelStart)"
-                               MaxDate="@FormModel!.TravelEnd"
-                               Clearable="true" />
-            </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudDatePicker @bind-Date="FormModel!.TravelEnd"
-                               Label="Enddatum"
-                               For="@(() => FormModel!.TravelEnd)"
-                               MinDate="@FormModel!.TravelStart"
-                               Clearable="true" />
+            <MudItem xs="12">
+                <PlanningSlotEdit Model="FormModel!.SlotEditModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -120,9 +109,9 @@
             TripId = trip.Id,
             Name = trip.Name,
             Description = trip.Description,
-            TravelStart = trip.Slot.Start?.Date,
-            TravelEnd = trip.Slot.End?.Date
+            SlotEditModel = new PlanningSlotEdit.PlanningSlotEditModel(trip.Slot)
         };
+
         // Keine manuelle ValidateModel mehr nötig (AutoValidate übernimmt)
     }
 
@@ -136,8 +125,7 @@
                 FormModel.TripId,
                 FormModel.Name!.Trim(),
                 FormModel.Description?.Trim() ?? string.Empty,
-                FormModel.TravelStart!.Value,
-                FormModel.TravelEnd!.Value
+                FormModel.SlotEditModel.ToPlanningSlot()
             );
 
             var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
@@ -200,32 +188,12 @@
         [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
         public string? Description { get; set; }
 
-        public DateTime? TravelStart { get; set; }
-
-        public DateTime? TravelEnd { get; set; }
+        public PlanningSlotEdit.PlanningSlotEditModel SlotEditModel { get; set; } = default!;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (TravelStart != null && TravelEnd == null)
-            {
-                yield return new ValidationResult("Enddatum darf nicht leer sein", new[] { nameof(TravelEnd) });
-            }
-            if (TravelStart == null && TravelEnd != null)
-            {
-                yield return new ValidationResult("Startdatum darf nicht leer sein", new[] { nameof(TravelStart) });
-            }
-
-            if (TravelStart.HasValue && TravelEnd.HasValue)
-            {
-                if (TravelEnd.Value.Date < TravelStart.Value.Date)
-                {
-                    yield return new ValidationResult("Enddatum darf nicht vor dem Startdatum liegen.", new[] { nameof(TravelEnd) });
-                }
-                if ((TravelEnd.Value.Date - TravelStart.Value.Date).TotalDays > 365)
-                {
-                    yield return new ValidationResult("Reise darf maximal 365 Tage dauern.", new[] { nameof(TravelEnd) });
-                }
-            }
+            // Validierung der Slot-Daten erfolgt im PlanningSlotEdit
+            yield break;
         }
     }
 }

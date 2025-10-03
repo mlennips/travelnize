@@ -13,8 +13,7 @@ namespace LIT.Travelnize.UseCases.Trips
             {
                 return TripErrors.TripNotFound;
             }
-            var result = trip.Update(request.Name, request.Description,
-                PlanningSlot.Create(request.TravelStart, request.TravelEnd));
+            var result = trip.Update(request.Name, request.Description, request.TravelSlot);
             await uow.UpdateAsync(trip);
             return result;
         }
