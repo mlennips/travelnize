@@ -7,7 +7,7 @@
 <MudContainer Class="@ContainerClass" MaxWidth="@(MaxWidth)">
     <MudGrid Spacing="6">
         <MudItem xs="12">
-            <PageHeader Title="@Title"
+            <PageHeader Title="@EffectiveTitle"
                         Subtitle="@Subtitle"
                         Image="@Image" />
         </MudItem>
@@ -21,8 +21,7 @@
             }
             else if (CurrentEditContext is not null && Model is not null)
             {
-                <EditForm EditContext="CurrentEditContext"                          
-                          OnValidSubmit="ValidSubmitAsync">
+                <EditForm EditContext="CurrentEditContext" OnValidSubmit="ValidSubmitAsync">
                     <DataAnnotationsValidator />
                     <MudPaper Class="pa-0" Elevation="0">
                         @if (FormContent is not null)
@@ -38,34 +37,24 @@
                             </MudPaper>
                         }
 
-@*                         @if (ActionContent is not null)
-                        {
-                            @ActionContent
-                        } *@
-
-                        <MudPaper>
-
-                        </MudPaper>
+                        <MudPaper></MudPaper>
                         <MudPaper Elevation="0" Outlined="true" Class="mt-4 bg-light">
                             <MudToolBar Dense="false" Gutters="true">
-                                @if (IsSaving)
-                                {
-                                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" />
-                                }
-                                <MudSpacer />
-                                <MudIconButton Icon="@Icons.Material.Outlined.Cancel"
+                                <MudIconButton Icon="@CancelIcon"
                                                Color="Color.Tertiary"
-                                               OnClick="Cancel"
+                                               OnClick="Cancel"                                               
                                                title="@CancelText"
                                                Disabled="IsSaving || DisableCancel">
                                 </MudIconButton>
-                                <MudIconButton Icon="@Icons.Material.Outlined.Save"
+                                <MudSpacer />
+                                <MudIconButton Icon="@SaveIcon"
                                                Color="Color.Primary"
                                                Disabled="@IsSaveButtonDisabled"
                                                title="@SaveText"
                                                ButtonType="ButtonType.Submit">
                                 </MudIconButton>
                             </MudToolBar>
+                            <MudProgressLinear Indeterminate="@IsSaving" Size="Size.Small"  />
                         </MudPaper>
                     </MudPaper>
                 </EditForm>
@@ -81,8 +70,11 @@
 </MudContainer>
 
 @code {
+    // --- NEU: Layout-Variante ---
+    [Parameter] public PageLayoutMode Mode { get; set; } = PageLayoutMode.Edit;
+
     // Layout / Header
-    [Parameter, EditorRequired] public string Title { get; set; } = default!;
+    [Parameter] public string Title { get; set; } = default!;
     [Parameter] public string? Subtitle { get; set; }
     [Parameter] public string? Image { get; set; }
 
@@ -102,8 +94,8 @@
     [Parameter] public bool ShowValidationSummary { get; set; } = false;
 
     // Actions / Texte
-    [Parameter] public string CancelText { get; set; } = "Abbrechen";
-    [Parameter] public string SaveText { get; set; } = "Speichern";
+    [Parameter] public string? CancelText { get; set; }
+    [Parameter] public string? SaveText { get; set; }
     [Parameter] public RenderFragment? ActionContent { get; set; }
 
     // Navigation / Cancel
@@ -123,6 +115,25 @@
 
     // Extern bereitgestellter EditContext (optional)
     [Parameter] public EditContext? EditContext { get; set; }
+
+    // --- Texte & Icons je nach Modus ---
+    private string EffectiveTitle => !string.IsNullOrWhiteSpace(Title)
+        ? Title
+        : Mode == PageLayoutMode.Create ? "Anlegen und weiter zur Bearbeitung" : "Speichern und zurück";
+
+    private string EffectiveSaveText => !string.IsNullOrWhiteSpace(SaveText)
+        ? SaveText
+        : Mode == PageLayoutMode.Create ? "Anlegen" : "Speichern";
+
+    private string EffectiveCancelText => !string.IsNullOrWhiteSpace(CancelText)
+        ? CancelText
+        : "Abbrechen";
+
+    private string SaveIcon => Mode == PageLayoutMode.Create
+        ? Icons.Material.Filled.SaveAs
+        : Icons.Material.Outlined.Save;
+
+    private string CancelIcon => Icons.Material.Outlined.Cancel;
 
     private EditContext? _internalEditContext;
     private EditContext? CurrentEditContext => EditContext ?? _internalEditContext;
