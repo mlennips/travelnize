@@ -1,26 +1,17 @@
 window.travelnizeLeaflet = {
     maps: {},
-    /**
-     * options (optional):
-     * {
-     *   zoomControl: false,              // Standard: true
-     *   attributionControl: true/false,  // Standard: true
-     *   disableInteraction: true/false   // Wenn true: macht Karte "statisch"
-     * }
-     */
-    init: function (id, lat, lon, zoom, tileUrl, attribution, markerColor, options) {
+    init: function (id, lat, lon, zoom, tileUrl, attribution, markerColor, options, dotNetRef) {
         if (!id) return;
         if (this.maps[id]) return;
         const el = document.getElementById(id);
         if (!el) return;
 
         options = options || {};
-
         const interactionDisabled = options.disableInteraction === true;
 
         const map = L.map(id, {
-            zoomControl: options.zoomControl !== false,          // default true
-            attributionControl: options.attributionControl !== false, // default true
+            zoomControl: options.zoomControl !== false,
+            attributionControl: options.attributionControl !== false,
             dragging: !interactionDisabled,
             scrollWheelZoom: interactionDisabled ? false : true,
             doubleClickZoom: !interactionDisabled,
@@ -31,7 +22,6 @@ window.travelnizeLeaflet = {
         });
 
         if (options.zoomControl === false && map.zoomControl) {
-            // (Nur falls Leaflet trotzdem einen Control angelegt hat)
             map.zoomControl.remove();
         }
 
@@ -43,14 +33,25 @@ window.travelnizeLeaflet = {
             });
         layer.addTo(map);
 
-        const marker = L.marker([lat, lon], markerColor ? { icon: this._coloredIcon(markerColor) } : undefined)
+        const marker = L.marker([lat, lon], markerColor ? { icon: this._coloredIcon(markerColor), draggable: true } : { draggable: true })
             .addTo(map);
 
         map.setView([lat, lon], zoom);
 
+        // Callback für Marker Drag
+        if (dotNetRef) {
+            marker.on('dragend', function (e) {
+                var pos = e.target.getLatLng();
+                dotNetRef.invokeMethodAsync('OnMapCoordinateChanged', pos.lat, pos.lng);
+            });
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                dotNetRef.invokeMethodAsync('OnMapCoordinateChanged', e.latlng.lat, e.latlng.lng);
+            });
+        }
+
         this.maps[id] = { map, marker };
 
-        // Größe nach Render sicherstellen
         setTimeout(() => map.invalidateSize(), 50);
     },
     update: function (id, lat, lon, zoom, markerColor) {
