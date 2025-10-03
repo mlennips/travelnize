@@ -166,7 +166,7 @@
             if (newId.HasValue)
             {
                 Snackbar.Add("Aktivität erstellt.", Severity.Success);
-                Navigation.NavigateTo($"/trips/{TripId}/destination/{DestinationId}/activities/{newId}/edit");
+                Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{DestinationId}/activities/{newId}/edit");
             }
             else
             {

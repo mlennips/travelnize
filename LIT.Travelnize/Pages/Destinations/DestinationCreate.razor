@@ -54,23 +54,6 @@
                                MinDate="FormModel!.Start"
                                Clearable="true" />
             </MudItem>
-            <MudItem xs="12">
-                <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">Adresse</MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <AddressEdit Model="AddressModel" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="FormModel!.ImageUrl"
-                              Label="Bild-URL"
-                              For="@(()=>FormModel!.ImageUrl)" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="FormModel!.WebsiteUrl"
-                              Label="Website"
-                              For="@(()=>FormModel!.WebsiteUrl)" />
-            </MudItem>
         </MudGrid>
     </FormContent>
 </EditPageLayout>
@@ -80,7 +63,6 @@
     [Parameter] public Guid TravelSegmentId { get; set; }
 
     internal DestinationCreateFormModel? FormModel;
-    internal AddressEdit.AddressEditModel AddressModel { get; set; } = new();
     internal bool IsLoading;
     internal string? LoadError;
 
@@ -149,10 +131,8 @@
             Name = string.Empty,
             Description = string.Empty,
             Start = start,
-            End = end,
-            Address = new AddressEdit.AddressEditModel()
+            End = end
         };
-        AddressModel = FormModel.Address;
     }
 
     private async Task HandleValidSubmit(EditContext _)
@@ -161,23 +141,7 @@
 
         try
         {
-            var address = new Address(
-                AddressModel.Line1 ?? string.Empty,
-                AddressModel.Line2 ?? string.Empty,
-                AddressModel.Street ?? string.Empty,
-                AddressModel.HouseNumber ?? string.Empty,
-                AddressModel.PostalCode ?? string.Empty,
-                AddressModel.City ?? string.Empty,
-                AddressModel.Country ?? string.Empty
-            );
-            var location = new Location(address, Coordinates.Empty);
-
-            ResourceReference? image = !string.IsNullOrWhiteSpace(FormModel.ImageUrl)
-                ? ResourceReference.FromUrl(FormModel.ImageUrl, FormModel.ImageUrl, forceKind: ResourceKind.Image)
-                : null;
-            ResourceReference? website = !string.IsNullOrWhiteSpace(FormModel.WebsiteUrl)
-                ? ResourceReference.FromUrl(FormModel.WebsiteUrl, FormModel.WebsiteUrl, forceKind: ResourceKind.Website)
-                : null;
+            var location = Location.Empty;
 
             var slot = PlanningSlot.Create(FormModel.Start, FormModel.End);
 
@@ -194,7 +158,7 @@
             if (newId.HasValue)
             {
                 Snackbar.Add("Reiseziel erstellt.", Severity.Success);
-                Navigation.NavigateTo($"/trips/{TripId}");
+                Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{newId}/edit");
             }
             else
             {
@@ -242,11 +206,6 @@
 
         [Required(ErrorMessage = "Ende ist erforderlich.")]
         public DateTime? End { get; set; }
-
-        public AddressEdit.AddressEditModel Address { get; set; } = new();
-
-        [StringLength(500)] public string? ImageUrl { get; set; }
-        [StringLength(500)] public string? WebsiteUrl { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

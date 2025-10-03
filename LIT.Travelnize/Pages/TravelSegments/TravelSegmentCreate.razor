@@ -145,7 +145,7 @@
             if (newId.HasValue)
             {
                 Snackbar.Add("Reiseabschnitt erstellt.", Severity.Success);
-                Navigation.NavigateTo($"/trips/{TripId}");
+                Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{newId}/edit");
             }
             else
             {
