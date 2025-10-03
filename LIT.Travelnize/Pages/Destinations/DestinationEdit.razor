@@ -50,19 +50,7 @@
             </MudItem>
 
             <MudItem xs="12">
-                <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">Adresse</MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <AddressEdit Model="FormModel!.AddressModel" />
-            </MudItem>
-
-            <MudItem xs="12">
-                <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <CoordinatesEdit Model="FormModel!.CoordinatesModel" />
+                <LocationEdit Model="FormModel!.LocationModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -140,8 +128,6 @@
             return;
         }
 
-        var addr = _destination.Location?.Address ?? Address.Empty;
-
         FormModel = new DestinationEditFormModel
         {
             TripId = TripId,
@@ -153,8 +139,7 @@
             SlotEnd = _destination.Slot.End,
             Image = _destination.Image?.Source,
             Thumbnail = _destination.Image?.Thumbnail,
-            AddressModel = new AddressEdit.AddressEditModel(addr),
-            CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel(_destination.Location?.Coordinates)
+            LocationModel = new LocationEdit.LocationEditModel(_destination.Location)
         };
     }
 
@@ -164,23 +149,7 @@
 
         try
         {
-            var address = new Address(
-                FormModel.AddressModel.Line1 ?? string.Empty,
-                FormModel.AddressModel.Line2 ?? string.Empty,
-                FormModel.AddressModel.Street ?? string.Empty,
-                FormModel.AddressModel.HouseNumber ?? string.Empty,
-                FormModel.AddressModel.PostalCode ?? string.Empty,
-                FormModel.AddressModel.City ?? string.Empty,
-                FormModel.AddressModel.Country ?? string.Empty
-            );
-
-            var coordinates = new Coordinates
-            {
-                Latitude = FormModel.CoordinatesModel.Latitude ?? 0,
-                Longitude = FormModel.CoordinatesModel.Longitude ?? 0
-            };
-
-            var location = new Location(address, coordinates);
+            var location = FormModel.LocationModel.ToLocation();
 
             ResourceReference? image = null;
             if (!string.IsNullOrWhiteSpace(FormModel.Image))
@@ -253,8 +222,7 @@
         public DateTime? SlotStart { get; set; }
         public DateTime? SlotEnd { get; set; }
 
-        public AddressEdit.AddressEditModel AddressModel { get; set; } = default!;
-        public CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = default!;
+        public LocationEdit.LocationEditModel LocationModel { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -289,9 +257,9 @@
             if (string.IsNullOrWhiteSpace(FormModel.Description) && !string.IsNullOrWhiteSpace(summary.Extract))
                 FormModel.Description = summary.ShortDescription + ". " + summary.Extract;
             if (summary.Latitude.HasValue)
-                FormModel.CoordinatesModel.Latitude = summary.Latitude;
+                FormModel.LocationModel.CoordinatesModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
-                FormModel.CoordinatesModel.Longitude = summary.Longitude;
+                FormModel.LocationModel.CoordinatesModel.Longitude = summary.Longitude;
             if (string.IsNullOrWhiteSpace(FormModel!.Image))
             {
                 FormModel.Image = summary.OriginalImageUrl;

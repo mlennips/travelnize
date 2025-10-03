@@ -1,0 +1,38 @@
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Domain.Common
+
+<MudGrid Spacing="4">
+    <MudItem xs="12">
+        <MudText Typo="Typo.subtitle2">Adresse</MudText>
+        <AddressEdit Model="Model.AddressModel" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
+        <CoordinatesEdit Model="Model.CoordinatesModel" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public LocationEditModel Model { get; set; } = new();
+
+    public class LocationEditModel
+    {
+        public AddressEdit.AddressEditModel AddressModel { get; set; } = default!;
+        public CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = default!;
+
+        public LocationEditModel() { }
+
+        public LocationEditModel(Location? location)
+        {
+            AddressModel = new AddressEdit.AddressEditModel(location?.Address);
+            CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel(location?.Coordinates);
+        }
+
+        public Location ToLocation()
+            => new(
+                AddressModel.ToAddress(),
+                CoordinatesModel.ToCoordinates()
+            );
+    }
+}

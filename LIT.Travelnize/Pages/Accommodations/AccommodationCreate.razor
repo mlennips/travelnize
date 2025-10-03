@@ -38,20 +38,10 @@
                 </MudSelect>
             </MudItem>
 
-            <MudItem xs="12" sm="6">
-                <MudDatePicker @bind-Date="FormModel!.CheckIn"
-                               Label="Check-In"
-                               For="@(()=>FormModel!.CheckIn)"
-                               MaxDate="FormModel!.CheckOut"
-                               Clearable="true" />
+            <MudItem xs="12">
+                <PlanningSlotEdit Model="FormModel!.CheckInOutModel" />
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudDatePicker @bind-Date="FormModel!.CheckOut"
-                               Label="Check-Out"
-                               For="@(()=>FormModel!.CheckOut)"
-                               MinDate="FormModel!.CheckIn"
-                               Clearable="true" />
-            </MudItem>
+
             <MudItem xs="12">
                 <MudDivider Class="my-2" />
                 <MudText Typo="Typo.subtitle2">Adresse</MudText>
@@ -147,8 +137,7 @@
             DestinationId = DestinationId,
             Name = string.Empty,
             Type = AccommodationType.Default.Value,
-            CheckIn = start,
-            CheckOut = end,
+            CheckInOutModel = new PlanningSlotEdit.PlanningSlotEditModel(new PlanningSlot(start, end)),
             Address = new AddressEdit.AddressEditModel()
         };
         AddressModel = FormModel.Address;
@@ -160,7 +149,7 @@
 
         try
         {
-            var slot = PlanningSlot.Create(FormModel.CheckIn, FormModel.CheckOut);
+            var slot = FormModel.CheckInOutModel.ToPlanningSlot();
 
             var command = new AddAccommodationCommand(
                 FormModel.TripId,
@@ -219,19 +208,15 @@
         [StringLength(80, ErrorMessage = "Maximal 80 Zeichen.")]
         public string? Type { get; set; }
 
-        [Required(ErrorMessage = "Check-In ist erforderlich.")]
-        public DateTime? CheckIn { get; set; }
-
-        [Required(ErrorMessage = "Check-Out ist erforderlich.")]
-        public DateTime? CheckOut { get; set; }
+        public PlanningSlotEdit.PlanningSlotEditModel CheckInOutModel { get; set; } = new();
 
         public AddressEdit.AddressEditModel Address { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (CheckIn.HasValue && CheckOut.HasValue && CheckIn.Value >= CheckOut.Value)
+            if (CheckInOutModel.Start.HasValue && CheckInOutModel.End.HasValue && CheckInOutModel.Start.Value >= CheckInOutModel.End.Value)
             {
-                yield return new ValidationResult("Check-In muss vor Check-Out liegen.", new[] { nameof(CheckOut) });
+                yield return new ValidationResult("Check-In muss vor Check-Out liegen.", new[] { nameof(CheckInOutModel.End) });
             }
         }
     }

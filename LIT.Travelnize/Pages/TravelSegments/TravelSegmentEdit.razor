@@ -31,20 +31,8 @@
                               Lines="1"
                               Placeholder="Kurze Beschreibung des Reiseabschnitts" />
             </MudItem>
-
-            <MudItem xs="12" sm="6">
-                <MudDatePicker @bind-Date="FormModel!.Start"
-                               Label="Startdatum"
-                               For="@(()=>FormModel!.Start)"
-                               MaxDate="FormModel!.End"
-                               Clearable="true" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudDatePicker @bind-Date="FormModel!.End"
-                               Label="Enddatum"
-                               For="@(()=>FormModel!.End)"
-                               MinDate="FormModel!.Start"
-                               Clearable="true" />
+            <MudItem xs="12">
+                <PlanningSlotEdit Model="FormModel!.SlotModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -124,8 +112,7 @@
             SegmentId = TravelSegmentId,
             Name = _segment.Name,
             Description = _segment.Description,
-            Start = _segment.Slot.Start?.Date,
-            End = _segment.Slot.End?.Date
+            SlotModel = new PlanningSlotEdit.PlanningSlotEditModel(_segment.Slot)
         };
     }
 
@@ -138,7 +125,7 @@
             var command = new UpdateTravelSegmentCommand(
                 FormModel.TripId,
                 FormModel.SegmentId,
-                PlanningSlot.Create(FormModel.Start, FormModel.End),
+                FormModel.SlotModel.ToPlanningSlot(),
                 FormModel.Name!.Trim(),
                 FormModel.Description!.Trim()
             );
@@ -189,22 +176,17 @@
         [StringLength(500, ErrorMessage = "Maximal 500 Zeichen.")]
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Startdatum ist erforderlich.")]
-        public DateTime? Start { get; set; }
-
-        [Required(ErrorMessage = "Enddatum ist erforderlich.")]
-        public DateTime? End { get; set; }
+        public PlanningSlotEdit.PlanningSlotEditModel SlotModel { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // ToDo Validate with PlanningSlot-Functions
-            if (Start.HasValue && End.HasValue && End.Value.Date < Start.Value.Date)
+            if (SlotModel.Start.HasValue && SlotModel.End.HasValue && SlotModel.End.Value.Date < SlotModel.Start.Value.Date)
             {
-                yield return new ValidationResult("Enddatum darf nicht vor dem Startdatum liegen.", new[] { nameof(End) });
+                yield return new ValidationResult("Enddatum darf nicht vor dem Startdatum liegen.", new[] { nameof(SlotModel.End) });
             }
-            if (Start.HasValue && End.HasValue && (End.Value.Date - Start.Value.Date).TotalDays > 365)
+            if (SlotModel.Start.HasValue && SlotModel.End.HasValue && (SlotModel.End.Value.Date - SlotModel.Start.Value.Date).TotalDays > 365)
             {
-                yield return new ValidationResult("Abschnitt darf maximal 365 Tage dauern.", new[] { nameof(End) });
+                yield return new ValidationResult("Abschnitt darf maximal 365 Tage dauern.", new[] { nameof(SlotModel.End) });
             }
         }
     }
