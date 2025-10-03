@@ -1,0 +1,75 @@
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Domain.Trips.ValueObjects
+
+<EditForm Model="Model" OnValidSubmit="OnValidSubmit">
+    <MudGrid Spacing="4">
+        <MudItem xs="12" sm="6">
+            <MudDatePicker @bind-Date="Model.Start"
+                           Label="Startdatum"
+                           For="@(() => Model.Start)"
+                           Clearable="true" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudDatePicker @bind-Date="Model.End"
+                           Label="Enddatum"
+                           For="@(() => Model.End)"
+                           MinDate="Model.Start"
+                           Clearable="true" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                @if (Model.Start.HasValue && Model.End.HasValue)
+                {
+                    <span>
+                        @($"{Model.TotalDaysInclusive} Tag(e), {Model.Nights} Nacht/Nächte")
+                    </span>
+                }
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public PlanningSlotEditModel Model { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<PlanningSlotEditModel> ModelChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    public class PlanningSlotEditModel
+    {
+        [Required(ErrorMessage = "Startdatum ist erforderlich.")]
+        public DateTime? Start { get; set; }
+
+        [Required(ErrorMessage = "Enddatum ist erforderlich.")]
+        public DateTime? End { get; set; }
+
+        public int TotalDays =>
+            Start.HasValue && End.HasValue
+                ? (End.Value.Date - Start.Value.Date).Days
+                : 0;
+
+        public int TotalDaysInclusive =>
+            Start.HasValue && End.HasValue
+                ? (End.Value.Date - Start.Value.Date).Days + 1
+                : 0;
+
+        public int Nights =>
+            Start.HasValue && End.HasValue
+                ? Math.Max(0, (End.Value.Date - Start.Value.Date).Days)
+                : 0;
+
+        public PlanningSlotEditModel() { }
+
+        public PlanningSlotEditModel(PlanningSlot? slot)
+        {
+            Start = slot?.Start;
+            End = slot?.End;
+        }
+
+        public PlanningSlot ToPlanningSlot() => PlanningSlot.Create(Start, End);
+    }
+}
