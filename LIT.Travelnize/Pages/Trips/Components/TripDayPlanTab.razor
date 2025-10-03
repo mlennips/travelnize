@@ -1,4 +1,4 @@
-@using System.Globalization
+Ôªø@using System.Globalization
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
 @using LIT.Travelnize.Helpers
@@ -9,13 +9,13 @@
 }
 else if (Trip.Slot.Start is null || Trip.Slot.End is null)
 {
-    <MudText Typo="Typo.caption">Der Trip hat kein g¸ltiges Start- oder Enddatum.</MudText>
+    <MudText Typo="Typo.caption">Der Trip hat kein g√ºltiges Start- oder Enddatum.</MudText>
 }
 else
 {
     @if (_days.Count == 0)
     {
-        <MudText Typo="Typo.caption">Keine Eintr‰ge vorhanden.</MudText>
+        <MudText Typo="Typo.caption">Keine Eintr√§ge vorhanden.</MudText>
     }
     else
     {
@@ -31,14 +31,14 @@ else
                             </CardHeaderAvatar>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.body1" Class="fw-bold">@day.Date.ToLongDateString()</MudText>
-                                <MudText Typo="Typo.body2">@day.Events.Count @(day.Events.Count == 1 ? "Eintrag" : "Eintr‰ge")</MudText>
+                                <MudText Typo="Typo.body2">@day.Events.Count @(day.Events.Count == 1 ? "Eintrag" : "Eintr√§ge")</MudText>
                             </CardHeaderContent>
                         </MudCardHeader>
                         <MudCardContent Class="pa-0">
                             <MudStack Spacing="1">
                                 @if (day.Events.Count == 0)
                                 {
-                                    <MudText Typo="Typo.caption" Class="opacity-50 ma-4">Keine Eintr‰ge</MudText>
+                                    <MudText Typo="Typo.caption" Class="opacity-50 ma-4">Keine Eintr√§ge</MudText>
                                 }
                                 else
                                 {
@@ -149,7 +149,7 @@ else
                 ));
             }
 
-            // Aktivit‰ten
+            // Aktivit√§ten
             foreach (var act in allActivities.Where(a => a.Activity.Date!.Value.Date == day.Date))
             {
                 day.Events.Add(new DayEvent(

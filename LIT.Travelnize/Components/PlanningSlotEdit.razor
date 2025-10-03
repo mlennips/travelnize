@@ -1,4 +1,4 @@
-@using System.ComponentModel.DataAnnotations
+﻿@using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 
 <EditForm Model="Model" OnValidSubmit="OnValidSubmit">
@@ -21,7 +21,7 @@
                 @if (Model.Start.HasValue && Model.End.HasValue)
                 {
                     <span>
-                        @($"{Model.TotalDaysInclusive} Tag(e), {Model.Nights} Nacht/N�chte")
+                        @($"{Model.TotalDaysInclusive} Tag(e), {Model.Nights} Nacht/Nächte")
                     </span>
                 }
             </MudText>

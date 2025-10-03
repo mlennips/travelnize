@@ -1,14 +1,14 @@
-@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/activities/create"
+ï»¿@page "/trips/{TripId:guid}/travelsegments/{TravelSegmentId:guid}/destinations/{DestinationId:guid}/activities/create"
 @using System.ComponentModel.DataAnnotations
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<PageTitle>Travelnize - Aktivität hinzufügen</PageTitle>
+<PageTitle>Travelnize - AktivitÃ¤t hinzufÃ¼gen</PageTitle>
 
 <EditPageLayout TModel="ActivityCreateFormModel"
-                Title="Aktivität hinzufügen"
-                Subtitle="Lege eine neue Aktivität für dein Reiseziel an."
+                Title="AktivitÃ¤t hinzufÃ¼gen"
+                Subtitle="Lege eine neue AktivitÃ¤t fÃ¼r dein Reiseziel an."
                 ContainerClass="my-6"
                 Model="FormModel"
                 IsLoading="IsLoading"
@@ -22,7 +22,7 @@
                               Label="Name"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name der Aktivität" />
+                              Placeholder="Name der AktivitÃ¤t" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
@@ -157,7 +157,7 @@
             var newId = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add("Aktivität erstellt.", Severity.Success);
+                Snackbar.Add("AktivitÃ¤t erstellt.", Severity.Success);
                 Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
             }
             else
