@@ -1,4 +1,5 @@
 @using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Domain.Common
 @inject IJSRuntime JS
 
 <MudGrid Spacing="4">
@@ -27,7 +28,7 @@
 
 @code {
     [Parameter, EditorRequired]
-    public CoordinatesEditModel Model { get; set; } = new();
+    public CoordinatesEditModel Model { get; set; }
 
     private bool _mapInitialized;
     private double? _lastLat;
@@ -98,12 +99,21 @@
         _dotNetRef?.Dispose();
     }
 
-    public class CoordinatesEditModel
+    public class CoordinatesEditModel(Coordinates? coordinates)
     {
         [Range(-90, 90, ErrorMessage = "Latitude muss zwischen -90 und 90 liegen.")]
-        public double? Latitude { get; set; }
+        public double? Latitude { get; set; } = coordinates?.Latitude;
 
         [Range(-180, 180, ErrorMessage = "Longitude muss zwischen -180 und 180 liegen.")]
-        public double? Longitude { get; set; }
+        public double? Longitude { get; set; } = coordinates?.Longitude;
+
+        public Coordinates ToCoordinates()
+        {
+            return new Coordinates
+                {
+                    Latitude = Latitude ?? 0,
+                    Longitude = Longitude ?? 0
+                };
+        }
     }
 }

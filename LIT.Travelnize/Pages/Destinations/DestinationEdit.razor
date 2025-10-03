@@ -60,7 +60,7 @@
                 <MudText Typo="Typo.subtitle2">Adresse</MudText>
             </MudItem>
             <MudItem xs="12">
-                <AddressEdit Model="AddressModel" />
+                <AddressEdit Model="FormModel!.AddressModel" />
             </MudItem>
 
             <MudItem xs="12">
@@ -68,7 +68,7 @@
                 <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
             </MudItem>
             <MudItem xs="12">
-                <CoordinatesEdit Model="CoordinatesModel" />
+                <CoordinatesEdit Model="FormModel!.CoordinatesModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -80,8 +80,6 @@
     [Parameter] public Guid DestinationId { get; set; }
 
     private DestinationEditFormModel? FormModel;
-    private AddressEdit.AddressEditModel AddressModel { get; set; } = new();
-    private CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = new();
     private bool IsLoading;
     private string? LoadError;
 
@@ -149,24 +147,6 @@
         }
 
         var addr = _destination.Location?.Address ?? Address.Empty;
-        var coords = _destination.Location?.Coordinates;
-
-        AddressModel = new AddressEdit.AddressEditModel
-        {
-            Line1 = addr.Line1,
-            Line2 = addr.Line2,
-            Street = addr.Street,
-            HouseNumber = addr.HouseNumber,
-            PostalCode = addr.PostalCode,
-            City = addr.City,
-            Country = addr.Country
-        };
-
-        CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel
-        {
-            Latitude = coords?.Latitude,
-            Longitude = coords?.Longitude
-        };
 
         FormModel = new DestinationEditFormModel
         {
@@ -178,7 +158,9 @@
             SlotStart = _destination.Slot.Start,
             SlotEnd = _destination.Slot.End,
             Image = _destination.Image?.Source,
-            Thumbnail = _destination.Image?.Thumbnail
+            Thumbnail = _destination.Image?.Thumbnail,
+            AddressModel = new AddressEdit.AddressEditModel(addr),
+            CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel(_destination.Location?.Coordinates)
         };
     }
 
@@ -189,19 +171,19 @@
         try
         {
             var address = new Address(
-                AddressModel.Line1 ?? string.Empty,
-                AddressModel.Line2 ?? string.Empty,
-                AddressModel.Street ?? string.Empty,
-                AddressModel.HouseNumber ?? string.Empty,
-                AddressModel.PostalCode ?? string.Empty,
-                AddressModel.City ?? string.Empty,
-                AddressModel.Country ?? string.Empty
+                FormModel.AddressModel.Line1 ?? string.Empty,
+                FormModel.AddressModel.Line2 ?? string.Empty,
+                FormModel.AddressModel.Street ?? string.Empty,
+                FormModel.AddressModel.HouseNumber ?? string.Empty,
+                FormModel.AddressModel.PostalCode ?? string.Empty,
+                FormModel.AddressModel.City ?? string.Empty,
+                FormModel.AddressModel.Country ?? string.Empty
             );
 
             var coordinates = new Coordinates
             {
-                Latitude = CoordinatesModel.Latitude ?? 0,
-                Longitude = CoordinatesModel.Longitude ?? 0
+                Latitude = FormModel.CoordinatesModel.Latitude ?? 0,
+                Longitude = FormModel.CoordinatesModel.Longitude ?? 0
             };
 
             var location = new Location(address, coordinates);
@@ -277,6 +259,9 @@
         public DateTime? SlotStart { get; set; }
         public DateTime? SlotEnd { get; set; }
 
+        public AddressEdit.AddressEditModel AddressModel { get; set; } = default!;
+        public CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = default!;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return Array.Empty<ValidationResult>();
@@ -310,9 +295,9 @@
             if (string.IsNullOrWhiteSpace(FormModel.Description) && !string.IsNullOrWhiteSpace(summary.Extract))
                 FormModel.Description = summary.ShortDescription + ". " + summary.Extract;
             if (summary.Latitude.HasValue)
-                CoordinatesModel.Latitude = summary.Latitude;
+                FormModel.CoordinatesModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
-                CoordinatesModel.Longitude = summary.Longitude;
+                FormModel.CoordinatesModel.Longitude = summary.Longitude;
             if (string.IsNullOrWhiteSpace(FormModel!.Image))
             {
                 FormModel.Image = summary.OriginalImageUrl;

@@ -1,0 +1,75 @@
+@using LIT.Travelnize.Domain.Common
+@using System.ComponentModel.DataAnnotations
+@inherits OwningComponentBase
+
+<MudPaper Class="pa-2" Elevation="0">
+    <MudTextField @bind-Value="Model.Name"
+                  Label="Name"
+                  For="@(() => Model.Name)"
+                  Required="true"
+                  Placeholder="Name der Ressource" />
+    <MudTextField @bind-Value="Model.Source"
+                  Label="Quelle (URL oder Pfad)"
+                  For="@(() => Model.Source)"
+                  Required="true"
+                  Placeholder="URL oder Pfad" />
+    <MudSelect T="ResourceKind" @bind-Value="Model.Kind" Label="Typ" Required="true">
+        @foreach (var kind in Enum.GetValues<ResourceKind>())
+        {
+            <MudSelectItem Value="@(kind)">@kind.ToString()</MudSelectItem>
+        }
+    </MudSelect>
+    <MudTextField @bind-Value="Model.Thumbnail"
+                  Label="Thumbnail (optional)"
+                  For="@(() => Model.Thumbnail)"
+                  Placeholder="URL oder Pfad zum Vorschaubild" />
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public ResourceReference? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<ResourceReference?> ValueChanged { get; set; }
+
+    private ResourceReferenceModel Model { get; set; } = new();
+
+    protected override void OnParametersSet()
+    {
+        if (Value != null)
+        {
+            Model = new ResourceReferenceModel
+            {
+                Name = Value.Name,
+                Source = Value.Source,
+                Kind = Value.Kind,
+                Thumbnail = Value.Thumbnail,
+                IsExternal = Value.IsExternal
+            };
+        }
+    }
+
+    private async Task OnModelChanged()
+    {
+        var reference = new ResourceReference(
+            Model.Name ?? string.Empty,
+            Model.Source ?? string.Empty,
+            Model.Kind,
+            Model.Thumbnail,
+            Model.IsExternal
+        );
+        await ValueChanged.InvokeAsync(reference);
+    }
+
+    private class ResourceReferenceModel
+    {
+        [Required]
+        public string? Name { get; set; }
+        [Required]
+        public string? Source { get; set; }
+        [Required]
+        public ResourceKind Kind { get; set; }
+        public string? Thumbnail { get; set; }
+        public bool IsExternal { get; set; }
+    }
+}

@@ -78,7 +78,7 @@
                 <MudText Typo="Typo.subtitle2">Adresse</MudText>
             </MudItem>
             <MudItem xs="12">
-                <AddressEdit Model="AddressModel" />
+                <AddressEdit Model="FormModel!.AddressModel" />
             </MudItem>
 
             <MudItem xs="12">
@@ -86,7 +86,7 @@
                 <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
             </MudItem>
             <MudItem xs="12">
-                <CoordinatesEdit Model="CoordinatesModel" />
+                <CoordinatesEdit Model="FormModel!.CoordinatesModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -99,8 +99,6 @@
     [Parameter] public Guid ActivityId { get; set; }
 
     private ActivityEditFormModel? FormModel;
-    private AddressEdit.AddressEditModel AddressModel { get; set; } = new();
-    private CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = new();
     private bool IsLoading;
     private string? LoadError;
 
@@ -175,26 +173,6 @@
             return;
         }
 
-        var addr = _activity.Location?.Address ?? Address.Empty;
-        var coords = _activity.Location?.Coordinates;
-
-        AddressModel = new AddressEdit.AddressEditModel
-        {
-            Line1 = addr.Line1,
-            Line2 = addr.Line2,
-            Street = addr.Street,
-            HouseNumber = addr.HouseNumber,
-            PostalCode = addr.PostalCode,
-            City = addr.City,
-            Country = addr.Country
-        };
-
-        CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel
-        {
-            Latitude = coords?.Latitude,
-            Longitude = coords?.Longitude
-        };
-
         FormModel = new ActivityEditFormModel
         {
             TripId = TripId,
@@ -205,7 +183,9 @@
             Description = _activity.Description,
             Date = _activity.Date,
             DurationHours = _activity.Duration?.Hours,
-            DurationMinutes = _activity.Duration?.Minutes % 60
+            DurationMinutes = _activity.Duration?.Minutes % 60,
+            AddressModel = new AddressEdit.AddressEditModel(_activity.Location?.Address),
+            CoordinatesModel = new CoordinatesEdit.CoordinatesEditModel(_activity.Location?.Coordinates)
         };
     }
 
@@ -223,23 +203,7 @@
                 duration = new TimeSpan(h, m, 0);
             }
 
-            var address = new Address(
-                AddressModel.Line1 ?? string.Empty,
-                AddressModel.Line2 ?? string.Empty,
-                AddressModel.Street ?? string.Empty,
-                AddressModel.HouseNumber ?? string.Empty,
-                AddressModel.PostalCode ?? string.Empty,
-                AddressModel.City ?? string.Empty,
-                AddressModel.Country ?? string.Empty
-            );
-
-            var coordinates = new Coordinates
-            {
-                Latitude = CoordinatesModel.Latitude ?? 0,
-                Longitude = CoordinatesModel.Longitude ?? 0
-            };
-
-            var location = new Location(address, coordinates);
+            var location = new Location(FormModel.AddressModel.ToAddress(), FormModel.CoordinatesModel.ToCoordinates());
 
             var command = new UpdateActivityCommand(
                 FormModel.TripId,
@@ -306,6 +270,9 @@
         public int? DurationHours { get; set; }
         public int? DurationMinutes { get; set; }
 
+        public AddressEdit.AddressEditModel AddressModel { get; set; } = default!;
+        public CoordinatesEdit.CoordinatesEditModel CoordinatesModel { get; set; } = default!;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (DurationHours is < 0)
@@ -342,9 +309,9 @@
             if (string.IsNullOrWhiteSpace(FormModel.Description) && !string.IsNullOrWhiteSpace(summary.Extract))
                 FormModel.Description = summary.ShortDescription + ". " + summary.Extract;
             if (summary.Latitude.HasValue)
-                CoordinatesModel.Latitude = summary.Latitude;
+                FormModel!.CoordinatesModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
-                CoordinatesModel.Longitude = summary.Longitude;
+                FormModel!.CoordinatesModel.Longitude = summary.Longitude;
 
             Snackbar.Add("Wikipedia-Daten übernommen.", Severity.Success);
             StateHasChanged();
