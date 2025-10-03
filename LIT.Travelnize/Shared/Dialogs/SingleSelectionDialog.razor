@@ -1,0 +1,37 @@
+@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudList T="SingleSelectionItem">
+            @foreach (var item in Items)
+            {
+                <MudListItem OnClick="@(() => OnItemSelected(item))">
+                    @item.DisplayText
+                </MudListItem>
+            }
+        </MudList>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudBlazor.IDialogReference MudDialog { get; set; } = default!;
+    [Parameter] public List<SingleSelectionItem> Items { get; set; } = new();
+
+    private void OnItemSelected(SingleSelectionItem item)
+    {
+        item.OnSelected?.Invoke();
+        MudDialog?.Close();
+    }
+
+    public class SingleSelectionItem
+    {
+        public string DisplayText { get; set; } = string.Empty;
+        public Action? OnSelected { get; set; }
+
+        public SingleSelectionItem(string displayText, Action? onSelected)
+        {
+            DisplayText = displayText;
+            OnSelected = onSelected;
+        }
+    }
+}

@@ -2,7 +2,9 @@
 @using LIT.Travelnize.Domain.Trips.Queries
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @using LIT.Travelnize.Helpers
+@using LIT.Travelnize.Shared.Dialogs
 @using LIT.Travelnize.Shared.Map
+@using static LIT.Travelnize.Shared.Dialogs.SingleSelectionDialog
 
 @if (Trip is not null)
 {
@@ -25,7 +27,7 @@
                 <MudPaper Elevation="0" Square Class="border-destination-bottom">
                     <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
                         <MudText Typo="Typo.subtitle1" Class="mb-0 text-destination fw-bold">Reiseziele</MudText>
-                        <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/create")" Class="text-destination">
+                        <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/create")" Class="text-activity">
                             <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-destination" />
                         </MudLink>
                     </MudStack>
@@ -36,7 +38,8 @@
                     <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
                         <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
                             <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">Unterkünfte</MudText>
-                            <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/accommodations/create")" Class="text-accommodation">
+                            <MudLink Class="text-accommodation"
+                                     OnClick="@(() => SelectDestinationAnOpenCreateAccommodation(travelSegment))">
                                 <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-accommodation" />
                             </MudLink>
                         </MudStack>
@@ -46,7 +49,8 @@
                     <MudPaper Elevation="0" Square Class="border-activity-bottom">
                         <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
                             <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">Aktivitäten</MudText>
-                            <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/activites/create")" Class="text-activity">
+                            <MudLink Class="text-activity"
+                                     OnClick="@(() => SelectDestinationAnOpenCreateActivity(travelSegment))">
                                 <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-activity" />
                             </MudLink>
                         </MudStack>
@@ -162,7 +166,7 @@
                     </MudPaper>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudDivider DividerType="DividerType.FullWidth" 
+                    <MudDivider DividerType="DividerType.FullWidth"
                                 Class="my-2 border-destination opacity-25"
                                 Style="border-width: 3px !important;border-top-width: 0 !important;border-style: dotted !important;" />
                 </MudItem>
@@ -186,4 +190,39 @@
 @code {
     [Parameter] public GetTripResponse? Trip { get; set; }
     [Parameter] public Guid TripId { get; set; }
+
+    @inject IDialogService DialogService
+    @inject NavigationManager Navigation
+
+    private async Task SelectDestinationAnOpenCreateAccommodation(TravelSegmentDto travelSegment)
+    {
+        var items = travelSegment.Destinations
+            .Select(dest => new SingleSelectionItem(
+                dest.Name,
+                () => Navigation.NavigateTo(LinkHelper.AccommodationLinkCreate(TripId, travelSegment.Id, dest.Id))))
+            .ToList();
+
+        var parameters = new DialogParameters
+        {
+            { "Items", items }
+        };
+
+        await DialogService.ShowAsync<SingleSelectionDialog>("Reiseziel auswählen", parameters);
+    }
+
+    private async Task SelectDestinationAnOpenCreateActivity(TravelSegmentDto travelSegment)
+    {
+        var items = travelSegment.Destinations
+            .Select(dest => new SingleSelectionItem(
+                dest.Name,
+                () => Navigation.NavigateTo(LinkHelper.ActivityLinkCreate(TripId, travelSegment.Id, dest.Id))))
+            .ToList();
+
+        var parameters = new DialogParameters
+        {
+            { "Items", items }
+        };
+
+        await DialogService.ShowAsync<SingleSelectionDialog>("Reiseziel auswählen", parameters);
+    }
 }
