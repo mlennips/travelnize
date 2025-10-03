@@ -1,7 +1,9 @@
+@using LIT.Travelnize.Shared.Dialogs
 @using MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
 @inject NavigationManager Navigation
+@inject IDialogService DialogService
 @typeparam TModel
 
 <MudContainer Class="@ContainerClass" MaxWidth="@(MaxWidth)">
@@ -47,6 +49,16 @@
                                                Disabled="IsSaving || DisableCancel">
                                 </MudIconButton>
                                 <MudSpacer />
+
+                                @if(OnDeleteConfirmed.HasDelegate)
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   ButtonType="ButtonType.Button"
+                                                   OnClick="Delete">
+                                    </MudIconButton>
+                                    <MudDivider DividerType="DividerType.Middle" Vertical="true" Light="false" />
+                                }
                                 <MudIconButton Icon="@SaveIcon"
                                                Color="Color.Primary"
                                                Disabled="@IsSaveButtonDisabled"
@@ -115,6 +127,10 @@
 
     // Extern bereitgestellter EditContext (optional)
     [Parameter] public EditContext? EditContext { get; set; }
+
+    // Delete
+    [Parameter] public EventCallback OnDeleteConfirmed { get; set; }
+
 
     // --- Texte & Icons je nach Modus ---
     private string EffectiveTitle => !string.IsNullOrWhiteSpace(Title)
@@ -236,6 +252,24 @@
         if (!string.IsNullOrWhiteSpace(CancelHref))
         {
             Navigation.NavigateTo(CancelHref);
+        }
+    }
+
+    private async Task Delete()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small };
+
+        var result = await DialogService.ShowMessageBox(
+            title: "Löschen bestätigen",
+            message: "Soll mit dem Löschen wirklich fortgefahren werden?",
+            yesText: "Löschen",
+            noText: "Abbrechen",
+            options: options
+        );
+
+        if (result == true && OnDeleteConfirmed.HasDelegate)
+        {
+            await OnDeleteConfirmed.InvokeAsync();
         }
     }
 
