@@ -18,7 +18,8 @@
                 IsLoading="IsLoading"
                 LoadError="LoadError"
                 CancelHref="@LinkHelper.TripLink(TripId)"
-                OnValidSubmit="HandleValidSubmit">
+                OnValidSubmit="HandleValidSubmit"
+                OnDeleteConfirmed="DeleteActivityAsync">
     <FormContent>
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="10">
@@ -230,6 +231,20 @@
     public void Dispose()
     {
         TripsState.OnChange -= StateChanged;
+    }
+
+    private async Task DeleteActivityAsync()
+    {
+        var result = await TripsState.RemoveActivityAsync(TripId, DestinationId, ActivityId);
+        if (result)
+        {
+            Snackbar.Add("Aktivität gelöscht.", Severity.Success);
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            Snackbar.Add("Löschen fehlgeschlagen.", Severity.Error);
+        }
     }
 
     private class ActivityEditFormModel : IValidatableObject

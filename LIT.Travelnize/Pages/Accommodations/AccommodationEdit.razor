@@ -14,7 +14,8 @@
                 IsLoading="IsLoading"
                 LoadError="LoadError"
                 CancelHref="@LinkHelper.TripLink(TripId)"
-                OnValidSubmit="HandleValidSubmit">
+                OnValidSubmit="HandleValidSubmit"
+                OnDeleteConfirmed="DeleteAccommodationAsync">
     <FormContent>
         <MudGrid Spacing="4">
 
@@ -191,6 +192,20 @@
             }
             StateHasChanged();
         });
+    }
+
+    private async Task DeleteAccommodationAsync()
+    {
+        var result = await TripsState.RemoveAccommodationAsync(TripId, DestinationId, AccommodationId);
+        if (result)
+        {
+            Snackbar.Add("Unterkunft gelöscht.", Severity.Success);
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            Snackbar.Add("Löschen fehlgeschlagen.", Severity.Error);
+        }
     }
 
     public void Dispose()
