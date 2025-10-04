@@ -1,19 +1,38 @@
-name: DEV Deploy (Pull from GHCR)
+name: Deploy (Pull from GHCR)
 
 on:
   workflow_dispatch:
     inputs:
-      image_tag:
-        description: "Docker Image Tag (z.B. dev, sha-..., v1.2.3)"
-        required: false
+      environment:
+        description: "Deployment-Umgebung (dev oder main)"
+        required: true
         default: "dev"
+        type: choice
+        options:
+          - dev
+          - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ github.event.inputs.environment == 'main' && 'latest' || 'dev' }}
+      SERVER_IP: ${{ github.event.inputs.environment == 'main' && secrets.PROD_SERVER_IP || secrets.DEV_SERVER_IP }}
+      SERVER_USER: ${{ github.event.inputs.environment == 'main' && secrets.PROD_SERVER_USER || secrets.DEV_SERVER_USER }}
+      SERVER_SSH_KEY: ${{ github.event.inputs.environment == 'main' && secrets.PROD_SERVER_SSH_KEY || secrets.DEV_SERVER_SSH_KEY }}
+      # Falls du für MAIN andere DB/API/JWT-Secrets brauchst, ergänze sie hier analog!
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      JWT_KEY: ${{ secrets.JWT_KEY }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      GHCR_USERNAME: ${{ github.repository_owner }}
+
     steps:
       - name: Commit Info
-        run: echo "Deploying $GITHUB_SHA with image tag '${{ inputs.image_tag }}'"
+        run: |
+          echo "Deploying $GITHUB_SHA to '${{ github.event.inputs.environment }}' with image tag '${IMAGE_TAG}'"
 
       - name: Checkout (nur für Compose/Configs)
         uses: actions/checkout@v4
@@ -28,27 +47,23 @@ jobs:
       - name: Upload Compose/Config
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.DEV_SERVER_IP }}
-          username: ${{ secrets.DEV_SERVER_USER }}
-          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USER }}
+          key: ${{ env.SERVER_SSH_KEY }}
           source: "deploy.tar.gz"
           target: "/opt/travelnize"
 
       - name: Remote Deploy (Pull aus GHCR)
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEV_SERVER_IP }}
-          username: ${{ secrets.DEV_SERVER_USER }}
-          key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-          # WICHTIG: Variablen, die an den Remote-Host gehen sollen
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USER }}
+          key: ${{ env.SERVER_SSH_KEY }}
           envs: IMAGE_TAG,GHCR_TOKEN,GHCR_USERNAME,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,API_BASE_URL,JWT_KEY
           script: |
             set -euo pipefail
             TARGET_DIR=/opt/travelnize
             cd "$TARGET_DIR"
-
-            # Fallback falls IMAGE_TAG leer (sollte nicht nötig sein, aber defensiv)
-            IMAGE_TAG="${IMAGE_TAG:-dev}"
 
             echo "Entpacke aktualisierte Compose-Dateien..."
             tar xzf deploy.tar.gz || true
@@ -89,13 +104,3 @@ jobs:
 
             echo "Status:"
             docker compose ps
-        env:
-          # Diese Werte stehen der Action zur Verfügung und werden via envs: selektiv durchgereicht
-          IMAGE_TAG: ${{ inputs.image_tag }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USERNAME: ${{ github.repository_owner }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          JWT_KEY: ${{ secrets.JWT_KEY }}
