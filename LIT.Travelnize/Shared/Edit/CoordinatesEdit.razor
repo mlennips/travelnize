@@ -48,7 +48,7 @@
                 "coord-edit-map",
                 Model.Latitude ?? 52.52,
                 Model.Longitude ?? 13.405,
-                13,
+                (Model.Latitude == 0 && Model.Longitude == 0 ? 1 : 13),
                 null,
                 null,
                 "#1976d2",
@@ -73,7 +73,7 @@
                 "coord-edit-map",
                 Model.Latitude.Value,
                 Model.Longitude.Value,
-                13,
+                (Model.Latitude == 0 && Model.Longitude == 0 ? 1 : 13),
                 "#1976d2"
             );
             _lastLat = Model.Latitude;

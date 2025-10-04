@@ -1,4 +1,5 @@
 @page "/trips/{TripId:guid}"
+@using Microsoft.AspNetCore.WebUtilities
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @using LIT.Travelnize.Pages.Trips.Components
@@ -24,53 +25,9 @@
         else if (TripsState.SelectedTrip != null)
         {
             <MudStack Spacing="4">
-                <MudPaper Class="bg-light text-bg-light pa-4" Elevation="0" Outlined="false" Style="position: relative;">
-                    <MudText Style="position: absolute; top: -17px; right: 10px;"
-                             Color="Color.Dark"
-                             Class="text-end opacity-25 fw-bolder">
-                        <PlanningSlotDisplay Slot="@TripsState.SelectedTrip.Slot" Typo="Typo.h6"></PlanningSlotDisplay>
-                    </MudText>
-                    <MudText Color="Color.Secondary" Class="opacity-75">
-                        @TripsState.SelectedTrip?.Description
-                        <MudLink Href="@LinkHelper.TripLinkEdit(TripId)" Typo="Typo.caption">
-                            (bearbeiten)
-                        </MudLink>
-                    </MudText>
-                    <MudChipSet T="string" Size="Size.Medium" IconColor="Color.Default" ReadOnly>
-                        <MudChip Icon="@Icons.Material.Filled.FlightTakeoff" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.Start?.ToLongDateString()</MudChip>
-                        <MudChip Icon="@Icons.Material.Filled.FlightLand" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.End?.ToLongDateString()</MudChip>
-                        @if (TripsState.SelectedTrip.Status == TripStatus.Pending)
-                        {
-                            <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage</MudChip>
-                        }
-                        else if (TripsState.SelectedTrip.Status == TripStatus.Upcoming)
-                        {
-                            <MudChip Icon="@Icons.Material.Filled.HourglassTop" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.DaysUntilStart Tage</MudChip>
-                            <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage</MudChip>
-                        }
-                        else if (TripsState.SelectedTrip.Status == TripStatus.Ongoing)
-                        {
-                            <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Success">
-                                @TripsState.SelectedTrip.Slot.ActiveDays/@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage
-                            </MudChip>
-                        }
-                        else if (TripsState.SelectedTrip.Status == TripStatus.Past)
-                        {
-                            <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@TripsState.SelectedTrip.Slot.TotalDaysInclusive Tage</MudChip>
-                        }
-                        <MudChip Icon="@Icons.Material.Filled.People" Color="Color.Tertiary">@TripsState.SelectedTrip.Participants.Count Teilnehmer</MudChip>
-                    </MudChipSet>
-                    <MudAvatarGroup Spacing="2"
-                                    Max="9"
-                                    Style="position: absolute; bottom: -24px; right: 10px;">
-                        @foreach (var participant in TripsState.SelectedTrip.Participants.OrderBy(p => p.Name))
-                        {
-                            <MudAvatar title="@participant.Name" Elevation="0">@participant.Initials</MudAvatar>
-                        }
-                    </MudAvatarGroup>
-                </MudPaper>
+                <TripHeader Trip="@TripsState.SelectedTrip" TripId="@TripId" />
 
-                <MudTabs>
+                <MudTabs ActivePanelIndex="@activeTabIndex" ActivePanelIndexChanged="OnTabChanged">
                     <MudTabPanel Text="Übersicht">
                         <TripOverviewTab Trip="@TripsState.SelectedTrip" TripId="@TripId" />
                     </MudTabPanel>
@@ -100,11 +57,58 @@
 @code {
     [Parameter] public Guid TripId { get; set; }
 
+    private int activeTabIndex = 0;
+
+    [SupplyParameterFromQuery]
+    private string? Area { get; set; }
+
+    private static readonly string[] TabAreas = new[] { "overview", "dayplan", "participants", "transport", "costs" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        SetTabFromQuery();
+        await base.OnInitializedAsync();
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         if (TripsState.SelectedTrip?.Id != TripId)
         {
             await TripsState.LoadTripAsync(TripId);
         }
+        SetTabFromQuery();
+    }
+
+    private void SetTabFromQuery()
+    {
+        if (Area == null || Area == "overview")
+        {
+            activeTabIndex = 0;
+        }
+        else if (Area == "dayplan")
+        {
+            activeTabIndex = 1;
+        }
+        else if (Area == "participants")
+        {
+            activeTabIndex = 2;
+        }
+        else if (Area == "transport")
+        {
+            activeTabIndex = 3;
+        }
+        else if (Area == "costs")
+        {
+            activeTabIndex = 4;
+        }
+    }
+
+    private void OnTabChanged(int newIndex)
+    {
+        activeTabIndex = newIndex;
+        var area = TabAreas.ElementAtOrDefault(newIndex) ?? "overview";
+        var uri = Navigation.GetUriWithQueryParameter("area", area);
+        Navigation.NavigateTo(uri, forceLoad: false);
+        Area = TabAreas.ElementAtOrDefault(newIndex) ?? "overview";
     }
 }

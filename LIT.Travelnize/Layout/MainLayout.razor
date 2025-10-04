@@ -51,7 +51,7 @@
     // Navigation Loading
     private bool _showProgress;
     private DateTime _navLoadingStartUtc;
-    private readonly TimeSpan _minLoadingDuration = TimeSpan.FromMilliseconds(500);
+    private readonly TimeSpan _minLoadingDuration = TimeSpan.FromMilliseconds(350);
     private IDisposable? _locationChangingReg;
 
     void DrawerToggle() => _drawerOpen = !_drawerOpen;

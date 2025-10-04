@@ -1,0 +1,27 @@
+@using LIT.Travelnize.Domain.Trips.Dtos
+@inject NavigationManager Navigation
+@using MudBlazor
+
+@if (Participant is not null)
+{
+    <MudAvatar @onclick="HandleClick"
+               Size="@Size"
+               Title="@Participant.Name"
+               Class="@((Href is not null ? "cursor-pointer" : null))">
+        @Participant.Initials
+    </MudAvatar>
+}
+
+@code {
+    [Parameter, EditorRequired] public ParticipantDto? Participant { get; set; }
+    [Parameter] public string? Href { get; set; }
+    [Parameter] public Size Size { get; set; } = Size.Medium;
+
+    private void HandleClick()
+    {
+        if (!string.IsNullOrWhiteSpace(Href))
+        {
+            Navigation.NavigateTo(Href);
+        }
+    }
+}

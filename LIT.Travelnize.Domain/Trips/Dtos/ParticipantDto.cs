@@ -22,10 +22,13 @@
                 if (parts.Length == 0)
                     return string.Empty;
 
-                if (parts.Length == 1)
-                    return parts[0][..1].ToUpperInvariant();
+                parts = parts.Select(x => new string(x.Where(char.IsLetterOrDigit).ToArray())).ToArray();
 
-                return string.Concat(parts[0][0], parts[^1][0]).ToUpperInvariant();
+                string initials = parts.Length == 1
+                    ? parts[0][..1]
+                    : string.Concat(parts[0][0], parts[^1][0]);
+
+                return initials.ToUpperInvariant();
             }
         }
     }

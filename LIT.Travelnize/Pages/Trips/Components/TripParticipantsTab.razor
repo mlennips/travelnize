@@ -7,7 +7,7 @@
 }
 else
 {
-    <MudStack Spacing="2" Class="mx-2 my-4">
+    <MudStack Spacing="2" Class="mx-2 my-6">
         <MudSimpleTable Dense="false" Hover="true" Elevation="2" Class="width-full">
             <thead>
                 <tr>
@@ -21,7 +21,7 @@ else
             {
                 <tr>
                     <td>
-                        <MudAvatar Size="Size.Medium">@p.Initials</MudAvatar>
+                        <ParticipantAvatar Participant="@p" Size="Size.Medium" />
                     </td>
                     <td>@p.Name</td>
                     <td>@p.PermissionLevel</td>

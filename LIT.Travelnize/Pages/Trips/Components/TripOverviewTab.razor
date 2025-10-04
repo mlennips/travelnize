@@ -117,6 +117,7 @@
                             {
                                 <MudListItem Icon="@IconHelper.AccommodationOutlined"
                                              id="@accommodation.Id"
+                                             Class="text-nowrap"
                                              Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/{accommodation.Id}/edit")">
                                     <PlanningSlotDisplay Slot="@accommodation.CheckInOut"></PlanningSlotDisplay>
                                     <MudText Typo="Typo.caption" Class="mb-0">@accommodation.Name</MudText>
@@ -150,6 +151,7 @@
                             {
                                 <MudListItem Icon="@IconHelper.ActivityOutlined"
                                              id="@activity.Id"
+                                             Class="text-nowrap"
                                              Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/{activity.Id}/edit")">
                                     <MudText Typo="Typo.caption" Class="mb-0">@activity.Date?.ToShortDateString()</MudText>
                                     <MudText Typo="Typo.caption" Class="mb-0">@activity.Name</MudText>

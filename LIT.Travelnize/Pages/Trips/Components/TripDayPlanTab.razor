@@ -19,7 +19,7 @@ else
     }
     else
     {
-        <MudGrid Class="my-4" Spacing="0">
+        <MudGrid Class="my-6" Spacing="0">
             @foreach (var day in _days)
             {
                 var avatarColor = day.IsToday ? Color.Primary : day.IsPast ? Color.Transparent : Color.Tertiary;

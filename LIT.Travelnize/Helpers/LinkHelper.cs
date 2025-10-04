@@ -3,7 +3,7 @@
     public class LinkHelper
     {
         // Trips
-        public static string TripLink(Guid tripId) => $"/trips/{tripId}";
+        public static string TripLink(Guid tripId, string? area = null) => $"/trips/{tripId}{(string.IsNullOrWhiteSpace(area) ? string.Empty : "?area=" + area)}";
         public static string TripLinkCreate() => $"/trips/create";
         public static string TripLinkEdit(Guid tripId) => $"/trips/{tripId}/edit";
 
