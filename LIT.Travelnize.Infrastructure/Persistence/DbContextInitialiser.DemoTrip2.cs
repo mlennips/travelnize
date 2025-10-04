@@ -1,4 +1,4 @@
-using LIT.Travelnize.Domain.Common;
+ï»¿using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -13,12 +13,12 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Amerika-Roadtrip",
-                "Abenteuer quer durch die USA: Von der Westküste über das Herzland bis zur Ostküste.",
+                "Abenteuer quer durch die USA: Von der WestkÃ¼ste Ã¼ber das Herzland bis zur OstkÃ¼ste.",
                 tripSlot
             );
 
             var travelSegment1 = trip.AddTravelSegment(
-                "Westküste",
+                "WestkÃ¼ste",
                 "Kalifornische Highlights",
                 PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(7))
             ).Value!;
@@ -70,7 +70,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             ).Value!;
 
             var travelSegment3 = trip.AddTravelSegment(
-                "Ostküste",
+                "OstkÃ¼ste",
                 "Metropolen & Geschichte",
                 PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(21))
             ).Value!;
@@ -86,7 +86,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination3_2 = trip.AddDestinationToTravelSegment(
                 travelSegment3.Id,
                 "Washington D.C.",
-                "Weiße Haus, Museen und Monumente.",
+                "WeiÃŸe Haus, Museen und Monumente.",
                 Location.Empty,
                 PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(4), travelSegment3.Slot.Start?.AddDays(7))
             ).Value!;

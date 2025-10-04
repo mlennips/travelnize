@@ -1,4 +1,4 @@
-using LIT.Travelnize.Domain.Common;
+ï»¿using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -12,8 +12,8 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
-                "Großbritannien-Rundreise",
-                "Entdecke die Vielfalt Großbritanniens: Von London über die Highlands bis nach Wales.",
+                "GroÃŸbritannien-Rundreise",
+                "Entdecke die Vielfalt GroÃŸbritanniens: Von London Ã¼ber die Highlands bis nach Wales.",
                 tripSlot
             );
 
@@ -55,7 +55,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
             var travelSegment3 = trip.AddTravelSegment(
                 "Wales",
-                "Küste & Nationalparks",
+                "KÃ¼ste & Nationalparks",
                 PlanningSlot.Create(tripSlot.Start?.AddDays(9), tripSlot.Start?.AddDays(12))
             ).Value!;
 

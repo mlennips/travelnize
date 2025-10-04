@@ -1,4 +1,4 @@
-using LIT.Travelnize.Domain.Common;
+ï»¿using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -8,7 +8,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
     {
         private async Task AddDemoTrip6Async()
         {
-            // Start am nächsten Samstag
+            // Start am nÃ¤chsten Samstag
             var today = DateTime.UtcNow.Date;
             int daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)today.DayOfWeek + 7) % 7;
             if (daysUntilSaturday == 0) daysUntilSaturday = 7;
@@ -19,35 +19,35 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
-                "Klassenfahrt Südtirol",
-                "Klassenfahrt mit 3 Organisatoren und 50 Schülern nach Südtirol und München.",
+                "Klassenfahrt SÃ¼dtirol",
+                "Klassenfahrt mit 3 Organisatoren und 50 SchÃ¼lern nach SÃ¼dtirol und MÃ¼nchen.",
                 tripSlot 
             );
 
             // 3 Organisatoren
-            var betreuer1 = trip.AddParticipant(Guid.NewGuid(), "Frau Müller (Lehrerin)", new Email("mueller@schule.de")).Value!;
+            var betreuer1 = trip.AddParticipant(Guid.NewGuid(), "Frau MÃ¼ller (Lehrerin)", new Email("mueller@schule.de")).Value!;
             var betreuer2 = trip.AddParticipant(Guid.NewGuid(), "Herr Schmidt (Lehrer)", new Email("schmidt@schule.de")).Value!;
             var betreuer3 = trip.AddParticipant(Guid.NewGuid(), "Frau Becker (Betreuerin)", new Email("becker@schule.de")).Value!;
             trip.ChangeParticipantPermission(betreuer1.Id, PermissionLevel.Organisator);
             trip.ChangeParticipantPermission(betreuer2.Id, PermissionLevel.Organisator);
             trip.ChangeParticipantPermission(betreuer3.Id, PermissionLevel.Organisator);
 
-            // 50 Schüler
+            // 50 SchÃ¼ler
             for (int i = 1; i <= 50; i++)
             {
-                trip.AddParticipantAsGuest($"Schüler {i}", new Email($"schueler{i}@schule.de"));
+                trip.AddParticipantAsGuest($"SchÃ¼ler {i}", new Email($"schueler{i}@schule.de"));
             }
 
-            // Segment 1: Südtirol (5 Tage)
+            // Segment 1: SÃ¼dtirol (5 Tage)
             var tirolSegment = trip.AddTravelSegment(
-                "Südtirol",
-                "Natur, Berge und Kultur in Südtirol",
+                "SÃ¼dtirol",
+                "Natur, Berge und Kultur in SÃ¼dtirol",
                 PlanningSlot.Create(tripStart, tripStart.AddDays(5))
             ).Value!;
 
             var tirolDestination = trip.AddDestinationToTravelSegment(
                 tirolSegment.Id,
-                "Bozen, Südtirol",
+                "Bozen, SÃ¼dtirol",
                 "Erkundung der Alpenregion, Natur und italienische Kultur.",
                 Location.WithCoordinates(46.4983, 11.3548),
                 PlanningSlot.Create(tripStart, tripStart.AddDays(5))
@@ -61,23 +61,23 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 PlanningSlot.Create(tripStart.AddHours(14), tripStart.AddDays(5).AddHours(9))
             );
 
-            // Aktivitäten Südtirol
-            trip.AddActivity(tirolDestination.Id, "Wanderung in den Dolomiten", "Geführte Wanderung für die ganze Klasse.", Location.Empty, tripStart.AddHours(16), TimeSpan.FromHours(3));
-            trip.AddActivity(tirolDestination.Id, "Besuch Ötzi-Museum", "Spannende Führung durch das Archäologiemuseum.", Location.Empty, tripStart.AddDays(1).AddHours(14), TimeSpan.FromHours(2));
+            // AktivitÃ¤ten SÃ¼dtirol
+            trip.AddActivity(tirolDestination.Id, "Wanderung in den Dolomiten", "GefÃ¼hrte Wanderung fÃ¼r die ganze Klasse.", Location.Empty, tripStart.AddHours(16), TimeSpan.FromHours(3));
+            trip.AddActivity(tirolDestination.Id, "Besuch Ã–tzi-Museum", "Spannende FÃ¼hrung durch das ArchÃ¤ologiemuseum.", Location.Empty, tripStart.AddDays(1).AddHours(14), TimeSpan.FromHours(2));
             trip.AddActivity(tirolDestination.Id, "Italienischer Kochkurs", "Gemeinsames Kochen von Pizza und Pasta.", Location.Empty, tripStart.AddDays(2).AddHours(16), TimeSpan.FromHours(2));
-            trip.AddActivity(tirolDestination.Id, "Sportturnier", "Fußball- und Volleyballturnier auf dem Jugendherbergsgelände.", Location.Empty, tripStart.AddDays(3).AddHours(15), TimeSpan.FromHours(3));
+            trip.AddActivity(tirolDestination.Id, "Sportturnier", "FuÃŸball- und Volleyballturnier auf dem JugendherbergsgelÃ¤nde.", Location.Empty, tripStart.AddDays(3).AddHours(15), TimeSpan.FromHours(3));
             trip.AddActivity(tirolDestination.Id, "Abend am Lagerfeuer", "Lagerfeuer mit Musik und Spielen.", Location.Empty, tripStart.AddDays(4).AddHours(19), TimeSpan.FromHours(2));
 
-            // Segment 2: München (2 Tage)
+            // Segment 2: MÃ¼nchen (2 Tage)
             var munichSegment = trip.AddTravelSegment(
-                "München",
-                "Kultur und Spaß in München",
+                "MÃ¼nchen",
+                "Kultur und SpaÃŸ in MÃ¼nchen",
                 PlanningSlot.Create(tripStart.AddDays(5), tripEnd)
             ).Value!;
 
             var munichDestination = trip.AddDestinationToTravelSegment(
                 munichSegment.Id,
-                "München",
+                "MÃ¼nchen",
                 "Erlebnisreiche Tage in der bayerischen Landeshauptstadt.",
                 Location.WithCoordinates(48.1351, 11.5820),
                 PlanningSlot.Create(tripStart.AddDays(5), tripEnd)
@@ -85,15 +85,15 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
             trip.AddAccommodationToDestination(
                 munichDestination.Id,
-                "Hostel München City",
+                "Hostel MÃ¼nchen City",
                 AccommodationType.Hostel,
                 Address.Empty,
                 PlanningSlot.Create(tripStart.AddDays(5).AddHours(12), tripEnd.AddHours(9))
             );
 
-            // Aktivitäten München
-            trip.AddActivity(munichDestination.Id, "Deutsches Museum", "Besuch des größten naturwissenschaftlichen Museums der Welt.", Location.Empty, tripStart.AddDays(5).AddHours(14), TimeSpan.FromHours(3));
-            trip.AddActivity(munichDestination.Id, "Stadtrallye", "Teamwettbewerb durch die Münchner Innenstadt.", Location.Empty, tripStart.AddDays(6).AddHours(11), TimeSpan.FromHours(2));
+            // AktivitÃ¤ten MÃ¼nchen
+            trip.AddActivity(munichDestination.Id, "Deutsches Museum", "Besuch des grÃ¶ÃŸten naturwissenschaftlichen Museums der Welt.", Location.Empty, tripStart.AddDays(5).AddHours(14), TimeSpan.FromHours(3));
+            trip.AddActivity(munichDestination.Id, "Stadtrallye", "Teamwettbewerb durch die MÃ¼nchner Innenstadt.", Location.Empty, tripStart.AddDays(6).AddHours(11), TimeSpan.FromHours(2));
             trip.AddActivity(munichDestination.Id, "Englischer Garten", "Picknick und Freizeit im Englischen Garten.", Location.Empty, tripStart.AddDays(6).AddHours(15), TimeSpan.FromHours(2));
             trip.AddActivity(munichDestination.Id, "Abschlussabend", "Gemeinsamer Abschlussabend mit Spielen im Hostel.", Location.Empty, tripStart.AddDays(6).AddHours(19), TimeSpan.FromHours(2));
 

@@ -1,4 +1,4 @@
-using LIT.Travelnize.Domain.Common;
+ï»¿using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -17,7 +17,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Elternzeit " + tripStart.Year,
-                "Kreuzfahrt ab Kiel und Ferienhaus in Dänemark",
+                "Kreuzfahrt ab Kiel und Ferienhaus in DÃ¤nemark",
                 tripSlot
             );
 
@@ -44,15 +44,15 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             );
 
             var denmarkSegment = trip.AddTravelSegment(
-                "Dänemark",
+                "DÃ¤nemark",
                 "",
                 PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2))
             ).Value!;
 
             var denmarkDestination = trip.AddDestinationToTravelSegment(
                 denmarkSegment.Id,
-                "Ost-Dänemark",
-                "Erkunde Dänemark",
+                "Ost-DÃ¤nemark",
+                "Erkunde DÃ¤nemark",
                 Location.Empty,
                 PlanningSlot.Create(tripStart.AddDays(7), tripEnd.AddDays(-2))
             ).Value!;
@@ -66,7 +66,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             );
 
             var hamburgSegment = trip.AddTravelSegment(
-                "Rückreise",
+                "RÃ¼ckreise",
                 "",
                 PlanningSlot.Create(tripEnd.AddDays(-2), tripEnd)
             ).Value!;

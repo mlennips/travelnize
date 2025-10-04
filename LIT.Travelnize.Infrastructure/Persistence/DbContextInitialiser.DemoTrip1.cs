@@ -1,4 +1,4 @@
-using LIT.Travelnize.Domain.Common;
+ï»¿using LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -13,20 +13,20 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Europa-Roadtrip",
-                "Roadtrip durch Skandinavien, West- und Südeuropa",
+                "Roadtrip durch Skandinavien, West- und SÃ¼deuropa",
                 tripSlot
             );
 
             var travelSegment1 = trip.AddTravelSegment(
                 "Skandinavien",
-                "Natur, Fjorde und nordische Städte",
+                "Natur, Fjorde und nordische StÃ¤dte",
                 PlanningSlot.Create(tripSlot.Start, tripSlot.Start?.AddDays(14))
             ).Value!;
 
             var destination1_1 = trip.AddDestinationToTravelSegment(
                 travelSegment1.Id,
-                "Dänemark",
-                "Erkunde die dänische Hauptstadt mit Nyhavn, Tivoli und moderner Architektur.",
+                "DÃ¤nemark",
+                "Erkunde die dÃ¤nische Hauptstadt mit Nyhavn, Tivoli und moderner Architektur.",
                 Location.WithCoordinates(55.78333333, 9.78333333),
                 PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(4))
             ).Value!;
@@ -34,7 +34,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination1_2 = trip.AddDestinationToTravelSegment(
                 travelSegment1.Id,
                 "Schweden",
-                "Entdecke die schwedische Metropole mit Altstadt, Schärengarten und königlichem Schloss.",
+                "Entdecke die schwedische Metropole mit Altstadt, SchÃ¤rengarten und kÃ¶niglichem Schloss.",
                 Location.WithCoordinates(61.31666667, 14.83333333),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(8))
             ).Value!;
@@ -64,7 +64,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination2_2 = trip.AddDestinationToTravelSegment(
                 travelSegment2.Id,
                 "Amsterdam",
-                "Fahre mit dem Fahrrad durch die Grachtenstadt und genieße das bunte Treiben.",
+                "Fahre mit dem Fahrrad durch die Grachtenstadt und genieÃŸe das bunte Treiben.",
                 Location.WithCoordinates(52.37019722, 4.89044444),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(15), tripSlot.Start?.AddDays(17))
             ).Value!;
@@ -72,13 +72,13 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination2_3 = trip.AddDestinationToTravelSegment(
                 travelSegment2.Id,
                 "Paris",
-                "Besuche Eiffelturm, Louvre und genieße französisches Flair.",
+                "Besuche Eiffelturm, Louvre und genieÃŸe franzÃ¶sisches Flair.",
                 Location.WithCoordinates(48.85666667, 2.35166667),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(17), tripSlot.Start?.AddDays(19))
             ).Value!;
 
             var travelSegment3 = trip.AddTravelSegment(
-                "Südeuropa",
+                "SÃ¼deuropa",
                 "Sonne, Meer und mediterranes Flair",
                 PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(26))
             ).Value!;
@@ -86,7 +86,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination3_1 = trip.AddDestinationToTravelSegment(
                 travelSegment3.Id,
                 "Barcelona",
-                "Erlebe Gaudí, Tapas und das mediterrane Lebensgefühl.",
+                "Erlebe GaudÃ­, Tapas und das mediterrane LebensgefÃ¼hl.",
                 Location.WithCoordinates(41.4, 2.16666667),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(22))
             ).Value!;
@@ -94,12 +94,12 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination3_2 = trip.AddDestinationToTravelSegment(
                 travelSegment3.Id,
                 "Rom",
-                "Tauche ein in die Geschichte der ewigen Stadt mit Kolosseum, Vatikan und italienischer Küche.",
+                "Tauche ein in die Geschichte der ewigen Stadt mit Kolosseum, Vatikan und italienischer KÃ¼che.",
                 Location.WithCoordinates(41.88333333, 12.48333333),
                 PlanningSlot.Create(tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(26))
             ).Value!;
 
-            trip.AddParticipantAsGuest("Anna Müller", new Email("anna.mueller@travelnize.de"));
+            trip.AddParticipantAsGuest("Anna MÃ¼ller", new Email("anna.mueller@travelnize.de"));
             trip.AddParticipantAsGuest("Max Mustermann", new Email("max.mustermann@travelnize.de"));
             trip.AddParticipantAsGuest("Lisa Schmidt", new Email("lisa.schmidt@travelnize.de"));
             trip.AddParticipantAsGuest("Tom Becker", new Email("tom.becker@travelnize.de"));
@@ -137,42 +137,42 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddAccommodationToDestination(destination3_2.Id, "Trastevere Boutique Hotel", AccommodationType.Hotel,
                 Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(24), tripSlot.Start?.AddDays(26)));
 
-            // Activities (unverändert)
-            trip.AddActivity(destination1_1.Id, "Stadtrundgang Kopenhagen", "Geführte Tour durch die Altstadt und den Nyhavn.", Location.Empty, travelSegment1.Slot.Start, TimeSpan.FromHours(3));
-            trip.AddActivity(destination1_1.Id, "Besuch im Tivoli", "Erlebe den berühmten Freizeitpark Tivoli mit Fahrgeschäften und Shows.", Location.Empty, travelSegment1.Slot.Start?.AddDays(1), TimeSpan.FromHours(5));
-            trip.AddActivity(destination1_1.Id, "Fahrradtour", "Entdecke Kopenhagen auf dem Rad – vorbei an moderner Architektur und Parks.", Location.Empty, travelSegment1.Slot.Start?.AddDays(2), TimeSpan.FromHours(2));
+            // Activities (unverÃ¤ndert)
+            trip.AddActivity(destination1_1.Id, "Stadtrundgang Kopenhagen", "GefÃ¼hrte Tour durch die Altstadt und den Nyhavn.", Location.Empty, travelSegment1.Slot.Start, TimeSpan.FromHours(3));
+            trip.AddActivity(destination1_1.Id, "Besuch im Tivoli", "Erlebe den berÃ¼hmten Freizeitpark Tivoli mit FahrgeschÃ¤ften und Shows.", Location.Empty, travelSegment1.Slot.Start?.AddDays(1), TimeSpan.FromHours(5));
+            trip.AddActivity(destination1_1.Id, "Fahrradtour", "Entdecke Kopenhagen auf dem Rad â€“ vorbei an moderner Architektur und Parks.", Location.Empty, travelSegment1.Slot.Start?.AddDays(2), TimeSpan.FromHours(2));
 
             // Schweden
             trip.AddActivity(destination1_2.Id, "Altstadt Gamla Stan", "Spaziergang durch die historische Altstadt von Stockholm.", Location.Empty, tripSlot.Start?.AddDays(4), TimeSpan.FromHours(2));
-            trip.AddActivity(destination1_2.Id, "Bootstour Schärengarten", "Bootsfahrt durch die Inselwelt vor Stockholm.", Location.Empty, tripSlot.Start?.AddDays(5), TimeSpan.FromHours(4));
-            trip.AddActivity(destination1_2.Id, "Besuch Königliches Schloss", "Führung durch das königliche Schloss in Stockholm.", Location.Empty, tripSlot.Start?.AddDays(6), TimeSpan.FromHours(2));
+            trip.AddActivity(destination1_2.Id, "Bootstour SchÃ¤rengarten", "Bootsfahrt durch die Inselwelt vor Stockholm.", Location.Empty, tripSlot.Start?.AddDays(5), TimeSpan.FromHours(4));
+            trip.AddActivity(destination1_2.Id, "Besuch KÃ¶nigliches Schloss", "FÃ¼hrung durch das kÃ¶nigliche Schloss in Stockholm.", Location.Empty, tripSlot.Start?.AddDays(6), TimeSpan.FromHours(2));
 
             // Norwegen
-            trip.AddActivity(destination1_3.Id, "Fjord-Kreuzfahrt", "Bootstour durch die berühmten norwegischen Fjorde.", Location.Empty, tripSlot.Start?.AddDays(8), TimeSpan.FromHours(6));
+            trip.AddActivity(destination1_3.Id, "Fjord-Kreuzfahrt", "Bootstour durch die berÃ¼hmten norwegischen Fjorde.", Location.Empty, tripSlot.Start?.AddDays(8), TimeSpan.FromHours(6));
             trip.AddActivity(destination1_3.Id, "Wanderung Preikestolen", "Atemberaubende Wanderung zum Felsenplateau Preikestolen.", Location.Empty, tripSlot.Start?.AddDays(9), TimeSpan.FromHours(5));
             trip.AddActivity(destination1_3.Id, "Besuch Bergen", "Stadtrundgang durch die Hansestadt Bergen.", Location.Empty, tripSlot.Start?.AddDays(10), TimeSpan.FromHours(3));
 
             // Hamburg
             trip.AddActivity(destination2_1.Id, "Hafenrundfahrt", "Bootstour durch den Hamburger Hafen und die Speicherstadt.", Location.Empty, tripSlot.Start?.AddDays(14), TimeSpan.FromHours(2));
-            trip.AddActivity(destination2_1.Id, "Reeperbahn-Tour", "Erkunde das berühmte Hamburger Nachtleben auf der Reeperbahn.", Location.Empty, tripSlot.Start?.AddDays(14).AddHours(20), TimeSpan.FromHours(3));
+            trip.AddActivity(destination2_1.Id, "Reeperbahn-Tour", "Erkunde das berÃ¼hmte Hamburger Nachtleben auf der Reeperbahn.", Location.Empty, tripSlot.Start?.AddDays(14).AddHours(20), TimeSpan.FromHours(3));
 
             // Amsterdam
-            trip.AddActivity(destination2_2.Id, "Grachtenfahrt", "Bootsfahrt durch die Kanäle von Amsterdam.", Location.Empty, tripSlot.Start?.AddDays(15), TimeSpan.FromHours(2));
-            trip.AddActivity(destination2_2.Id, "Van Gogh Museum", "Besuch des weltberühmten Van Gogh Museums.", Location.Empty, tripSlot.Start?.AddDays(16), TimeSpan.FromHours(2));
-            trip.AddActivity(destination2_2.Id, "Fahrradtour", "Geführte Fahrradtour durch die Innenstadt.", Location.Empty, tripSlot.Start?.AddDays(16).AddHours(14), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_2.Id, "Grachtenfahrt", "Bootsfahrt durch die KanÃ¤le von Amsterdam.", Location.Empty, tripSlot.Start?.AddDays(15), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_2.Id, "Van Gogh Museum", "Besuch des weltberÃ¼hmten Van Gogh Museums.", Location.Empty, tripSlot.Start?.AddDays(16), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_2.Id, "Fahrradtour", "GefÃ¼hrte Fahrradtour durch die Innenstadt.", Location.Empty, tripSlot.Start?.AddDays(16).AddHours(14), TimeSpan.FromHours(2));
 
             // Paris
             trip.AddActivity(destination2_3.Id, "Eiffelturm-Besuch", "Auffahrt auf den Eiffelturm mit Panoramablick.", Location.Empty, tripSlot.Start?.AddDays(17), TimeSpan.FromHours(2));
-            trip.AddActivity(destination2_3.Id, "Louvre-Führung", "Geführte Tour durch das berühmte Kunstmuseum Louvre.", Location.Empty, tripSlot.Start?.AddDays(18), TimeSpan.FromHours(3));
-            trip.AddActivity(destination2_3.Id, "Spaziergang Montmartre", "Erkunde das Künstlerviertel Montmartre und Sacré-Cœur.", Location.Empty, tripSlot.Start?.AddDays(18).AddHours(16), TimeSpan.FromHours(2));
+            trip.AddActivity(destination2_3.Id, "Louvre-FÃ¼hrung", "GefÃ¼hrte Tour durch das berÃ¼hmte Kunstmuseum Louvre.", Location.Empty, tripSlot.Start?.AddDays(18), TimeSpan.FromHours(3));
+            trip.AddActivity(destination2_3.Id, "Spaziergang Montmartre", "Erkunde das KÃ¼nstlerviertel Montmartre und SacrÃ©-CÅ“ur.", Location.Empty, tripSlot.Start?.AddDays(18).AddHours(16), TimeSpan.FromHours(2));
 
             // Barcelona
-            trip.AddActivity(destination3_1.Id, "Sagrada Família", "Besichtigung der berühmten Basilika von Gaudí.", Location.Empty, tripSlot.Start?.AddDays(19), TimeSpan.FromHours(2));
+            trip.AddActivity(destination3_1.Id, "Sagrada FamÃ­lia", "Besichtigung der berÃ¼hmten Basilika von GaudÃ­.", Location.Empty, tripSlot.Start?.AddDays(19), TimeSpan.FromHours(2));
             trip.AddActivity(destination3_1.Id, "Tapas-Tour", "Kulinarische Tour durch Barcelonas Tapas-Bars.", Location.Empty, tripSlot.Start?.AddDays(20), TimeSpan.FromHours(3));
             trip.AddActivity(destination3_1.Id, "Strandtag Barceloneta", "Entspannung und Baden am Stadtstrand.", Location.Empty, tripSlot.Start?.AddDays(21), TimeSpan.FromHours(5));
 
             // Rom
-            trip.AddActivity(destination3_2.Id, "Kolosseum & Forum Romanum", "Geführte Tour durch das antike Rom.", Location.Empty, tripSlot.Start?.AddDays(22), TimeSpan.FromHours(3));
+            trip.AddActivity(destination3_2.Id, "Kolosseum & Forum Romanum", "GefÃ¼hrte Tour durch das antike Rom.", Location.Empty, tripSlot.Start?.AddDays(22), TimeSpan.FromHours(3));
             trip.AddActivity(destination3_2.Id, "Vatikanische Museen", "Besuch der Vatikanstadt und der Sixtinischen Kapelle.", Location.Empty, tripSlot.Start?.AddDays(23), TimeSpan.FromHours(4));
             trip.AddActivity(destination3_2.Id, "Piazza Navona & Pantheon", "Spaziergang durch das barocke Rom.", Location.Empty, tripSlot.Start?.AddDays(24), TimeSpan.FromHours(2));
 

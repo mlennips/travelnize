@@ -1,4 +1,4 @@
-using LIT.Travelnize.Domain.Common;
+Ôªøusing LIT.Travelnize.Domain.Common;
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
@@ -13,7 +13,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Kanada-Abenteuer",
-                "Von Vancouver bis Montreal: Natur, St‰dte und Wildnis Kanadas erleben.",
+                "Von Vancouver bis Montreal: Natur, St√§dte und Wildnis Kanadas erleben.",
                 tripSlot
             );
 
@@ -41,7 +41,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
             var travelSegment2 = trip.AddTravelSegment(
                 "Zentral-Kanada",
-                "Pr‰rien & Winnipeg",
+                "Pr√§rien & Winnipeg",
                 PlanningSlot.Create(tripSlot.Start?.AddDays(6), tripSlot.Start?.AddDays(10))
             ).Value!;
 
@@ -70,7 +70,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var destination3_2 = trip.AddDestinationToTravelSegment(
                 travelSegment3.Id,
                 "Montreal",
-                "Franzˆsisches Flair, Altstadt und Festivals.",
+                "Franz√∂sisches Flair, Altstadt und Festivals.",
                 Location.Empty,
                 PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4))
             ).Value!;
