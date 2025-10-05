@@ -1,0 +1,68 @@
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Domain.Common
+
+<EditForm Model="Model">
+    <MudGrid Spacing="4">
+        <MudItem xs="6" sm="3" lg="2">
+            <MudSelect T="ResourceKind" @bind-Value="Model.Kind" Label="Typ">
+                <MudSelectItem Value="ResourceKind.Image">Bild</MudSelectItem>
+                <MudSelectItem Value="ResourceKind.Video">Video</MudSelectItem>
+                <MudSelectItem Value="ResourceKind.Audio">Audio</MudSelectItem>
+                <MudSelectItem Value="ResourceKind.Document">Dokument</MudSelectItem>
+                <MudSelectItem Value="ResourceKind.Website">Webseite</MudSelectItem>
+                <MudSelectItem Value="ResourceKind.Other">Sonstiges</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="6" sm="3" lg="2">
+            <MudTextField @bind-Value="Model.Name"
+                          Label="Name"
+                          For="@(() => Model.Name)" />
+        </MudItem>
+        <MudItem xs="12" sm="3" lg="4">
+            <MudTextField @bind-Value="Model.Source"
+                          Label="Quelle/URL"
+                          For="@(() => Model.Source)" />
+        </MudItem>
+        <MudItem xs="12" sm="3" lg="4">
+            <MudTextField @bind-Value="Model.Thumbnail"
+                          Label="Thumbnail (optional)"
+                          For="@(() => Model.Thumbnail)" />
+        </MudItem>
+        @* Optional: Extern-Flag, falls benötigt
+        <MudItem xs="12" sm="6">
+            <MudSwitch @bind-Checked="Model.IsExternal" Color="Color.Primary" Label="Extern" />
+        </MudItem>
+        *@
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public ResourceReferenceEditModel Model { get; set; } = new();
+
+    public class ResourceReferenceEditModel
+    {
+        [StringLength(150)] public string Name { get; set; } = "";
+        [StringLength(500)] public string Source { get; set; } = "";
+        public ResourceKind Kind { get; set; } = ResourceKind.Image;
+        [StringLength(500)] public string? Thumbnail { get; set; }
+        public bool IsExternal { get; private set; } = true;
+
+        public ResourceReferenceEditModel() { }
+
+        public ResourceReferenceEditModel(ResourceReference? reference)
+        {
+            if (reference is not null)
+            {
+                Name = reference.Name;
+                Source = reference.Source;
+                Kind = reference.Kind;
+                Thumbnail = reference.Thumbnail;
+                IsExternal = reference.IsExternal;
+            }
+        }
+
+        public ResourceReference ToResourceReference()
+            => new(Name, Source, Kind, Thumbnail, IsExternal);
+    }
+}

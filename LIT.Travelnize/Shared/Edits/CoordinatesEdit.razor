@@ -1,9 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Common
+@using MudBlazor
 @inject IJSRuntime JS
 
 <MudGrid Spacing="4">
-    <MudItem xs="12" sm="6">
+    <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Latitude"
                          Label="Breitengrad (Latitude)"
                          For="@(() => Model.Latitude)"
@@ -12,7 +13,7 @@
                          Placeholder="z.B. 52.5200"
                          Min="-90" Max="90" />
     </MudItem>
-    <MudItem xs="12" sm="6">
+    <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Longitude"
                          Label="Längengrad (Longitude)"
                          For="@(() => Model.Longitude)"
@@ -21,9 +22,21 @@
                          Placeholder="z.B. 13.4050"
                          Min="-180" Max="180" />
     </MudItem>
-    <MudItem xs="12">
-        <div id="coord-edit-map" style="height: 350px;"></div>
+    <MudItem xs="12" sm="4" lg="2" Class="d-flex align-items-end">
+        <MudButton Variant="Variant.Filled"
+                   FullWidth
+                   Color="Color.Tertiary"
+                   StartIcon="@(_showMap ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Map)"
+                   OnClick="@ToggleMap">
+            @(_showMap ? "Karte ausblenden" : "Karte anzeigen")
+        </MudButton>
     </MudItem>
+    @if (_showMap)
+    {
+        <MudItem xs="12">
+            <div id="coord-edit-map" style="height: 350px;"></div>
+        </MudItem>
+    }
 </MudGrid>
 
 @code {
@@ -34,10 +47,16 @@
     private double? _lastLat;
     private double? _lastLon;
     private DotNetObjectReference<CoordinatesEdit>? _dotNetRef;
+    private bool _showMap = false;
+
+    private void ToggleMap()
+    {
+        _showMap = !_showMap;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!_mapInitialized)
+        if (_showMap && !_mapInitialized)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             await JS.InvokeVoidAsync(
@@ -60,11 +79,16 @@
             _lastLon = Model.Longitude;
             StateHasChanged();
         }
+        else if (!_showMap && _mapInitialized)
+        {
+            await JS.InvokeVoidAsync("travelnizeLeaflet.dispose", "coord-edit-map");
+            _mapInitialized = false;
+        }
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_mapInitialized &&
+        if (_showMap && _mapInitialized &&
             Model.Latitude.HasValue && Model.Longitude.HasValue &&
             (Model.Latitude != _lastLat || Model.Longitude != _lastLon))
         {

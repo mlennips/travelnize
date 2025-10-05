@@ -2,6 +2,7 @@
 @using LIT.Travelnize.Domain.External.Wikipedia
 @using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Shared.External
+@using LIT.Travelnize.Shared.Edits
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -52,6 +53,11 @@
 
             <MudItem xs="12">
                 <LocationEdit Model="FormModel!.LocationModel" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle2">Bild</MudText>
+                <ResourceReferenceEdit Model="@FormModel!.ImageModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -140,8 +146,22 @@
             SlotEnd = _destination.Slot.End,
             Image = _destination.Image?.Source,
             Thumbnail = _destination.Image?.Thumbnail,
+            ImageModel = new ResourceReferenceEdit.ResourceReferenceEditModel(_destination.Image),
             LocationModel = new LocationEdit.LocationEditModel(_destination.Location)
         };
+    }
+
+    private async Task OnImageModelChanged(ResourceReferenceEdit.ResourceReferenceEditModel model)
+    {
+        if (FormModel != null && model is not null)
+        {
+            FormModel.ImageModel = model;
+            // Optional: Image/Thumbnail für Kompatibilität mit Altlogik
+            var rr = model.ToResourceReference();
+            FormModel.Image = rr.Source;
+            FormModel.Thumbnail = rr.Thumbnail;
+        }
+        await Task.CompletedTask;
     }
 
     private async Task HandleValidSubmit(EditContext _)
@@ -153,9 +173,9 @@
             var location = FormModel.LocationModel.ToLocation();
 
             ResourceReference? image = null;
-            if (!string.IsNullOrWhiteSpace(FormModel.Image))
+            if (!string.IsNullOrWhiteSpace(FormModel.ImageModel.Source))
             {
-                image = ResourceReference.FromUrl(FormModel.Image, FormModel.Image, FormModel.Thumbnail, ResourceKind.Image);
+                image = FormModel.ImageModel.ToResourceReference();
             }
 
             var command = new UpdateDestinationCommand(
@@ -237,6 +257,7 @@
         public DateTime? SlotStart { get; set; }
         public DateTime? SlotEnd { get; set; }
 
+        public ResourceReferenceEdit.ResourceReferenceEditModel ImageModel { get; set; } = new();
         public LocationEdit.LocationEditModel LocationModel { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -275,8 +296,17 @@
                 FormModel.LocationModel.CoordinatesModel.Latitude = summary.Latitude;
             if (summary.Longitude.HasValue)
                 FormModel.LocationModel.CoordinatesModel.Longitude = summary.Longitude;
-            if (string.IsNullOrWhiteSpace(FormModel!.Image))
+            if (FormModel.ImageModel is not null)
             {
+                FormModel.ImageModel = new ResourceReferenceEdit.ResourceReferenceEditModel(
+                    new ResourceReference(
+                        summary.Title ?? "",
+                        summary.OriginalImageUrl ?? "",
+                        ResourceKind.Image,
+                        summary.ThumbnailUrl,
+                        true
+                    )
+                );
                 FormModel.Image = summary.OriginalImageUrl;
                 FormModel.Thumbnail = summary.ThumbnailUrl;
             }           
