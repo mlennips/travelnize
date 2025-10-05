@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LIT.Travelnize.Domain.Base
+﻿namespace LIT.Travelnize.Domain.Base
 {
-    public interface IAggregateRoot : IEntity
+    public interface IAggregateRoot : IAuditableEntity
     {
     }
 }

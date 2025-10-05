@@ -2,13 +2,14 @@
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Accommodation : IEntity
+    public class Accommodation : IAuditableEntity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
         public Guid TravelSegmentId { get; init; }
         public Guid DestinationId { get; init; }
+        public Guid AggregateId => TripId;
 
         public string Name { get; private set; } = default!;
         public AccommodationType Type { get; private set; } = default!;

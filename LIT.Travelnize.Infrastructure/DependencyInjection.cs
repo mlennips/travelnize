@@ -20,6 +20,7 @@ namespace LIT.Travelnize.Infrastructure
             services.AddMediatR();
             services.AddDatabase(configuration);
             services.AddIdentity(configuration);
+            services.AddAudtiLog();
             services.AddRepository();
             services.AddUnitOfWork();
             services.AddSwaggerGen();
@@ -75,6 +76,11 @@ namespace LIT.Travelnize.Infrastructure
             return services;
         }
 
+        private static IServiceCollection AddAudtiLog(this IServiceCollection services)
+        {
+            services.AddScoped<AuditSaveChangesInterceptor>();
+            return services;
+        }
         private static void AddRepository(this IServiceCollection services)
         {
             services.AddScoped(typeof(IReadOnlyRepository<>), typeof(EFReadOnlyRepository<>));

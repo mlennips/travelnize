@@ -2,7 +2,7 @@
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Destination : IEntity
+    public class Destination : IAuditableEntity
     {
         private List<Accommodation> _accommodations = [];
         private List<Activity> _activities = [];
@@ -11,6 +11,7 @@ namespace LIT.Travelnize.Domain.Trips
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
         public Guid TravelSegmentId { get; private set; }
+        public Guid AggregateId => TripId;
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;

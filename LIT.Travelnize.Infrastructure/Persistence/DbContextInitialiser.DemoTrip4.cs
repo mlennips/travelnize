@@ -96,8 +96,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(2), travelSegment3.Slot.Start?.AddDays(4)));
 
             appContext.Trips.Add(trip);
-
-            await appContext.SaveChangesAsync();
         }
     }
 }

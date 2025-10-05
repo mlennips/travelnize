@@ -2,13 +2,14 @@
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class TravelSegment : IEntity
+    public class TravelSegment : IAuditableEntity
     {
         private readonly List<Destination> _destinations = [];
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
+        public Guid AggregateId => TripId;
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;

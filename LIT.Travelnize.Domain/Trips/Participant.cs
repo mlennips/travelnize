@@ -2,13 +2,14 @@
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Participant : IEntity
+    public class Participant : IAuditableEntity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
-        public Guid? UserId { get; private set; }
+        public Guid AggregateId => TripId;
 
+        public Guid? UserId { get; private set; }
         public string Name { get; private set; } = default!;
         public Email? Email { get; private set; }
         public PermissionLevel PermissionLevel { get; private set; } = PermissionLevel.Guest;

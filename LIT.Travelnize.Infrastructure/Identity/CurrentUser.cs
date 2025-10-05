@@ -20,10 +20,18 @@ namespace LIT.Travelnize.Infrastructure.Identity
 
         public async Task<IUser> GetUserAsync()
         {
+            
             if (_user == null)
             {
-                var identityUser = await _userManager.FindByNameAsync(Name);
-                _user = identityUser ?? throw new InvalidOperationException($"User with name {Name} not found.");
+                if (Name == "?")
+                {
+                    _user = new User { Id = Guid.Empty, UserName = "Anonymous" };
+                }
+                else
+                {
+                    var identityUser = await _userManager.FindByNameAsync(Name);
+                    _user = identityUser ?? throw new InvalidOperationException($"User with name {Name} not found.");
+                }
             }
             return _user;
         }

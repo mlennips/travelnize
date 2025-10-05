@@ -98,7 +98,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddActivity(munichDestination.Id, "Abschlussabend", "Gemeinsamer Abschlussabend mit Spielen im Hostel.", Location.Empty, tripStart.AddDays(6).AddHours(19), TimeSpan.FromHours(2));
 
             appContext.Trips.Add(trip);
-            await appContext.SaveChangesAsync();
         }
     }
 }

@@ -1,16 +1,15 @@
-﻿using LIT.Travelnize.Domain.Base;
-using LIT.Travelnize.Domain.Trips.ValueObjects;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIT.Travelnize.Domain.Trips
 {
-    public class Transportation : IEntity
+    public class Transportation : IAuditableEntity
     {
         private List<Participant> _passengers = [];
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; init; }
         public Guid TripId { get; init; }
+        public Guid AggregateId => TripId;
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;

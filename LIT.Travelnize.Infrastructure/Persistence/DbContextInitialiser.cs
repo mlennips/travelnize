@@ -114,6 +114,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                     await AddDemoTrip4Async();
                     await AddDemoTrip5Async();
                     await AddDemoTrip6Async();
+                    await appContext.SaveChangesAsync();
                 }
             }
         }

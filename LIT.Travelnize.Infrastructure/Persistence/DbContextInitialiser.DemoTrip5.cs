@@ -93,8 +93,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddParticipantAsGuest("Merle Mustermann", new Email("max.mustermann@travelnize.de"));
 
             appContext.Trips.Add(trip);
-
-            await appContext.SaveChangesAsync();
         }
     }
 }

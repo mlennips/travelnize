@@ -177,8 +177,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddActivity(destination3_2.Id, "Piazza Navona & Pantheon", "Spaziergang durch das barocke Rom.", Location.Empty, tripSlot.Start?.AddDays(24), TimeSpan.FromHours(2));
 
             appContext.Trips.Add(trip);
-
-            await appContext.SaveChangesAsync();
         }
 
     }

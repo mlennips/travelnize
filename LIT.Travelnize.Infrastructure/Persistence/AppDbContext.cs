@@ -5,8 +5,18 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 {
     public partial class AppDbContext : DbContext
     {
-        protected AppDbContext() {}
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
+        private readonly AuditSaveChangesInterceptor _auditInterceptor;
+
+        protected AppDbContext() 
+        {
+            _auditInterceptor = default!;
+        }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options, AuditSaveChangesInterceptor auditInterceptor)
+            : base(options)
+        {
+            _auditInterceptor = auditInterceptor;
+        }
 
         public DbSet<Trip> Trips => Set<Trip>();
         public DbSet<TravelSegment> TravelSegments => Set<TravelSegment>();
@@ -15,6 +25,13 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         public DbSet<Accommodation> Accommodations => Set<Accommodation>();
         public DbSet<Transportation> Transportations => Set<Transportation>();
         public DbSet<Activity> Activities => Set<Activity>();
+        public DbSet<AuditLogEntry> AuditLogs { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.AddInterceptors(_auditInterceptor);
+            base.OnConfiguring(optionsBuilder);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
