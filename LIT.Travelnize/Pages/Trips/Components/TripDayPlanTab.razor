@@ -132,7 +132,7 @@ else
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckInOut.Start?.ToString("HH:mm", _culture),
                     SortKey: 102 + (acc.Accommodation.CheckInOut.Start?.Hour ?? 0),
-                    Icon: IconHelper.AccommodationTwoTone
+                    Icon: IconHelper.AccommodationOutlined
                 ));
             }
 
@@ -145,7 +145,7 @@ else
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckInOut.End?.ToString("HH:mm", _culture),
                     SortKey: 101 + (acc.Accommodation.CheckInOut.End?.Hour ?? 0),
-                    Icon: IconHelper.AccommodationOutlined
+                    Icon: IconHelper.AccommodationTwoTone
                 ));
             }
 
