@@ -14,7 +14,7 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] IDialogReference MudDialog { get; set; } = default!;
+    [CascadingParameter] IDialogReference? MudDialog { get; set; }
     [Parameter] public List<SingleSelectionItem> Items { get; set; } = new();
 
     private void OnItemSelected(SingleSelectionItem item)

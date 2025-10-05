@@ -67,7 +67,7 @@
                                 <MudAvatar Color="Color.Transparent" Size="Size.Medium" Class="bg-destination border-destination">
                                     @if (destination.Image != null)
                                     {
-                                        <MudImage Src="@destination.Image?.Thumbnail" Class="opacity-75" />
+                                        <MudImage Src="@destination.Image?.ThumbnailOrSource" Class="opacity-75" />
                                     }
                                     else
                                     {

@@ -8,6 +8,8 @@ public sealed record ResourceReference : ValueObject
     public string? Thumbnail { get; private init; }
     public bool IsExternal { get; private init; }
 
+    public string ThumbnailOrSource => Thumbnail ?? Source;
+
     private ResourceReference() { }
 
     public ResourceReference(string name, string source, ResourceKind kind, string? thumbnail, bool isExternal)
@@ -31,12 +33,13 @@ public sealed record ResourceReference : ValueObject
         return new ResourceReference(originalFileName, storedPath, kind, Normalize(thumbnail), isExternal: false);
     }
 
-    public static ResourceReference FromUrl(string title, string url, string? thumbnail = null, ResourceKind? forceKind = null)
+    public static ResourceReference FromUrl(string? name, string url, string? thumbnail = null, ResourceKind? forceKind = null)
     {
-        if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Titel leer", nameof(title));
         if (string.IsNullOrWhiteSpace(url)) throw new ArgumentException("URL leer", nameof(url));
 
-        title = title.Trim();
+        name = string.IsNullOrEmpty(name) ? DetectNameBySource(url) : name.Trim();
+
+        name = name.Trim();
         url = url.Trim();
 
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
@@ -44,11 +47,8 @@ public sealed record ResourceReference : ValueObject
             throw new ArgumentException("Ungültige URL", nameof(url));
 
         var kind = forceKind ?? DetectKindFromUrl(uri);
-        return new ResourceReference(title, url, kind, Normalize(thumbnail), isExternal: true);
+        return new ResourceReference(name, url, kind, Normalize(thumbnail), isExternal: true);
     }
-
-    public ResourceReference WithThumbnail(string? thumbnail)
-        => this with { Thumbnail = Normalize(thumbnail) };
 
     public ResourceReference Rename(string newName)
     {
@@ -65,6 +65,19 @@ public sealed record ResourceReference : ValueObject
 
     private static string? Normalize(string? v)
         => string.IsNullOrWhiteSpace(v) ? null : v.Trim();
+
+    private static string DetectNameBySource(string source)
+    {
+        if (string.IsNullOrWhiteSpace(source))
+            return string.Empty;
+
+        if (Uri.TryCreate(Normalize(source), UriKind.Absolute, out var uri) && uri.IsAbsoluteUri)
+        {
+            var fileName = System.IO.Path.GetFileName(uri.LocalPath);
+            return string.IsNullOrEmpty(fileName) ? source : fileName;
+        }
+        return string.Empty;
+    }
 
     private static ResourceKind DetectKindFromUrl(Uri uri)
     {
