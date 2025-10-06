@@ -1,19 +1,44 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using MudBlazor
 @inject NavigationManager Navigation
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity?.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
+        <MudMenu AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.BottomLeft" Dense Size="Size.Small">
+            <ActivatorContent>
+                <MudAvatar Size="Size.Small"   
+                           Variant="Variant.Outlined"
+                           Color="Color.Tertiary">
+                    <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" />
+                </MudAvatar>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Icon="@Icons.Material.Filled.AccountCircle" OnClick="@(() => Navigation.NavigateTo("profile"))">
+                    Mein Profil
+                </MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@BeginLogOut">
+                    Abmelden
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+        <MudButton Variant="Variant.Text" Color="Color.Tertiary" Href="authentication/login">Login</MudButton>
     </NotAuthorized>
 </AuthorizeView>
 
-@code{
+@code {
     public void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");
+    }
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "U";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1)
+            return parts[0].Substring(0, 1).ToUpper();
+        return string.Concat(parts[0][0], parts[^1][0]).ToUpper();
     }
 }
