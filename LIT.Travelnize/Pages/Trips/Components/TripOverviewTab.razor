@@ -25,7 +25,7 @@
 
             <MudItem xs="12" sm="12" lg="4" xl="4">
                 <MudPaper Elevation="0" Square Class="border-destination-bottom">
-                    <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                    <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                         <MudText Typo="Typo.subtitle1" Class="mb-0 text-destination fw-bold">Reiseziele</MudText>
                         <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/create")" Class="text-activity">
                             <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-destination" />
@@ -36,7 +36,7 @@
             <MudHidden Breakpoint="Breakpoint.MdAndDown">
                 <MudItem xs="12" sm="6" lg="4" xl="4">
                     <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
-                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                             <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">Unterkünfte</MudText>
                             <MudLink Class="text-accommodation"
                                      OnClick="@(() => SelectDestinationAnOpenCreateAccommodation(travelSegment))">
@@ -47,7 +47,7 @@
                 </MudItem>
                 <MudItem xs="12" sm="6" lg="4" xl="4">
                     <MudPaper Elevation="0" Square Class="border-activity-bottom">
-                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                             <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">Aktivitäten</MudText>
                             <MudLink Class="text-activity"
                                      OnClick="@(() => SelectDestinationAnOpenCreateActivity(travelSegment))">
@@ -104,7 +104,7 @@
                     <MudPaper Elevation="0" Class="mud-width-full">
                         <MudHidden Breakpoint="Breakpoint.LgAndUp">
                             <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
-                                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                                     <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">Unterkünfte</MudText>
                                     <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/create")" Class="text-accommodation">
                                         <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-accommodation" />
@@ -138,7 +138,7 @@
                     <MudPaper Elevation="0" Class="mud-width-full">
                         <MudHidden Breakpoint="Breakpoint.LgAndUp">
                             <MudPaper Elevation="0" Square Class="border-activity-bottom">
-                                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-4 pb-0">
+                                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                                     <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">Aktivitäten</MudText>
                                     <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activites/create")" Class="text-activity">
                                         <MudIcon Icon="@Icons.Material.Filled.Add" Class="text-activity" />

@@ -14,17 +14,8 @@
                            Label="Enddatum"
                            For="@(() => Model.End)"
                            MinDate="Model.Start"
+                           HelperText="@($"{Model.TotalDaysInclusive} Tage, {Model.Nights} Nächte")"
                            Clearable="true" />
-        </MudItem>
-        <MudItem xs="12">
-            <MudText Typo="Typo.caption" Color="Color.Secondary">
-                @if (Model.Start.HasValue && Model.End.HasValue)
-                {
-                    <span>
-                        @($"{Model.TotalDaysInclusive} Tag(e), {Model.Nights} Nacht/Nächte")
-                    </span>
-                }
-            </MudText>
         </MudItem>
     </MudGrid>
 </EditForm>

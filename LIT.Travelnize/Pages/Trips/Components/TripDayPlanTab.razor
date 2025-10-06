@@ -25,7 +25,7 @@ else
                 var avatarColor = day.IsToday ? Color.Primary : day.IsPast ? Color.Transparent : Color.Tertiary;
                 <MudItem xs="12" sm="6" md="6" lg="4" Class="mb-12">
                     <MudCard Elevation="0">
-                        <MudCardHeader>
+                        <MudCardHeader Class="ps-2">
                             <CardHeaderAvatar>
                                 <MudAvatar Color="@avatarColor">@day.Day</MudAvatar>
                             </CardHeaderAvatar>
