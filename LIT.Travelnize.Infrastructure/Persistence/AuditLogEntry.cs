@@ -12,5 +12,6 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         public string? UserName { get; set; }
         public DateTime Timestamp { get; set; }
         public string Details { get; set; } = default!;
+        public string RequestInfo { get; set; } = default!;
     }
 }

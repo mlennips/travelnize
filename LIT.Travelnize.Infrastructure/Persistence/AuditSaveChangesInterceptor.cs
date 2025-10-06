@@ -21,9 +21,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
         {
             var correlationId = Guid.NewGuid();
             var user = await currentUser.GetUserAsync();
+            var requestInfo = GetRequestInfo(currentUser);
 
-            // ChangeTracker-Einträge als Snapshot, um Collection-Änderungen zu vermeiden
             var entries = context.ChangeTracker.Entries().ToList();
+            var parentLookup = BuildParentLookup(entries);
 
             foreach (var entry in entries)
             {
@@ -32,48 +33,78 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
                 if (entry.Entity is IAuditableEntity auditableEntity)
                 {
-                    var details = "";
-                    AddAuditLog(context, auditableEntity.AggregateId, correlationId, entry.Metadata.ClrType.Name, auditableEntity.Id, entry.State.ToString(), details, user);
+                    var action = $"{entry.State}/{currentUser.HttpMethod ?? "?"}";
+                    AddAuditLog(context, auditableEntity.AggregateId, correlationId, entry.Metadata.ClrType.Name, auditableEntity.Id, action, string.Empty, requestInfo, user);
+                    continue;
                 }
-                else if (entry.Metadata.IsOwned())
+
+                if (!entry.Metadata.IsOwned())
+                    continue;
+
+                var ownership = entry.Metadata.FindOwnership();
+                if (ownership is null || ownership.Properties.Count == 0)
+                    continue;
+
+                var fkProperty = ownership.Properties[0];
+                var fkValue = entry.Property(fkProperty.Name).CurrentValue;
+                var parentKey = (ownership.PrincipalEntityType.ClrType, fkValue);
+
+                if (parentLookup.TryGetValue(parentKey, out var parentEntry) && parentEntry.Entity is IAuditableEntity parentAuditable)
                 {
-                    var ownership = entry.Metadata.FindOwnership();
-                    if (ownership is { Properties.Count: > 0 })
-                    {
-                        var fkProperty = ownership.Properties[0];
-                        var fkValue = entry.Property(fkProperty.Name).CurrentValue;
-
-                        var parentEntry = entries.FirstOrDefault(e =>
-                            e.Metadata == ownership.PrincipalEntityType &&
-                            e.Property(ownership.PrincipalKey.Properties[0].Name).CurrentValue?.Equals(fkValue) == true);
-
-                        if (parentEntry?.Entity is IAuditableEntity parentAuditable)
-                        {
-                            string details = entry.Metadata.Name.Split('.').LastOrDefault() ?? "";
-                            AddAuditLog(context, parentAuditable.AggregateId, correlationId,
-                                parentEntry.Metadata.ClrType.Name,
-                                parentAuditable.Id, EntityState.Modified.ToString(), details, user);
-                        }
-                    }
+                    var details = entry.Metadata.Name.Split('.').LastOrDefault() ?? string.Empty;
+                    var action = $"{EntityState.Modified}/{currentUser.HttpMethod ?? "?"}";
+                    AddAuditLog(context, parentAuditable.AggregateId, correlationId,
+                        parentEntry.Metadata.ClrType.Name,
+                        parentAuditable.Id, action, details, requestInfo, user);
                 }
             }
         }
 
-        private static void AddAuditLog(DbContext context, Guid aggregateId, Guid correlationId, string entityName, Guid entityId, string action, string details, IUser user)
+        private static Dictionary<(Type, object?), Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> BuildParentLookup(List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> entries)
+        {
+            var parentLookup = new Dictionary<(Type, object?), Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry>();
+            foreach (var entry in entries)
+            {
+                if (entry.Entity is IAuditableEntity && entry.Metadata.FindPrimaryKey() is { } pk && entry.State != EntityState.Detached)
+                {
+                    var keyValue = entry.Property(pk.Properties[0].Name).CurrentValue;
+                    parentLookup[(entry.Metadata.ClrType, keyValue)] = entry;
+                }
+            }
+
+            return parentLookup;
+        }
+
+        private static void AddAuditLog(DbContext context, Guid aggregateId, Guid correlationId, string entityName, Guid entityId, string action, string details, string requestInfo, IUser user)
         {
             var log = new AuditLogEntry
             {
-                AggregateId = aggregateId,
                 CorrelationId = correlationId,
+                AggregateId = aggregateId,
                 EntityName = entityName,
                 EntityId = entityId,
                 Action = action,
                 Details = details,
                 UserId = user.Id,
                 UserName = user.UserName,
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.UtcNow,
+                RequestInfo = requestInfo
             };
             context.Add(log);
+        }
+
+        private static string GetRequestInfo(ICurrentUser user)
+        {
+            var requestInfo = new
+            {
+                user.RequestPath,
+                user.HttpMethod,
+                user.IpAddress,
+                user.UserAgent,
+                user.TraceIdentifier,
+                user.Referer
+            };
+            return System.Text.Json.JsonSerializer.Serialize(requestInfo);
         }
     }
 }
