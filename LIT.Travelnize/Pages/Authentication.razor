@@ -8,75 +8,74 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using MudBlazor
-
 @inject AuthApiClient AuthApiClient
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudStack Spacing="6">
-        <PageHeader Title="Anmeldung & Registrierung"
-                    Subtitle="Melde dich an oder erstelle ein neues Konto, um deine Reisen mit Travelnize zu planen."
+        <PageHeader Title="@L["Auth_Title"]"
+                    Subtitle="@L["Auth_Subtitle"]"
                     Image="icon-192.png" />
         <MudPaper Elevation="0" Outlined="false">
             <AuthorizeView>
                 <Authorized Context="authContext">
                     <MudTabs>
-                        <MudTabPanel Text="Abmelden">
+                        <MudTabPanel Text="@L["Auth_TabLogout"]">
                             <MudText Class="my-4">
-                                Du bist angemeldet als <b>@authContext.User.Identity?.Name</b>
+                                @L["Auth_LoggedInAs"] <b>@authContext.User.Identity?.Name</b>
                             </MudText>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Logout())">Abmelden</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Logout())">@L["Auth_Logout"]</MudButton>
                         </MudTabPanel>
                     </MudTabs>
                 </Authorized>
                 <NotAuthorized Context="notAuthContext">
                     <MudTabs>
-                        <MudTabPanel Text="Login">
+                        <MudTabPanel Text="@L["Auth_TabLogin"]">
                             <MudForm @ref="loginForm" Class="my-4">
                                 <MudGrid Spacing="4">
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="@L["Auth_EmailOrUserName"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="LoginModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="LoginModel.Password" Label="@L["Auth_Password"]" InputType="InputType.Password" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitLoginAsync">Anmelden</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitLoginAsync">@L["Auth_Login"]</MudButton>
                                         @if (IsDevEnvironment)
                                         {
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="FillDemoAndLogin">Demo</MudButton>
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="FillDemoAndLogin">@L["Auth_Demo"]</MudButton>
                                         }
                                     </MudItem>
                                     <MudItem xs="12">
                                         <MudText Color="Color.Error">@loginError</MudText>
-
                                         <MudDivider Class="my-4" />
                                         <MudText Typo="Typo.caption" Class="text-center d-block">
-                                            Noch kein Konto? Registriere dich kostenlos und starte deine Reiseplanung!
+                                            @L["Auth_NoAccount"]
                                         </MudText>
                                     </MudItem>
                                 </MudGrid>
                             </MudForm>
                         </MudTabPanel>
-                        <MudTabPanel Text="Registrieren">
+                        <MudTabPanel Text="@L["Auth_TabRegister"]">
                             <MudForm @ref="registerForm" Class="my-4">
                                 <MudGrid Spacing="4">
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="RegisterModel.Email" Label="E-Mail" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.Email" Label="@L["Auth_Email"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.Password" Label="Passwort" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.Password" Label="@L["Auth_Password"]" InputType="InputType.Password" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="Passwort bestätigen" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="@L["Auth_ConfirmPassword"]" InputType="InputType.Password" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.FirstName" Label="Vorname" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.FirstName" Label="@L["Auth_FirstName"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.LastName" Label="Nachname" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.LastName" Label="@L["Auth_LastName"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitRegisterAsync">Registrieren</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitRegisterAsync">@L["Auth_Register"]</MudButton>
                                     </MudItem>
                                     <MudItem xs="12">
                                         <MudText Color="Color.Error">@registerError</MudText>
@@ -84,14 +83,14 @@
                                 </MudGrid>
                             </MudForm>
                         </MudTabPanel>
-                        <MudTabPanel Text="Passwort vergessen">
+                        <MudTabPanel Text="@L["Auth_TabForgotPassword"]">
                             <MudForm @ref="forgotPasswordForm" Class="my-4">
                                 <MudGrid Spacing="4">
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="ForgotPasswordModel.EmailOrUserName" Label="E-Mail" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="ForgotPasswordModel.EmailOrUserName" Label="@L["Auth_EmailOrUserName"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForgotPasswordAsync">Neues Passwort anfordern</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForgotPasswordAsync">@L["Auth_RequestNewPassword"]</MudButton>
                                     </MudItem>
                                     <MudItem xs="12">
                                         <MudText Color="Color.Error">@forgotPasswordError</MudText>
@@ -154,12 +153,12 @@
                 }
                 else
                 {
-                    loginError = "Login fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+                    loginError = L["Auth_LoginFailed"];
                 }
             }
             else
             {
-                loginError = "Bitte fülle alle Felder korrekt aus.";
+                loginError = L["Auth_ValidationError"];
             }
         }
     }
@@ -179,12 +178,12 @@
                 }
                 else
                 {
-                    loginError = "Passwort zurücksetzen fehlgeschlagen. Bitte überprüfe deine Eingaben.";
+                    loginError = L["Auth_ForgotPasswordFailed"];
                 }
             }
             else
             {
-                loginError = "Bitte fülle alle Felder korrekt aus.";
+                loginError = L["Auth_ValidationError"];
             }
         }
     }
@@ -208,12 +207,12 @@
                 }
                 else
                 {
-                    registerError = "Registrierung fehlgeschlagen. Bitte versuche es erneut.";
+                    registerError = L["Auth_RegisterFailed"];
                 }
             }
             else
             {
-                registerError = "Bitte fülle alle Felder korrekt aus.";
+                registerError = L["Auth_ValidationError"];
             }
         }
     }

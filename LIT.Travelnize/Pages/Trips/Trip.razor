@@ -9,18 +9,17 @@
 @inject IDialogService DialogService
 @inject NavigationManager Navigation
 @inject LIT.Travelnize.Services.ScrollService Scroll
-
-<PageTitle>Travelnize - @TripsState.SelectedTrip?.Name</PageTitle>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudStack Spacing="6">
         <PageHeader Title="@TripsState.SelectedTrip?.Name"
-                    Subtitle="Hier findest du alle Informationen zu deinem Trip."
+                    Subtitle="@L["Trip_TabSubtitle"]"
                     Image="Icons.Material.Filled.FlightTakeoff" />
 
         @if (TripsState.IsLoading)
         {
-            
+            <!-- Optional: Ladeanzeige -->
         }
         else if (TripsState.SelectedTrip != null)
         {
@@ -28,19 +27,19 @@
                 <TripHeader Trip="@TripsState.SelectedTrip" TripId="@TripId" />
 
                 <MudTabs ActivePanelIndex="@activeTabIndex" ActivePanelIndexChanged="OnTabChanged">
-                    <MudTabPanel Text="Übersicht">
+                    <MudTabPanel Text="@L["Trip_TabOverview"]">
                         <TripOverviewTab Trip="@TripsState.SelectedTrip" TripId="@TripId" />
                     </MudTabPanel>
-                    <MudTabPanel Text="Tagesplan">
+                    <MudTabPanel Text="@L["Trip_TabDayPlan"]">
                         <TripDayPlanTab Trip="@TripsState.SelectedTrip" TripId="@TripId" />
                     </MudTabPanel>
-                    <MudTabPanel Text="Teilnehmer">
+                    <MudTabPanel Text="@L["Trip_TabParticipants"]">
                         <TripParticipantsTab Trip="@TripsState.SelectedTrip" />
                     </MudTabPanel>
-                    <MudTabPanel Text="Transport" Disabled>
+                    <MudTabPanel Text="@L["Trip_TabTransport"]" Disabled>
                         <TripTransportTab Trip="@TripsState.SelectedTrip" />
                     </MudTabPanel>                  
-                    <MudTabPanel Text="Reisekosten" Disabled>
+                    <MudTabPanel Text="@L["Trip_TabCosts"]" Disabled>
                     </MudTabPanel>
                 </MudTabs>
             </MudStack>
@@ -48,7 +47,7 @@
         else
         {
             <MudAlert Severity="Severity.Error" Elevation="0" Variant="Variant.Filled" Dense="true">
-                Trip nicht gefunden.
+                @L["Trip_NotFound"]
             </MudAlert>
         }
     </MudStack>

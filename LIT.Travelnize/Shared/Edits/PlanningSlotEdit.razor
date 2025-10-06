@@ -1,20 +1,21 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Trips.ValueObjects
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditForm Model="Model">
     <MudGrid Spacing="4">
         <MudItem xs="12" sm="6">
             <MudDatePicker @bind-Date="Model.Start"
-                           Label="Startdatum"
+                           Label="@L["PlanningSlotEdit_StartDate"]"
                            For="@(() => Model.Start)"
                            Clearable="true" />
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudDatePicker @bind-Date="Model.End"
-                           Label="Enddatum"
+                           Label="@L["PlanningSlotEdit_EndDate"]"
                            For="@(() => Model.End)"
                            MinDate="Model.Start"
-                           HelperText="@($"{Model.TotalDaysInclusive} Tage, {Model.Nights} Nächte")"
+                           HelperText="@L["PlanningSlotEdit_HelperText", Model.TotalDaysInclusive, Model.Nights]"
                            Clearable="true" />
         </MudItem>
     </MudGrid>

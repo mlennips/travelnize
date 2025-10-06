@@ -1,49 +1,45 @@
 ﻿@page "/"
-@using LIT.Travelnize.Helpers
-@using LIT.Travelnize.Interfaces
 @using LIT.Travelnize.Services.Api
-@using MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthService
 @inject TripsState TripsState
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudGrid Spacing="6">
         <MudItem xs="12">
-            <PageHeader Title="Willkommen bei Travelnize"
-                        Subtitle="Dein smarter Begleiter für die Planung und Organisation deiner nächsten Reise." />
+            <PageHeader Title="@L["Home_WelcomeTitle"]"
+                        Subtitle="@L["Home_WelcomeSubtitle"]" />
         </MudItem>
         <MudItem>
             <MudPaper Class="bg-light text-bg-light pa-4" Elevation="0" Outlined="true">
                 <MudText>
-                    Ob Städtetrip, Weltreise oder Kurzurlaub – mit Travelnize behältst du alles im Blick und kannst schöne Momente planen.
-                    Egal, ob du alleine reist oder in einer Gruppe: Die Planung wird zum Kinderspiel.
-                    Lege individuelle Reiseabschnitte an und organisiere deine Reise ganz nach deinen Wünschen.
+                    @L["Home_IntroText"]
                 </MudText>
 
                 @if (!isAuthenticated)
                 {
                     <MudButtonGroup Color="Color.Secondary" Variant="Variant.Filled" Class="mt-4" DropShadow="false">
                         <MudButton Href="/authentication/login">
-                            Jetzt einloggen
+                            @L["Home_LoginNow"]
                         </MudButton>
                         <MudButton Href="/authentication/register">
-                            Oder registrieren
+                            @L["Home_OrRegister"]
                         </MudButton>
                     </MudButtonGroup>
                 }
                 else
                 {
                     <MudAlert Severity="Severity.Success" Elevation="0" Variant="Variant.Filled" Dense="true" Class="mt-4">
-                        Willkommen zurück, @firstName! Schön, dass du wieder da bist.
+                        @L["Home_WelcomeBack", firstName ?? ""]
                     </MudAlert>
                 }
             </MudPaper>
         </MudItem>
 
         <MudItem xs="12">
-            <MudText Typo="Typo.caption">Features</MudText>
+            <MudText Typo="Typo.caption">@L["Home_Features"]</MudText>
         </MudItem>
 
         <MudItem xs="12" sm="12" md="6">
@@ -51,9 +47,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-trip">
                 <MudIcon Icon="@IconHelper.TripTwoTone" Size="Size.Large" Class="mb-2 text-trip" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-trip">Reisen</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-trip">@L["Home_Trips"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Die große Bühne deiner Tour: Von der ersten Idee bis zum Heimkommen – hier landet alles, was dein Abenteuer lebendig macht.
+                    @L["Home_TripsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -62,9 +58,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-travelsegment">
                 <MudIcon Icon="@IconHelper.TravelSegmentTwoTone" Size="Size.Large" Class="mb-2 text-travelsegment" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-travelsegment">Reiseabschnitte</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-travelsegment">@L["Home_TravelSegments"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Ein Kapitel deines Trips: ein paar Tage Road, eine Insel, ein Städteblock – verschiebbar, wenn Pläne mal wackeln.
+                    @L["Home_TravelSegmentsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -73,9 +69,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-destination">
                 <MudIcon Icon="@IconHelper.DestinationTwoTone" Size="Size.Large" Class="mb-2 text-destination" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-destination">Ziele</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-destination">@L["Home_Destinations"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Ein Punkt auf der Karte, der dich ruft: Zeitraum rein, kleine Notiz dazu – fertig der Ort, an dem Erinnerungen kleben bleiben.
+                    @L["Home_DestinationsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -84,9 +80,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-accommodation">
                 <MudIcon Icon="@IconHelper.AccommodationTwoTone" Size="Size.Large" Class="mb-2 text-accommodation" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-accommodation">Unterkünfte</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-accommodation">@L["Home_Accommodations"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Dein Ruheplatz unterwegs: Adresse griffbereit, Zeiten klar, Kopf frei – kein endloses Suchen in alten Mails mehr.
+                    @L["Home_AccommodationsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -95,56 +91,56 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-activity">
                 <MudIcon Icon="@IconHelper.AccommodationTwoTone" Size="Size.Large" Class="mb-2 text-activity" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-activity">Aktivitäten</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-activity">@L["Home_Activities"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Das Salz im Reisealltag: Sonnenaufgang spotten, Markt schlendern, Kajak raus – Zeit festhalten und nicht vergessen.
+                    @L["Home_ActivitiesDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
 
         <MudItem xs="12">
-            <MudText Typo="Typo.caption">Statistiken</MudText>
+            <MudText Typo="Typo.caption">@L["Home_Statistics"]</MudText>
         </MudItem>
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center mud-width-full py-2 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.EventNote" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                <MudText Typo="Typo.h6" Class="mb-1">Reisen</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1">@L["Home_Trips"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Anzahl deiner geplanten und abgeschlossenen Reisen.
+                    @L["Home_TripsStatsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center mud-width-full py-2 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                <MudText Typo="Typo.h6" Class="mb-1">Ziele</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1">@L["Home_Destinations"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Orte und Sehenswürdigkeiten, die du besucht hast.
+                    @L["Home_DestinationsStatsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center mud-width-full py-2 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                <MudText Typo="Typo.h6" Class="mb-1">Mitreisende</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1">@L["Home_Companions"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Anzahl der Personen, mit denen du gereist bist.
+                    @L["Home_CompanionsStatsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center mud-width-full py-2 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                <MudText Typo="Typo.h6" Class="mb-1">Community</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1">@L["Home_Community"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    Werde Teil der Travelnize-Community und teile deine Erfahrungen.
+                    @L["Home_CommunityStatsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" Class="text-center">
             <MudDivider />
             <MudText Class="mt-6 text-secondary">
-                Viel Spaß beim Entdecken und gemeinsamen Erleben!
+                @L["Home_EnjoyExploring"]
             </MudText>
         </MudItem>
     </MudGrid>

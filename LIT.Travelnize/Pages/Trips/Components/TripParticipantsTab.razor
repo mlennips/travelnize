@@ -1,9 +1,10 @@
 ﻿@using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 @if (Trip is null)
 {
-    <MudText Typo="Typo.caption">Keine Daten.</MudText>
+    <MudText Typo="Typo.caption">@L["TripParticipantsTab_NoData"]</MudText>
 }
 else
 {
@@ -12,8 +13,8 @@ else
             <thead>
                 <tr>
                     <th style="width:56px;"></th>
-                    <th>Name</th>
-                    <th>Rolle</th>
+                    <th>@L["TripParticipantsTab_NameLabel"]</th>
+                    <th>@L["TripParticipantsTab_RoleLabel"]</th>
                 </tr>
             </thead>
             <tbody>

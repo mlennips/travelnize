@@ -2,24 +2,25 @@
 @using LIT.Travelnize.Domain.Common
 @using MudBlazor
 @inject IJSRuntime JS
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudGrid Spacing="4">
     <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Latitude"
-                         Label="Breitengrad (Latitude)"
+                         Label="@L["CoordinatesEdit_Latitude"]"
                          For="@(() => Model.Latitude)"
                          Immediate="true"
                          Clearable="true"
-                         Placeholder="z.B. 52.5200"
+                         Placeholder="@L["CoordinatesEdit_LatitudePlaceholder"]"
                          Min="-90" Max="90" />
     </MudItem>
     <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Longitude"
-                         Label="Längengrad (Longitude)"
+                         Label="@L["CoordinatesEdit_Longitude"]"
                          For="@(() => Model.Longitude)"
                          Immediate="true"
                          Clearable="true"
-                         Placeholder="z.B. 13.4050"
+                         Placeholder="@L["CoordinatesEdit_LongitudePlaceholder"]"
                          Min="-180" Max="180" />
     </MudItem>
     <MudItem xs="12" sm="4" lg="2" Class="d-flex align-items-end">
@@ -28,7 +29,7 @@
                    Color="Color.Tertiary"
                    StartIcon="@(_showMap ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Map)"
                    OnClick="@ToggleMap">
-            @(_showMap ? "Karte ausblenden" : "Karte anzeigen")
+            @(_showMap ? L["CoordinatesEdit_HideMap"] : L["CoordinatesEdit_ShowMap"])
         </MudButton>
     </MudItem>
     @if (_showMap)

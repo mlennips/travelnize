@@ -3,10 +3,11 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="AccommodationCreateFormModel"
-                Title="Unterkunft hinzufügen"
-                Subtitle="Lege eine neue Unterkunft für dein Reiseziel an."
+                Title="@L["AccommodationCreate_Title"]"
+                Subtitle="@L["AccommodationCreate_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -17,15 +18,15 @@
 
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["AccommodationCreate_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name der Unterkunft" />
+                              Placeholder="@L["AccommodationCreate_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12" sm="4">
                 <MudSelect T="string" @bind-Value="FormModel!.Type"
-                           Label="Typ"
+                           Label="@L["AccommodationCreate_TypeLabel"]"
                            For="@(()=>FormModel!.Type)"
                            Required="true">
                     @foreach (var t in AccommodationType.DefaultValues)
@@ -41,7 +42,7 @@
 
             <MudItem xs="12">
                 <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">Adresse</MudText>
+                <MudText Typo="Typo.subtitle2">@L["AccommodationCreate_AddressLabel"]</MudText>
             </MudItem>
             <MudItem xs="12">
                 <AddressEdit Model="AddressModel" />
@@ -91,12 +92,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["AccommodationCreate_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["AccommodationCreate_LoadError", ex.Message];
         }
         finally
         {
@@ -112,14 +113,14 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            LoadError = L["AccommodationCreate_SegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = "Ziel wurde nicht gefunden.";
+            LoadError = L["AccommodationCreate_DestinationNotFound"];
             return;
         }
 
@@ -160,17 +161,17 @@
             var newId = await TripsState.AddAccommodationAsync(FormModel.TripId, FormModel.DestinationId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add("Unterkunft erstellt.", Severity.Success);
+                Snackbar.Add(L["AccommodationCreate_Success"], Severity.Success);
                 Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{DestinationId}/accommodations/{newId}/edit");
             }
             else
             {
-                Snackbar.Add("Erstellung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["AccommodationCreate_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["AccommodationCreate_Error", ex.Message], Severity.Error);
         }
     }
 
@@ -211,10 +212,7 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (CheckInOutModel.Start.HasValue && CheckInOutModel.End.HasValue && CheckInOutModel.Start.Value >= CheckInOutModel.End.Value)
-            {
-                yield return new ValidationResult("Check-In muss vor Check-Out liegen.", new[] { nameof(CheckInOutModel.End) });
-            }
+            return [];
         }
     }
 }

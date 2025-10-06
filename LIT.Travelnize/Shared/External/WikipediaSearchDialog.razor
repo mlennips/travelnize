@@ -1,13 +1,15 @@
 ﻿@using LIT.Travelnize.Domain.External.Wikipedia
 @inject IWikipediaApiClient Wikipedia
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+
 <MudDialog>
     <DialogContent>
         <MudStack Spacing="2">
             <MudTextField @bind-Value="_query"
-                          Label="Suchbegriff"
+                          Label="@L["WikipediaSearchDialog_QueryLabel"]"
                           Immediate="true"
-                          Placeholder="Begriff eingeben und Enter drücken"
+                          Placeholder="@L["WikipediaSearchDialog_QueryPlaceholder"]"
                           OnKeyDown="HandleKeyDown"
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" />
@@ -23,7 +25,7 @@
 
             @if (!_loading && _results.Count == 0 && string.IsNullOrWhiteSpace(_error))
             {
-                <MudText Typo="Typo.caption" Class="mt-2">Keine Ergebnisse.</MudText>
+                <MudText Typo="Typo.caption" Class="mt-2">@L["WikipediaSearchDialog_NoResults"]</MudText>
             }
 
             <MudList Dense="true" Class="wiki-search-list" T="WikipediaSearchResultDto">
@@ -45,14 +47,13 @@
                             </MudStack>
                         </MudStack>
                     </MudListItem>
-                    @* <MudDivider /> *@
                 }
             </MudList>
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Close" Color="Color.Secondary">Schließen</MudButton>
-        <MudButton OnClick="SearchAsync" Disabled="@_loading" Color="Color.Primary" Variant="Variant.Filled">Suchen</MudButton>
+        <MudButton OnClick="Close" Color="Color.Secondary">@L["WikipediaSearchDialog_Close"]</MudButton>
+        <MudButton OnClick="SearchAsync" Disabled="@_loading" Color="Color.Primary" Variant="Variant.Filled">@L["WikipediaSearchDialog_Search"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -94,7 +95,7 @@
         }
         catch (Exception ex)
         {
-            _error = "Fehler bei der Suche: " + ex.Message;
+            _error = L["WikipediaSearchDialog_SearchError", ex.Message];
         }
         finally
         {
@@ -110,14 +111,14 @@
             var summary = await Wikipedia.GetSummaryAsync(result.Title, "de");
             if (summary is null)
             {
-                Snackbar.Add("Kein Summary gefunden.", Severity.Warning);
+                Snackbar.Add(L["WikipediaSearchDialog_NoSummary"], Severity.Warning);
                 return;
             }
             Dialog.Close(DialogResult.Ok(summary));
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler beim Laden des Artikels: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["WikipediaSearchDialog_LoadError", ex.Message], Severity.Error);
         }
     }
 

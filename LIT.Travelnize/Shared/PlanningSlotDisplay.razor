@@ -1,14 +1,18 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+
 @if (Slot is not null)
 {
     <MudText Inline Typo="@Typo">@Slot.ToShortDateString()</MudText>
     @if (ShowDays)
     {
-        <MudText Inline Typo="@Typo"> (@Slot.TotalDays @(Slot.TotalDaysInclusive == 1 ? "Tag" : "Tage"))</MudText>
+        <MudText Inline Typo="@Typo">
+            (@Slot.TotalDays @(Slot.TotalDaysInclusive == 1 ? L["PlanningSlotDisplay_DaySingular"] : L["PlanningSlotDisplay_DayPlural"]))
+        </MudText>
     }
 }
 else
 {
-    <MudText Typo="@Typo" Color="Color.Warning">Kein Zeitraum definiert</MudText>
+    <MudText Typo="@Typo" Color="Color.Warning">@L["PlanningSlotDisplay_NoPeriod"]</MudText>
 }
 
 @code {

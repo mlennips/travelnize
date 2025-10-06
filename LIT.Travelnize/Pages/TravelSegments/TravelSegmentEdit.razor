@@ -3,10 +3,11 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="TravelSegmentEditFormModel"
-                Title="Reiseabschnitt bearbeiten"
-                Subtitle="Passe Zeitraum und Beschreibung des Abschnitts an."
+                Title="@L["TravelSegmentEdit_Title"]"
+                Subtitle="@L["TravelSegmentEdit_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -17,17 +18,17 @@
         <MudGrid Spacing="4">
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["TravelSegmentEdit_NameLabel"]"
                               For="@(() => FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name des Reiseabschnitts" />
+                              Placeholder="@L["TravelSegmentEdit_NamePlaceholder"]" />
             </MudItem>
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="Beschreibung"
+                              Label="@L["TravelSegmentEdit_DescriptionLabel"]"
                               For="@(() => FormModel!.Description)"
                               Lines="1"
-                              Placeholder="Kurze Beschreibung des Reiseabschnitts" />
+                              Placeholder="@L["TravelSegmentEdit_DescriptionPlaceholder"]" />
             </MudItem>
             <MudItem xs="12">
                 <PlanningSlotEdit Model="FormModel!.SlotModel" />
@@ -76,12 +77,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["TravelSegmentEdit_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["TravelSegmentEdit_LoadError", ex.Message];
         }
         finally
         {
@@ -100,11 +101,11 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            LoadError = L["TravelSegmentEdit_SegmentNotFound"];
             return;
         }
 
-        FormModel = new TravelSegmentEditFormModel
+        FormModel = new TravelSegmentEditFormModel(L)
         {
             TripId = TripId,
             SegmentId = TravelSegmentId,
@@ -131,17 +132,17 @@
             var ok = await TripsState.UpdateTravelSegmentAsync(FormModel.TripId, FormModel.SegmentId, command);
             if (ok)
             {
-                Snackbar.Add("Reiseabschnitt aktualisiert.", Severity.Success);
+                Snackbar.Add(L["TravelSegmentEdit_Success"], Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TripLink(TripId));
             }
             else
             {
-                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["TravelSegmentEdit_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["TravelSegmentEdit_Error", ex.Message], Severity.Error);
         }
     }
 
@@ -162,12 +163,12 @@
         var result = await TripsState.RemoveTravelSegmentAsync(TripId, TravelSegmentId);
         if (result)
         {
-            Snackbar.Add("Reiseabschnitt gelöscht.", Severity.Success);
+            Snackbar.Add(L["TravelSegmentEdit_Deleted"], Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add("Löschen fehlgeschlagen.", Severity.Error);
+            Snackbar.Add(L["TravelSegmentEdit_DeleteFailed"], Severity.Error);
         }
     }
 
@@ -178,6 +179,13 @@
 
     internal class TravelSegmentEditFormModel : IValidatableObject
     {
+        private readonly Microsoft.Extensions.Localization.IStringLocalizer<App> _localizer;
+
+        public TravelSegmentEditFormModel(Microsoft.Extensions.Localization.IStringLocalizer<App> localizer)
+        {
+            _localizer = localizer;
+        }
+
         public Guid TripId { get; set; }
         public Guid SegmentId { get; set; }
 
@@ -194,11 +202,11 @@
         {
             if (SlotModel.Start.HasValue && SlotModel.End.HasValue && SlotModel.End.Value.Date < SlotModel.Start.Value.Date)
             {
-                yield return new ValidationResult("Enddatum darf nicht vor dem Startdatum liegen.", new[] { nameof(SlotModel.End) });
+                yield return new ValidationResult(_localizer["TravelSegmentEdit_EndBeforeStart"], new[] { nameof(SlotModel.End) });
             }
             if (SlotModel.Start.HasValue && SlotModel.End.HasValue && (SlotModel.End.Value.Date - SlotModel.Start.Value.Date).TotalDays > 365)
             {
-                yield return new ValidationResult("Abschnitt darf maximal 365 Tage dauern.", new[] { nameof(SlotModel.End) });
+                yield return new ValidationResult(_localizer["TravelSegmentEdit_MaxDuration"], new[] { nameof(SlotModel.End) });
             }
         }
     }

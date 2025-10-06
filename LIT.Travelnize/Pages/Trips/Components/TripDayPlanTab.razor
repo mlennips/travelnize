@@ -2,20 +2,21 @@
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
 @using LIT.Travelnize.Helpers
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 @if (Trip is null)
 {
-    <MudText Typo="Typo.caption">Keine Daten.</MudText>
+    <MudText Typo="Typo.caption">@L["TripDayPlanTab_NoData"]</MudText>
 }
 else if (Trip.Slot.Start is null || Trip.Slot.End is null)
 {
-    <MudText Typo="Typo.caption">Der Trip hat kein gültiges Start- oder Enddatum.</MudText>
+    <MudText Typo="Typo.caption">@L["TripDayPlanTab_InvalidDates"]</MudText>
 }
 else
 {
     @if (_days.Count == 0)
     {
-        <MudText Typo="Typo.caption">Keine Einträge vorhanden.</MudText>
+        <MudText Typo="Typo.caption">@L["TripDayPlanTab_NoEntries"]</MudText>
     }
     else
     {
@@ -31,14 +32,14 @@ else
                             </CardHeaderAvatar>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.body1" Class="fw-bold">@day.Date.ToLongDateString()</MudText>
-                                <MudText Typo="Typo.body2">@day.Events.Count @(day.Events.Count == 1 ? "Eintrag" : "Einträge")</MudText>
+                                <MudText Typo="Typo.body2">@day.Events.Count @(day.Events.Count == 1 ? L["TripDayPlanTab_EntrySingular"] : L["TripDayPlanTab_EntryPlural"])</MudText>
                             </CardHeaderContent>
                         </MudCardHeader>
                         <MudCardContent Class="pa-0">
                             <MudStack Spacing="1">
                                 @if (day.Events.Count == 0)
                                 {
-                                    <MudText Typo="Typo.caption" Class="opacity-50 ma-4">Keine Einträge</MudText>
+                                    <MudText Typo="Typo.caption" Class="opacity-50 ma-4">@L["TripDayPlanTab_NoEntriesDay"]</MudText>
                                 }
                                 else
                                 {
@@ -87,7 +88,6 @@ else
         var end = Trip.Slot.End!.Value.Date;
         var totalDays = (int)(end - start).TotalDays + 1;
 
-        // Alle relevanten Daten strukturieren
         var segments = Trip.TravelSegments;
 
         var allDestinations = segments.SelectMany(s => s.Destinations.Select(d => new
@@ -123,11 +123,10 @@ else
 
         foreach (var day in _days)
         {
-            // Accommodation Check-In
             foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckInOut.Start?.Date == day.Date))
             {
                 day.Events.Add(new DayEvent(
-                    Label: $"Check-In {acc.Accommodation.Name}",
+                    Label: string.Format(L["TripDayPlanTab_CheckIn"], acc.Accommodation.Name),
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckInOut.Start?.ToString("HH:mm", _culture),
@@ -136,11 +135,10 @@ else
                 ));
             }
 
-            // Accommodation Check-Out
             foreach (var acc in allAccommodations.Where(a => a.Accommodation.CheckInOut.End?.Date == day.Date))
             {
                 day.Events.Add(new DayEvent(
-                    Label: $"Check-Out {acc.Accommodation.Name}",
+                    Label: string.Format(L["TripDayPlanTab_CheckOut"], acc.Accommodation.Name),
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckInOut.End?.ToString("HH:mm", _culture),
@@ -149,7 +147,6 @@ else
                 ));
             }
 
-            // Aktivitäten
             foreach (var act in allActivities.Where(a => a.Activity.Date!.Value.Date == day.Date))
             {
                 day.Events.Add(new DayEvent(
@@ -161,9 +158,6 @@ else
                     Icon: IconHelper.ActivityFilled
                 ));
             }
-            // (Optional) Transport
-            // foreach (var t in Trip.Transportations.Where(t => t.DepartureDate.Date == day.Date)) { ... }
-            // foreach (var t in Trip.Transportations.Where(t => t.ArrivalDate.Date == day.Date)) { ... }
         }
     }
 

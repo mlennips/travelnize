@@ -1,31 +1,31 @@
 @using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Common
 @using LIT.Travelnize.Shared.Dialogs
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditForm Model="Model">
     <MudGrid Spacing="4">
         <MudItem xs="6" sm="3" lg="4">
-
             <MudStack Row AlignItems="AlignItems.Center">
                 <MudTextField @bind-Value="Model.Source"
-                              Label="Quelle/URL"
+                              Label="@L["ResourceReferenceEdit_SourceLabel"]"
                               For="@(() => Model.Source)"
-                              HelperText="@($"{GetKindDisplayText(Model.Kind)} URL")"
+                              HelperText="@($"{GetKindDisplayText(Model.Kind)} {L["ResourceReferenceEdit_Url"]}")"
                               Clearable />
 
                 @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
                 {
                     <MudImage Src="@Model.Source"
                               Height="26"
-                              Alt="Quelle" />
+                              Alt="@L["ResourceReferenceEdit_SourceLabel"]" />
                 }
             </MudStack>
         </MudItem>
         <MudItem xs="6" sm="3" lg="4">
             <MudStack Row AlignItems="AlignItems.Center">
                 <MudTextField @bind-Value="Model.Thumbnail"
-                              Label="Thumbnail"
-                              HelperText="Optional"
+                              Label="@L["ResourceReferenceEdit_ThumbnailLabel"]"
+                              HelperText="@L["ResourceReferenceEdit_Optional"]"
                               For="@(() => Model.Thumbnail)"
                               Clearable />
 
@@ -33,14 +33,14 @@
                 {
                     <MudImage Src="@Model.Thumbnail"
                               Height="26"
-                              Alt="Thumbnail" />
+                              Alt="@L["ResourceReferenceEdit_ThumbnailLabel"]" />
                 }
             </MudStack>
         </MudItem>
         <MudItem xs="9" sm="3" lg="2">
             <MudTextField @bind-Value="Model.Name"
-                          Label="Name"
-                          HelperText="Optional"                          
+                          Label="@L["ResourceReferenceEdit_NameLabel"]"
+                          HelperText="@L["ResourceReferenceEdit_Optional"]"                          
                           For="@(() => Model.Name)" 
                           Clearable />
         </MudItem>
@@ -56,7 +56,7 @@
         </MudItem>
         @* Optional: Extern-Flag, falls benötigt
         <MudItem xs="12" sm="6">
-            <MudSwitch @bind-Checked="Model.IsExternal" Color="Color.Primary" Label="Extern" />
+            <MudSwitch @bind-Checked="Model.IsExternal" Color="Color.Primary" Label="@L["ResourceReferenceEdit_ExternalLabel"]" />
         </MudItem>
         *@
     </MudGrid>
@@ -67,7 +67,6 @@
 
     [Parameter, EditorRequired] public ResourceReferenceEditModel Model { get; set; } = new();
     [Parameter] public ResourceKind? ForceKind { get; set; }
-
 
     protected override void OnParametersSet()
     {
@@ -92,18 +91,18 @@
 
         var parameters = new DialogParameters { ["Items"] = items };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        dialog = await DialogService.ShowAsync<SingleSelectionDialog>("Typ auswählen", parameters, options);
+        dialog = await DialogService.ShowAsync<SingleSelectionDialog>(L["ResourceReferenceEdit_SelectType"], parameters, options);
     }
 
     private string GetKindDisplayText(ResourceKind kind)
         => kind switch
         {
-            ResourceKind.Image => "Bild",
-            ResourceKind.Video => "Video",
-            ResourceKind.Audio => "Audio",
-            ResourceKind.Document => "Dokument",
-            ResourceKind.Website => "Webseite",
-            ResourceKind.Other => "Sonstiges",
+            ResourceKind.Image => L["ResourceReferenceEdit_Kind_Image"],
+            ResourceKind.Video => L["ResourceReferenceEdit_Kind_Video"],
+            ResourceKind.Audio => L["ResourceReferenceEdit_Kind_Audio"],
+            ResourceKind.Document => L["ResourceReferenceEdit_Kind_Document"],
+            ResourceKind.Website => L["ResourceReferenceEdit_Kind_Website"],
+            ResourceKind.Other => L["ResourceReferenceEdit_Kind_Other"],
             _ => kind.ToString()
         };
     private string GetKindDisplayText(ResourceKind? kind)

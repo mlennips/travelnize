@@ -3,10 +3,11 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="AccommodationEditFormModel"
-                Title="Unterkunft bearbeiten"
-                Subtitle="Passe die Daten deiner Unterkunft an."
+                Title="@L["AccommodationEdit_Title"]"
+                Subtitle="@L["AccommodationEdit_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -18,15 +19,15 @@
 
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["AccommodationEdit_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name der Unterkunft" />
+                              Placeholder="@L["AccommodationEdit_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12" sm="4">
                 <MudSelect T="string" @bind-Value="FormModel!.Type"
-                           Label="Typ"
+                           Label="@L["AccommodationEdit_TypeLabel"]"
                            For="@(()=>FormModel!.Type)"
                            Required="true">
                     @foreach (var t in AccommodationType.DefaultValues)
@@ -42,7 +43,7 @@
 
             <MudItem xs="12">
                 <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">Adresse</MudText>
+                <MudText Typo="Typo.subtitle2">@L["AccommodationEdit_AddressLabel"]</MudText>
             </MudItem>
 
             <MudItem xs="12">
@@ -94,12 +95,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["AccommodationEdit_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["AccommodationEdit_LoadError", ex.Message];
         }
         finally
         {
@@ -115,21 +116,21 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            LoadError = L["AccommodationEdit_SegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = "Ziel wurde nicht gefunden.";
+            LoadError = L["AccommodationEdit_DestinationNotFound"];
             return;
         }
 
         _accommodation = _destination.Accommodations.FirstOrDefault(a => a.Id == AccommodationId);
         if (_accommodation == null)
         {
-            LoadError = "Unterkunft wurde nicht gefunden.";
+            LoadError = L["AccommodationEdit_AccommodationNotFound"];
             return;
         }
 
@@ -164,17 +165,17 @@
             var success = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
             if (success)
             {
-                Snackbar.Add("Unterkunft aktualisiert.", Severity.Success);
+                Snackbar.Add(L["AccommodationEdit_Success"], Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TripLink(TripId));
             }
             else
             {
-                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["AccommodationEdit_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["AccommodationEdit_Error", ex.Message], Severity.Error);
         }
     }
 
@@ -196,12 +197,12 @@
         var result = await TripsState.RemoveAccommodationAsync(TripId, DestinationId, AccommodationId);
         if (result)
         {
-            Snackbar.Add("Unterkunft gelöscht.", Severity.Success);
+            Snackbar.Add(L["AccommodationEdit_Deleted"], Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add("Löschen fehlgeschlagen.", Severity.Error);
+            Snackbar.Add(L["AccommodationEdit_DeleteFailed"], Severity.Error);
         }
     }
 

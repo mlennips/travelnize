@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
     <PackageReference Include="MudBlazor" Version="8.13.0" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="TimeWarp.State" Version="11.0.3" />
@@ -26,5 +27,9 @@
   <ItemGroup>
     <ProjectReference Include="..\LIT.Travelnize.Domain\LIT.Travelnize.Domain.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+  </PropertyGroup>
 
 </Project>

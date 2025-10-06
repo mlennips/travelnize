@@ -7,10 +7,11 @@
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="TripEditFormModel"
-                Title="Reise bearbeiten"
-                Subtitle="Passe die Basisdaten deiner Reise an."
+                Title="@L["TripEdit_Title"]"
+                Subtitle="@L["TripEdit_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -22,17 +23,17 @@
         <MudGrid Spacing="4">
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["TripEdit_NameLabel"]"
                               For="@(() => FormModel!.Name)"
                               Required="true"
-                              Placeholder="Titel der Reise" />
+                              Placeholder="@L["TripEdit_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="Beschreibung"
+                              Label="@L["TripEdit_DescriptionLabel"]"
                               For="@(() => FormModel!.Description)"
-                              Placeholder="Kurze Beschreibung"
+                              Placeholder="@L["TripEdit_DescriptionPlaceholder"]"
                               Lines="4" />
             </MudItem>
 
@@ -78,7 +79,7 @@
 
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["TripEdit_TripNotFound"];
             }
             else
             {
@@ -87,7 +88,7 @@
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["TripEdit_LoadError", ex.Message];
         }
         finally
         {
@@ -107,8 +108,6 @@
             Description = trip.Description,
             SlotEditModel = new PlanningSlotEdit.PlanningSlotEditModel(trip.Slot)
         };
-
-        // Keine manuelle ValidateModel mehr nötig (AutoValidate übernimmt)
     }
 
     private async Task HandleValidSubmit(EditContext _)
@@ -127,17 +126,17 @@
             var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
             if (ok)
             {
-                Snackbar.Add("Reise aktualisiert.", Severity.Success);
+                Snackbar.Add(L["TripEdit_Success"], Severity.Success);
                 Navigation.NavigateTo($"/trips/{TripId}", forceLoad: false);
             }
             else
             {
-                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["TripEdit_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["TripEdit_Error", ex.Message], Severity.Error);
         }
     }
 
@@ -146,12 +145,12 @@
         var result = await TripsState.DeleteTripAsync(TripId);
         if (result)
         {
-            Snackbar.Add("Reise gelöscht.", Severity.Success);
+            Snackbar.Add(L["TripEdit_Deleted"], Severity.Success);
             Navigation.NavigateTo("/trips");
         }
         else
         {
-            Snackbar.Add("Löschen fehlgeschlagen.", Severity.Error);
+            Snackbar.Add(L["TripEdit_DeleteFailed"], Severity.Error);
         }
     }
 
@@ -188,7 +187,6 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // Validierung der Slot-Daten erfolgt im PlanningSlotEdit
             yield break;
         }
     }

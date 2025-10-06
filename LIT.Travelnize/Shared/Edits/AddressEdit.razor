@@ -1,41 +1,42 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Common
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditForm Model="Model">
     <MudGrid Spacing="4">
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="Model.Line1"
-                          Label="Adresszeile 1"
+                          Label="@L["AddressEdit_Line1"]"
                           For="@(() => Model.Line1)" />
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="Model.Line2"
-                          Label="Adresszeile 2"
+                          Label="@L["AddressEdit_Line2"]"
                           For="@(() => Model.Line2)" />
         </MudItem>
         <MudItem xs="12" sm="5">
             <MudTextField @bind-Value="Model.Street"
-                          Label="Straße"
+                          Label="@L["AddressEdit_Street"]"
                           For="@(() => Model.Street)" />
         </MudItem>
         <MudItem xs="6" sm="2">
             <MudTextField @bind-Value="Model.HouseNumber"
-                          Label="Nr."
+                          Label="@L["AddressEdit_HouseNumber"]"
                           For="@(() => Model.HouseNumber)" />
         </MudItem>
         <MudItem xs="6" sm="2">
             <MudTextField @bind-Value="Model.PostalCode"
-                          Label="PLZ"
+                          Label="@L["AddressEdit_PostalCode"]"
                           For="@(() => Model.PostalCode)" />
         </MudItem>
         <MudItem xs="12" sm="3">
             <MudTextField @bind-Value="Model.City"
-                          Label="Stadt"
+                          Label="@L["AddressEdit_City"]"
                           For="@(() => Model.City)" />
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudTextField @bind-Value="Model.Country"
-                          Label="Land"
+                          Label="@L["AddressEdit_Country"]"
                           For="@(() => Model.Country)" />
         </MudItem>
     </MudGrid>

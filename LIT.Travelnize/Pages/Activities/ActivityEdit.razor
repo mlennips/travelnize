@@ -7,10 +7,11 @@
 @inject ISnackbar Snackbar
 @inject IDialogService Dialog
 @inject IWikipediaApiClient Wikipedia
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="ActivityEditFormModel"
-                Title="Aktivität bearbeiten"
-                Subtitle="Passe die Daten deiner Aktivität an."
+                Title="@L["ActivityEdit_Title"]"
+                Subtitle="@L["ActivityEdit_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -21,10 +22,10 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="10">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["ActivityEdit_NameLabel"]"
                               For="@(() => FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name der Aktivität" />
+                              Placeholder="@L["ActivityEdit_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12" sm="2">
@@ -33,34 +34,34 @@
                                OnClick="OpenWikipediaDialogAsync"
                                Variant="Variant.Filled"
                                Color="Color.Primary">
-                        Aus Wikipedia ergänzen
+                        @L["ActivityEdit_WikipediaButton"]
                     </MudButton>
                 </MudButtonGroup>
             </MudItem>
 
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="Beschreibung"
+                              Label="@L["ActivityEdit_DescriptionLabel"]"
                               For="@(() => FormModel!.Description)"
-                              Placeholder="Beschreibung"
+                              Placeholder="@L["ActivityEdit_DescriptionPlaceholder"]"
                               Lines="4" />
             </MudItem>
 
             <MudItem xs="12" sm="4">
                 <MudDatePicker @bind-Date="FormModel!.Date"
-                               Label="Datum"
+                               Label="@L["ActivityEdit_DateLabel"]"
                                Clearable="true"
                                DateFormat="dd.MM.yyyy" />
             </MudItem>
 
             <MudItem xs="6" sm="2">
                 <MudNumericField T="int?" @bind-Value="FormModel!.DurationHours"
-                                 Label="Dauer (Std.)"
+                                 Label="@L["ActivityEdit_DurationHoursLabel"]"
                                  Min="0" Max="240" Immediate="true" />
             </MudItem>
             <MudItem xs="6" sm="2">
                 <MudNumericField T="int?" @bind-Value="FormModel!.DurationMinutes"
-                                 Label="Dauer (Min.)"
+                                 Label="@L["ActivityEdit_DurationMinutesLabel"]"
                                  Min="0" Max="59" Immediate="true" />
             </MudItem>
 
@@ -113,12 +114,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["ActivityEdit_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["ActivityEdit_LoadError", ex.Message];
         }
         finally
         {
@@ -134,21 +135,21 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            LoadError = L["ActivityEdit_SegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = "Ziel wurde nicht gefunden.";
+            LoadError = L["ActivityEdit_DestinationNotFound"];
             return;
         }
 
         _activity = _destination.Activities.FirstOrDefault(a => a.Id == ActivityId);
         if (_activity == null)
         {
-            LoadError = "Aktivität wurde nicht gefunden.";
+            LoadError = L["ActivityEdit_ActivityNotFound"];
             return;
         }
 
@@ -198,17 +199,17 @@
             var success = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
             if (success)
             {
-                Snackbar.Add("Aktivität aktualisiert.", Severity.Success);
+                Snackbar.Add(L["ActivityEdit_Success"], Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TripLink(TripId));
             }
             else
             {
-                Snackbar.Add("Aktualisierung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["ActivityEdit_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["ActivityEdit_Error", ex.Message], Severity.Error);
         }
     }
 
@@ -235,12 +236,12 @@
         var result = await TripsState.RemoveActivityAsync(TripId, DestinationId, ActivityId);
         if (result)
         {
-            Snackbar.Add("Aktivität gelöscht.", Severity.Success);
+            Snackbar.Add(L["ActivityEdit_Deleted"], Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add("Löschen fehlgeschlagen.", Severity.Error);
+            Snackbar.Add(L["ActivityEdit_DeleteFailed"], Severity.Error);
         }
     }
 
@@ -290,7 +291,7 @@
             CloseOnEscapeKey = true
         };
 
-        var dialogRef = await Dialog.ShowAsync<WikipediaSearchDialog>("Wikipedia Suche", parameters, options);
+        var dialogRef = await Dialog.ShowAsync<WikipediaSearchDialog>(L["ActivityEdit_WikipediaDialogTitle"], parameters, options);
         var result = await dialogRef.Result;
 
         if (result != null && !result.Canceled && result.Data is WikipediaSummaryDto summary)
@@ -304,7 +305,7 @@
             if (summary.Longitude.HasValue)
                 FormModel!.LocationModel.CoordinatesModel.Longitude = summary.Longitude;
 
-            Snackbar.Add("Wikipedia-Daten übernommen.", Severity.Success);
+            Snackbar.Add(L["ActivityEdit_WikipediaSuccess"], Severity.Success);
             StateHasChanged();
         }
     }

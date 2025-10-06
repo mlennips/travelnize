@@ -1,13 +1,14 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Common
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudGrid Spacing="4">
     <MudItem xs="12">
-        <MudText Typo="Typo.subtitle2">Adresse</MudText>
+        <MudText Typo="Typo.subtitle2">@L["LocationEdit_Address"]</MudText>
         <AddressEdit Model="Model.AddressModel" />
     </MudItem>
     <MudItem xs="12">
-        <MudText Typo="Typo.subtitle2">Koordinaten</MudText>
+        <MudText Typo="Typo.subtitle2">@L["LocationEdit_Coordinates"]</MudText>
         <CoordinatesEdit Model="Model.CoordinatesModel" />
     </MudItem>
 </MudGrid>

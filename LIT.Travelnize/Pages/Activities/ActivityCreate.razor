@@ -3,10 +3,11 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="ActivityCreateFormModel"
-                Title="Aktivität hinzufügen"
-                Subtitle="Lege eine neue Aktivität für dein Reiseziel an."
+                Title="@L["ActivityCreate_Title"]"
+                Subtitle="@L["ActivityCreate_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -16,21 +17,21 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["ActivityCreate_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name der Aktivität" />
+                              Placeholder="@L["ActivityCreate_NamePlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="Beschreibung"
+                              Label="@L["ActivityCreate_DescriptionLabel"]"
                               For="@(()=>FormModel!.Description)"
-                              Placeholder="Beschreibung"
+                              Placeholder="@L["ActivityCreate_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudDatePicker @bind-Date="FormModel!.Date"
-                               Label="Datum"
+                               Label="@L["ActivityCreate_DateLabel"]"
                                For="@(()=>FormModel!.Date)"
                                Clearable="true"
                                MinDate="@MinDate"
@@ -38,7 +39,7 @@
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTimePicker @bind-Time="FormModel!.Duration"
-                               Label="Dauer"
+                               Label="@L["ActivityCreate_DurationLabel"]"
                                For="@(()=>FormModel!.Duration)"
                                AmPm="false"
                                Clearable="true" />
@@ -89,12 +90,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["ActivityCreate_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["ActivityCreate_LoadError", ex.Message];
         }
         finally
         {
@@ -110,14 +111,14 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            LoadError = L["ActivityCreate_SegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = "Ziel wurde nicht gefunden.";
+            LoadError = L["ActivityCreate_DestinationNotFound"];
             return;
         }
 
@@ -154,17 +155,17 @@
             var newId = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add("Aktivität erstellt.", Severity.Success);
+                Snackbar.Add(L["ActivityCreate_Success"], Severity.Success);
                 Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
             }
             else
             {
-                Snackbar.Add("Erstellung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["ActivityCreate_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["ActivityCreate_Error", ex.Message], Severity.Error);
         }
     }
 

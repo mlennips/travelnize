@@ -8,7 +8,9 @@ using LIT.Travelnize.States;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
+using System.Globalization;
 
 internal class Program
 {
@@ -18,6 +20,7 @@ internal class Program
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
         builder.Services.AddScoped<IAuthService, JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider>(p => (JwtAuthenticationStateProvider)p.GetRequiredService<IAuthService>());
         builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
@@ -53,7 +56,15 @@ internal class Program
         builder.Services.AddScoped<ScrollService>();
         builder.Services.AddSingleton<TripsState>();
 
-        await builder.Build().RunAsync();
-    }
+        var host = builder.Build();
 
+        // Culture auf "de" setzen
+        var js = host.Services.GetRequiredService<IJSRuntime>();
+        var result = await js.InvokeAsync<string>("appCulture.get");
+        var culture = !string.IsNullOrWhiteSpace(result) ? result : "de";
+        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(culture);
+        CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(culture);
+
+        await host.RunAsync();
+    }
 }

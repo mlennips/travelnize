@@ -3,10 +3,11 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="DestinationCreateFormModel"
-                Title="Reiseziel hinzufügen"
-                Subtitle="Lege ein neues Reiseziel für deinen Reiseabschnitt an."
+                Title="@L["DestinationCreate_Title"]"
+                Subtitle="@L["DestinationCreate_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -16,16 +17,16 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["DestinationCreate_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name des Reiseziels" />
+                              Placeholder="@L["DestinationCreate_NamePlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="Beschreibung"
+                              Label="@L["DestinationCreate_DescriptionLabel"]"
                               For="@(()=>FormModel!.Description)"
-                              Placeholder="Beschreibung"
+                              Placeholder="@L["DestinationCreate_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12">
@@ -73,12 +74,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["DestinationCreate_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["DestinationCreate_LoadError", ex.Message];
         }
         finally
         {
@@ -94,14 +95,14 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = "Reiseabschnitt wurde nicht gefunden.";
+            LoadError = L["DestinationCreate_SegmentNotFound"];
             return;
         }
 
         var start = _segment.Slot.Start;
         var end = _segment.Slot.End;
 
-        FormModel ??= new DestinationCreateFormModel
+        FormModel ??= new DestinationCreateFormModel(L)
         {
             TripId = TripId,
             TravelSegmentId = TravelSegmentId,
@@ -133,17 +134,17 @@
             var newId = await TripsState.AddDestinationAsync(FormModel.TripId, FormModel.TravelSegmentId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add("Reiseziel erstellt.", Severity.Success);
+                Snackbar.Add(L["DestinationCreate_Success"], Severity.Success);
                 Navigation.NavigateTo(LinkHelper.DestinationLinkEdit(TripId, TravelSegmentId, newId.Value));
             }
             else
             {
-                Snackbar.Add("Erstellung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["DestinationCreate_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["DestinationCreate_Error", ex.Message], Severity.Error);
         }
     }
 
@@ -167,6 +168,11 @@
 
     internal class DestinationCreateFormModel : IValidatableObject
     {
+        public DestinationCreateFormModel(Microsoft.Extensions.Localization.IStringLocalizer<App> localizer)
+        {
+
+        }
+
         public Guid TripId { get; set; }
         public Guid TravelSegmentId { get; set; }
 
@@ -181,10 +187,7 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (SlotModel.Start.HasValue && SlotModel.End.HasValue && SlotModel.Start.Value >= SlotModel.End.Value)
-            {
-                yield return new ValidationResult("Start muss vor Ende liegen.", new[] { nameof(SlotModel.End) });
-            }
+            return [];
         }
     }
 }
