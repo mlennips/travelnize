@@ -1,4 +1,4 @@
-@using Microsoft.JSInterop
+﻿@using Microsoft.JSInterop
 @using System.Globalization
 
 @if (!_hasCoords)
@@ -31,7 +31,7 @@ else
     [Parameter] public string? TileAttribution { get; set; }
 
     [Parameter] public string Class { get; set; } = "";
-    [Parameter] public string FallbackText { get; set; } = "Keine Karte verf�gbar";
+    [Parameter] public string FallbackText { get; set; } = "Keine Karte verfügbar";
 
     private bool _hasCoords;
     private string _mapId = "map_" + Guid.NewGuid().ToString("N");

@@ -1,4 +1,4 @@
-@using LIT.Travelnize.Domain.External.Wikipedia
+Ôªø@using LIT.Travelnize.Domain.External.Wikipedia
 @inject IWikipediaApiClient Wikipedia
 @inject ISnackbar Snackbar
 <MudDialog>
@@ -7,7 +7,7 @@
             <MudTextField @bind-Value="_query"
                           Label="Suchbegriff"
                           Immediate="true"
-                          Placeholder="Begriff eingeben und Enter dr¸cken"
+                          Placeholder="Begriff eingeben und Enter dr√ºcken"
                           OnKeyDown="HandleKeyDown"
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" />
@@ -51,7 +51,7 @@
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Close" Color="Color.Secondary">Schlieﬂen</MudButton>
+        <MudButton OnClick="Close" Color="Color.Secondary">Schlie√üen</MudButton>
         <MudButton OnClick="SearchAsync" Disabled="@_loading" Color="Color.Primary" Variant="Variant.Filled">Suchen</MudButton>
     </DialogActions>
 </MudDialog>
@@ -133,7 +133,7 @@
     private static string TrimExcerpt(string? excerpt)
     {
         if (string.IsNullOrWhiteSpace(excerpt)) return string.Empty;
-        // Wikipedia Excerpt enth‰lt <span class="searchmatch">...</span> usw. -> rudiment‰r entfernen
+        // Wikipedia Excerpt enth√§lt <span class="searchmatch">...</span> usw. -> rudiment√§r entfernen
         return System.Text.RegularExpressions.Regex
             .Replace(excerpt, "<.*?>", string.Empty)
             .Trim();

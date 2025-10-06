@@ -1,4 +1,4 @@
-@page "/trips/{TripId:guid}"
+﻿@page "/trips/{TripId:guid}"
 @using Microsoft.AspNetCore.WebUtilities
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.ValueObjects
@@ -28,7 +28,7 @@
                 <TripHeader Trip="@TripsState.SelectedTrip" TripId="@TripId" />
 
                 <MudTabs ActivePanelIndex="@activeTabIndex" ActivePanelIndexChanged="OnTabChanged">
-                    <MudTabPanel Text="�bersicht">
+                    <MudTabPanel Text="Übersicht">
                         <TripOverviewTab Trip="@TripsState.SelectedTrip" TripId="@TripId" />
                     </MudTabPanel>
                     <MudTabPanel Text="Tagesplan">
