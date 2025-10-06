@@ -1,5 +1,10 @@
 @using MudBlazor
 
+@if (ShowPageTitle)
+{
+    <PageTitle>Travelnize - @Title</PageTitle>
+}
+
 <div class="d-flex flex-row mud-width-full py-4">
     @if (!string.IsNullOrEmpty(Image))
     {
@@ -22,4 +27,5 @@
     [Parameter] public string? Title { get; set; }
     [Parameter] public string? Subtitle { get; set; }
     [Parameter] public string? Image { get; set; } = "icon-192.png";
+    [Parameter] public bool ShowPageTitle { get; set; } = true;
 }
