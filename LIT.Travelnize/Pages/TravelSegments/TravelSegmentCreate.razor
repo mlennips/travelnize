@@ -9,7 +9,6 @@
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="TravelSegmentCreateFormModel"
                 Title="Reiseabschnitt hinzufügen"
                 Subtitle="Lege einen neuen Reiseabschnitt für deine Reise an."
-                ContainerClass="my-6"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -125,7 +124,7 @@
             if (newId.HasValue)
             {
                 Snackbar.Add("Reiseabschnitt erstellt.", Severity.Success);
-                Navigation.NavigateTo(LinkHelper.TravelSegmentLink(TripId, newId.Value));
+                Navigation.NavigateTo(LinkHelper.TravelSegmentLinkEdit(TripId, newId.Value));
             }
             else
             {

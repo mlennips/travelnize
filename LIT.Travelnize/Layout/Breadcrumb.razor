@@ -1,0 +1,115 @@
+@inject NavigationManager Navigation
+
+@if (Breadcrumbs.Count > 1)
+{
+    <MudPaper Class="px-4" Elevation="0">
+        <MudBreadcrumbs Items="@Breadcrumbs"
+                        Class="text-light small flex-nowrap"
+                        Style="font-size:0.75rem" />
+    </MudPaper>
+}
+else
+{
+    <MudPaper Class="px-4" Elevation="0" Style="height:28px"></MudPaper>
+}
+
+@code {
+    private List<BreadcrumbItem> Breadcrumbs = new();
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+        UpdateBreadcrumbs();
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        UpdateBreadcrumbs();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateBreadcrumbs()
+        => Breadcrumbs = BuildBreadcrumbs();
+
+    private List<BreadcrumbItem> BuildBreadcrumbs()
+    {
+        var uri = RemoveQuery(Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/'));
+        if (string.IsNullOrEmpty(uri))
+            return new() { new BreadcrumbItem("Willkommen", "/", false, Icons.Material.Filled.Home) };
+
+        var segments = uri.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var breadcrumbs = new List<BreadcrumbItem> { new("", "/", false, Icons.Material.Filled.Home) };
+
+        if (segments.Length < 1 || !segments[0].Equals("trips", StringComparison.OrdinalIgnoreCase))
+            return breadcrumbs;
+
+        breadcrumbs.Add(new("Reisen", "/trips"));
+
+        if (segments.Length < 2 || !Guid.TryParse(segments[1], out var tripId))
+            return breadcrumbs;
+
+        breadcrumbs.Add(new("Übersicht", RemoveQuery(LinkHelper.TripLink(tripId))));
+
+        if (IsEditSegment(segments, 2))
+            return breadcrumbs;
+
+        var travSegIdx = IndexOfSegment(segments, "travelsegments");
+        if (!TryAddBreadcrumb(segments, travSegIdx, 1, out var travelSegmentId))
+            return breadcrumbs;
+
+        breadcrumbs.Add(new("Reiseabschnitt", RemoveQuery(LinkHelper.TravelSegmentLinkEdit(tripId, travelSegmentId))));
+
+        if (IsEditSegment(segments, travSegIdx + 2))
+            return breadcrumbs;
+
+        var destIdx = IndexOfSegment(segments, "destinations");
+        if (!TryAddBreadcrumb(segments, destIdx, travSegIdx, out var destinationId))
+            return breadcrumbs;
+
+        breadcrumbs.Add(new("Reiseziel", RemoveQuery(LinkHelper.DestinationLinkEdit(tripId, travelSegmentId, destinationId))));
+
+        if (IsEditSegment(segments, destIdx + 2))
+            return breadcrumbs;
+
+        var accIdx = IndexOfSegment(segments, "accommodations");
+        if (TryAddBreadcrumb(segments, accIdx, destIdx, out var accommodationId))
+        {
+            breadcrumbs.Add(new("Unterkunft", RemoveQuery(LinkHelper.AccommodationLinkEdit(tripId, travelSegmentId, destinationId, accommodationId))));
+            if (IsEditSegment(segments, accIdx + 2))
+                return breadcrumbs;
+        }
+
+        var actIdx = IndexOfSegment(segments, "activities");
+        if (TryAddBreadcrumb(segments, actIdx, destIdx, out var activityId))
+        {
+            breadcrumbs.Add(new("Aktivität", RemoveQuery(LinkHelper.ActivityLinkEdit(tripId, travelSegmentId, destinationId, activityId))));
+            if (IsEditSegment(segments, actIdx + 2))
+                return breadcrumbs;
+        }
+
+        return breadcrumbs;
+    }
+
+    private static int IndexOfSegment(string[] segments, string value)
+        => Array.FindIndex(segments, s => s.Equals(value, StringComparison.OrdinalIgnoreCase));
+
+    private static bool IsEditSegment(string[] segments, int idx)
+        => segments.Length > idx && segments[idx].Equals("edit", StringComparison.OrdinalIgnoreCase);
+
+    private static bool TryAddBreadcrumb(string[] segments, int idx, int minIdx, out Guid id)
+    {
+        id = Guid.Empty;
+        return idx > minIdx && idx + 1 < segments.Length && Guid.TryParse(segments[idx + 1], out id);
+    }
+
+    private static string RemoveQuery(string url)
+    {
+        var idx = url.IndexOf('?');
+        return idx >= 0 ? url[..idx] : url;
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}
