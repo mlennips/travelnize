@@ -3,10 +3,11 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="TravelSegmentCreateFormModel"
-                Title="Reiseabschnitt hinzufügen"
-                Subtitle="Lege einen neuen Reiseabschnitt für deine Reise an."
+                Title="@L["TravelSegmentCreate_Title"]"
+                Subtitle="@L["TravelSegmentCreate_Subtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -16,16 +17,16 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="Name"
+                              Label="@L["TravelSegment_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="Name des Reiseabschnitts" />
+                              Placeholder="@L["TravelSegment_NamePlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="Beschreibung"
+                              Label="@L["TravelSegment_DescriptionLabel"]"
                               For="@(()=>FormModel!.Description)"
-                              Placeholder="Beschreibung"
+                              Placeholder="@L["TravelSegment_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12">
@@ -70,7 +71,7 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = "Reise wurde nicht gefunden.";
+                LoadError = L["TravelSegmentCreate_TripNotFound"];
             }
         }
         catch (Exception ex)
@@ -121,17 +122,17 @@
             var newId = await TripsState.AddTravelSegmentAsync(FormModel.TripId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add("Reiseabschnitt erstellt.", Severity.Success);
+                Snackbar.Add(L["TravelSegmentCreate_Success"], Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TravelSegmentLinkEdit(TripId, newId.Value));
             }
             else
             {
-                Snackbar.Add("Erstellung fehlgeschlagen.", Severity.Error);
+                Snackbar.Add(L["TravelSegmentCreate_Failed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add("Fehler: " + ex.Message, Severity.Error);
+            Snackbar.Add(L["TravelSegmentCreate_Error", ex.Message], Severity.Error);
         }
     }
 

@@ -715,6 +715,39 @@
 </data>
 
 
+  <data name="TravelSegmentCreate_Title" xml:space="preserve">
+  <value>Reiseabschnitt hinzufügen</value>
+</data>
+  <data name="TravelSegmentCreate_Subtitle" xml:space="preserve">
+  <value>Lege einen neuen Reiseabschnitt für deine Reise an.</value>
+</data>
+  <data name="TravelSegment_NameLabel" xml:space="preserve">
+  <value>Name</value>
+</data>
+  <data name="TravelSegment_NamePlaceholder" xml:space="preserve">
+  <value>Name des Reiseabschnitts</value>
+</data>
+  <data name="TravelSegment_DescriptionLabel" xml:space="preserve">
+  <value>Beschreibung</value>
+</data>
+  <data name="TravelSegment_DescriptionPlaceholder" xml:space="preserve">
+  <value>Beschreibung</value>
+</data>
+  <data name="TravelSegmentCreate_TripNotFound" xml:space="preserve">
+  <value>Reise wurde nicht gefunden.</value>
+</data>
+  <data name="TravelSegmentCreate_Success" xml:space="preserve">
+  <value>Reiseabschnitt erstellt.</value>
+</data>
+  <data name="TravelSegmentCreate_Failed" xml:space="preserve">
+  <value>Erstellung fehlgeschlagen.</value>
+</data>
+  <data name="TravelSegmentCreate_Error" xml:space="preserve">
+  <value>Fehler: {0}</value>
+</data>
+  <data name="TravelSegmentCreate_SlotValidation" xml:space="preserve">
+  <value>Start muss vor Ende liegen.</value>
+</data>
 
   <data name="TravelSegmentEdit_Title" xml:space="preserve">
   <value>Reiseabschnitt bearbeiten</value>
