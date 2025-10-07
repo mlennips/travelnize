@@ -34,10 +34,10 @@
                             <MudForm @ref="loginForm" Class="my-4">
                                 <MudGrid Spacing="4">
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="@L["Auth_EmailOrUserName"]" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="LoginModel.EmailOrUserName" Label="@L["Auth_EmailLabel"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="LoginModel.Password" Label="@L["Auth_Password"]" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="LoginModel.Password" Label="@L["Auth_PasswordLabel"]" InputType="InputType.Password" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitLoginAsync">@L["Auth_Login"]</MudButton>
@@ -60,19 +60,19 @@
                             <MudForm @ref="registerForm" Class="my-4">
                                 <MudGrid Spacing="4">
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="RegisterModel.Email" Label="@L["Auth_Email"]" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.Email" Label="@L["Auth_EmailLabel"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.Password" Label="@L["Auth_Password"]" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.Password" Label="@L["Auth_PasswordLabel"]" InputType="InputType.Password" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="@L["Auth_ConfirmPassword"]" InputType="InputType.Password" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.ConfirmPassword" Label="@L["Auth_ConfirmPasswordLabel"]" InputType="InputType.Password" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.FirstName" Label="@L["Auth_FirstName"]" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.FirstName" Label="@L["Auth_FirstNameLabel"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
-                                        <MudTextField @bind-Value="RegisterModel.LastName" Label="@L["Auth_LastName"]" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="RegisterModel.LastName" Label="@L["Auth_LastNameLabel"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitRegisterAsync">@L["Auth_Register"]</MudButton>
@@ -87,7 +87,7 @@
                             <MudForm @ref="forgotPasswordForm" Class="my-4">
                                 <MudGrid Spacing="4">
                                     <MudItem xs="12">
-                                        <MudTextField @bind-Value="ForgotPasswordModel.EmailOrUserName" Label="@L["Auth_EmailOrUserName"]" FullWidth="true" Required="true" />
+                                        <MudTextField @bind-Value="ForgotPasswordModel.EmailOrUserName" Label="@L["Auth_EmailLabel"]" FullWidth="true" Required="true" />
                                     </MudItem>
                                     <MudItem xs="12">
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitForgotPasswordAsync">@L["Auth_RequestNewPassword"]</MudButton>
@@ -153,12 +153,12 @@
                 }
                 else
                 {
-                    loginError = L["Auth_LoginFailed"];
+                    loginError = L["Errors_LoginFailed"];
                 }
             }
             else
             {
-                loginError = L["Auth_ValidationError"];
+                loginError = L["Errors_Validation"];
             }
         }
     }
@@ -178,12 +178,12 @@
                 }
                 else
                 {
-                    loginError = L["Auth_ForgotPasswordFailed"];
+                    forgotPasswordError = L["Errors_PasswordResetFailed"];
                 }
             }
             else
             {
-                loginError = L["Auth_ValidationError"];
+                forgotPasswordError = L["Errors_Validation"];
             }
         }
     }
@@ -207,12 +207,12 @@
                 }
                 else
                 {
-                    registerError = L["Auth_RegisterFailed"];
+                    registerError = L["Errors_RegisterFailed"];
                 }
             }
             else
             {
-                registerError = L["Auth_ValidationError"];
+                registerError = L["Errors_Validation"];
             }
         }
     }

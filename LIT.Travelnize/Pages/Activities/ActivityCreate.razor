@@ -6,8 +6,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="ActivityCreateFormModel"
-                Title="@L["ActivityCreate_Title"]"
-                Subtitle="@L["ActivityCreate_Subtitle"]"
+                Title="@L["Activity_CreateTitle"]"
+                Subtitle="@L["Activity_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -17,32 +17,35 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="@L["ActivityCreate_NameLabel"]"
+                              Label="@L["Activity_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="@L["ActivityCreate_NamePlaceholder"]" />
+                              Placeholder="@L["Activity_NamePlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="@L["ActivityCreate_DescriptionLabel"]"
+                              Label="@L["Activity_DescriptionLabel"]"
                               For="@(()=>FormModel!.Description)"
-                              Placeholder="@L["ActivityCreate_DescriptionPlaceholder"]"
+                              Placeholder="@L["Activity_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudDatePicker @bind-Date="FormModel!.Date"
-                               Label="@L["ActivityCreate_DateLabel"]"
+                               Label="@L["Activity_DateLabel"]"
                                For="@(()=>FormModel!.Date)"
                                Clearable="true"
                                MinDate="@MinDate"
                                MaxDate="@MaxDate" />
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTimePicker @bind-Time="FormModel!.Duration"
-                               Label="@L["ActivityCreate_DurationLabel"]"
-                               For="@(()=>FormModel!.Duration)"
-                               AmPm="false"
-                               Clearable="true" />
+            <MudItem xs="6" sm="3">
+                <MudNumericField T="int" @bind-Value="FormModel!.DurationHours"
+                                 Label="@L["Activity_DurationHoursLabel"]"
+                                 Min="0" Max="24" />
+            </MudItem>
+            <MudItem xs="6" sm="3">
+                <MudNumericField T="int" @bind-Value="FormModel!.DurationMinutes"
+                                 Label="@L["Activity_DurationMinutesLabel"]"
+                                 Min="0" Max="59" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -90,12 +93,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["ActivityCreate_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = L["ActivityCreate_LoadError", ex.Message];
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -111,14 +114,14 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["ActivityCreate_SegmentNotFound"];
+            LoadError = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = L["ActivityCreate_DestinationNotFound"];
+            LoadError = L["Errors_DestinationNotFound"];
             return;
         }
 
@@ -129,7 +132,8 @@
             Name = string.Empty,
             Description = string.Empty,
             Date = _destination.Slot.Start,
-            Duration = null
+            DurationHours = 0,
+            DurationMinutes = 0
         };
 
         MinDate = _destination.Slot.Start;
@@ -142,6 +146,10 @@
 
         try
         {
+            TimeSpan? duration = null;
+            if (FormModel.DurationHours > 0 || FormModel.DurationMinutes > 0)
+                duration = new TimeSpan(FormModel.DurationHours, FormModel.DurationMinutes, 0);
+
             var command = new AddActivityCommand(
                 FormModel.TripId,
                 FormModel.DestinationId,
@@ -149,23 +157,23 @@
                 FormModel.Description ?? string.Empty,
                 Location.Empty,
                 FormModel.Date,
-                FormModel.Duration
+                duration
             );
 
             var newId = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add(L["ActivityCreate_Success"], Severity.Success);
+                Snackbar.Add(string.Format(L["Success_Created"], L["Activity_Singular"]), Severity.Success);
                 Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
             }
             else
             {
-                Snackbar.Add(L["ActivityCreate_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["ActivityCreate_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 
@@ -202,7 +210,8 @@
         [Required(ErrorMessage = "Datum ist erforderlich.")]
         public DateTime? Date { get; set; }
 
-        public TimeSpan? Duration { get; set; }
+        public int DurationHours { get; set; }
+        public int DurationMinutes { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

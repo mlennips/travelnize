@@ -12,7 +12,7 @@
     <MudText Color="Color.Secondary" Class="opacity-75">
         @Trip?.Description
         <MudLink Href="@LinkHelper.TripLinkEdit(TripId)" Typo="Typo.caption">
-            @L["TripHeader_EditLink"]
+            @L["Trip_HeaderEditLink"]
         </MudLink>
     </MudText>
     <MudChipSet T="string" Size="Size.Medium" IconColor="Color.Default" ReadOnly>
@@ -22,24 +22,24 @@
         {
             if (Trip.Status == TripStatus.Pending)
             {
-                <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@Trip.Slot.TotalDaysInclusive @L["TripHeader_Days"]</MudChip>
+                <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@Trip.Slot.TotalDaysInclusive @L["Trip_HeaderDays"]</MudChip>
             }
             else if (Trip.Status == TripStatus.Upcoming)
             {
-                <MudChip Icon="@Icons.Material.Filled.HourglassTop" Color="Color.Tertiary">@Trip.Slot.DaysUntilStart @L["TripHeader_DaysUntilStart"]</MudChip>
-                <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@Trip.Slot.TotalDaysInclusive @L["TripHeader_Days"]</MudChip>
+                <MudChip Icon="@Icons.Material.Filled.HourglassTop" Color="Color.Tertiary">@Trip.Slot.DaysUntilStart @L["Trip_HeaderDaysUntilStart"]</MudChip>
+                <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@Trip.Slot.TotalDaysInclusive @L["Trip_HeaderDays"]</MudChip>
             }
             else if (Trip.Status == TripStatus.Ongoing)
             {
                 <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Success">
-                    @Trip.Slot.ActiveDays/@Trip.Slot.TotalDaysInclusive @L["TripHeader_Days"]
+                    @Trip.Slot.ActiveDays/@Trip.Slot.TotalDaysInclusive @L["Trip_HeaderDays"]
                 </MudChip>
             }
             else if (Trip.Status == TripStatus.Past)
             {
-                <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@Trip.Slot.TotalDaysInclusive @L["TripHeader_Days"]</MudChip>
+                <MudChip Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Tertiary">@Trip.Slot.TotalDaysInclusive @L["Trip_HeaderDays"]</MudChip>
             }
-            <MudChip Icon="@Icons.Material.Filled.People" Color="Color.Tertiary">@Trip.Participants.Count @L["TripHeader_Participants"]</MudChip>
+            <MudChip Icon="@Icons.Material.Filled.People" Color="Color.Tertiary">@Trip.Participants.Count @L["Trip_HeaderParticipants"]</MudChip>
         }
     </MudChipSet>
     <MudAvatarGroup Spacing="2"

@@ -6,13 +6,13 @@
     @if (ShowDays)
     {
         <MudText Inline Typo="@Typo">
-            (@Slot.TotalDays @(Slot.TotalDaysInclusive == 1 ? L["PlanningSlotDisplay_DaySingular"] : L["PlanningSlotDisplay_DayPlural"]))
+            (@Slot.TotalDays @(Slot.TotalDaysInclusive == 1 ? L["Common_DaySingular"] : L["Common_DayPlural"]))
         </MudText>
     }
 }
 else
 {
-    <MudText Typo="@Typo" Color="Color.Warning">@L["PlanningSlotDisplay_NoPeriod"]</MudText>
+    <MudText Typo="@Typo" Color="Color.Warning">@L["Common_NoPeriod"]</MudText>
 }
 
 @code {

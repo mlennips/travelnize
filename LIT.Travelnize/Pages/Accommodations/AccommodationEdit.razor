@@ -6,8 +6,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="AccommodationEditFormModel"
-                Title="@L["AccommodationEdit_Title"]"
-                Subtitle="@L["AccommodationEdit_Subtitle"]"
+                Title="@L["Accommodation_EditTitle"]"
+                Subtitle="@L["Accommodation_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -19,15 +19,15 @@
 
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="@L["AccommodationEdit_NameLabel"]"
+                              Label="@L["Accommodation_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="@L["AccommodationEdit_NamePlaceholder"]" />
+                              Placeholder="@L["Accommodation_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12" sm="4">
                 <MudSelect T="string" @bind-Value="FormModel!.Type"
-                           Label="@L["AccommodationEdit_TypeLabel"]"
+                           Label="@L["Accommodation_TypeLabel"]"
                            For="@(()=>FormModel!.Type)"
                            Required="true">
                     @foreach (var t in AccommodationType.DefaultValues)
@@ -43,7 +43,7 @@
 
             <MudItem xs="12">
                 <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">@L["AccommodationEdit_AddressLabel"]</MudText>
+                <MudText Typo="Typo.subtitle2">@L["Accommodation_AddressLabel"]</MudText>
             </MudItem>
 
             <MudItem xs="12">
@@ -95,12 +95,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["AccommodationEdit_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = L["AccommodationEdit_LoadError", ex.Message];
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -116,21 +116,21 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["AccommodationEdit_SegmentNotFound"];
+            LoadError = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = L["AccommodationEdit_DestinationNotFound"];
+            LoadError = L["Errors_DestinationNotFound"];
             return;
         }
 
         _accommodation = _destination.Accommodations.FirstOrDefault(a => a.Id == AccommodationId);
         if (_accommodation == null)
         {
-            LoadError = L["AccommodationEdit_AccommodationNotFound"];
+            LoadError = L["Errors_AccommodationNotFound"];
             return;
         }
 
@@ -165,17 +165,17 @@
             var success = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
             if (success)
             {
-                Snackbar.Add(L["AccommodationEdit_Success"], Severity.Success);
+                Snackbar.Add(string.Format(L["Success_Updated"], L["Accommodation_Singular"]), Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TripLink(TripId));
             }
             else
             {
-                Snackbar.Add(L["AccommodationEdit_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["AccommodationEdit_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 
@@ -197,12 +197,12 @@
         var result = await TripsState.RemoveAccommodationAsync(TripId, DestinationId, AccommodationId);
         if (result)
         {
-            Snackbar.Add(L["AccommodationEdit_Deleted"], Severity.Success);
+            Snackbar.Add(string.Format(L["Success_Deleted"], L["Accommodation_Singular"]), Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add(L["AccommodationEdit_DeleteFailed"], Severity.Error);
+            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
         }
     }
 

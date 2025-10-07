@@ -10,8 +10,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="ActivityEditFormModel"
-                Title="@L["ActivityEdit_Title"]"
-                Subtitle="@L["ActivityEdit_Subtitle"]"
+                Title="@L["Activity_EditTitle"]"
+                Subtitle="@L["Activity_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -22,10 +22,10 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="10">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="@L["ActivityEdit_NameLabel"]"
+                              Label="@L["Activity_NameLabel"]"
                               For="@(() => FormModel!.Name)"
                               Required="true"
-                              Placeholder="@L["ActivityEdit_NamePlaceholder"]" />
+                              Placeholder="@L["Activity_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12" sm="2">
@@ -34,34 +34,34 @@
                                OnClick="OpenWikipediaDialogAsync"
                                Variant="Variant.Filled"
                                Color="Color.Primary">
-                        @L["ActivityEdit_WikipediaButton"]
+                        @L["Activity_WikipediaButton"]
                     </MudButton>
                 </MudButtonGroup>
             </MudItem>
 
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="@L["ActivityEdit_DescriptionLabel"]"
+                              Label="@L["Activity_DescriptionLabel"]"
                               For="@(() => FormModel!.Description)"
-                              Placeholder="@L["ActivityEdit_DescriptionPlaceholder"]"
+                              Placeholder="@L["Activity_DescriptionPlaceholder"]"
                               Lines="4" />
             </MudItem>
 
             <MudItem xs="12" sm="4">
                 <MudDatePicker @bind-Date="FormModel!.Date"
-                               Label="@L["ActivityEdit_DateLabel"]"
+                               Label="@L["Activity_DateLabel"]"
                                Clearable="true"
                                DateFormat="dd.MM.yyyy" />
             </MudItem>
 
             <MudItem xs="6" sm="2">
                 <MudNumericField T="int?" @bind-Value="FormModel!.DurationHours"
-                                 Label="@L["ActivityEdit_DurationHoursLabel"]"
+                                 Label="@L["Activity_DurationHoursLabel"]"
                                  Min="0" Max="240" Immediate="true" />
             </MudItem>
             <MudItem xs="6" sm="2">
                 <MudNumericField T="int?" @bind-Value="FormModel!.DurationMinutes"
-                                 Label="@L["ActivityEdit_DurationMinutesLabel"]"
+                                 Label="@L["Activity_DurationMinutesLabel"]"
                                  Min="0" Max="59" Immediate="true" />
             </MudItem>
 
@@ -114,12 +114,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["ActivityEdit_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = L["ActivityEdit_LoadError", ex.Message];
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -135,21 +135,21 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["ActivityEdit_SegmentNotFound"];
+            LoadError = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = L["ActivityEdit_DestinationNotFound"];
+            LoadError = L["Errors_DestinationNotFound"];
             return;
         }
 
         _activity = _destination.Activities.FirstOrDefault(a => a.Id == ActivityId);
         if (_activity == null)
         {
-            LoadError = L["ActivityEdit_ActivityNotFound"];
+            LoadError = L["Errors_ActivityNotFound"];
             return;
         }
 
@@ -199,17 +199,17 @@
             var success = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
             if (success)
             {
-                Snackbar.Add(L["ActivityEdit_Success"], Severity.Success);
+                Snackbar.Add(string.Format(L["Success_Updated"], L["Activity_Singular"]), Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TripLink(TripId));
             }
             else
             {
-                Snackbar.Add(L["ActivityEdit_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["ActivityEdit_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 
@@ -236,12 +236,12 @@
         var result = await TripsState.RemoveActivityAsync(TripId, DestinationId, ActivityId);
         if (result)
         {
-            Snackbar.Add(L["ActivityEdit_Deleted"], Severity.Success);
+            Snackbar.Add(string.Format(L["Success_Deleted"], L["Activity_Singular"]), Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add(L["ActivityEdit_DeleteFailed"], Severity.Error);
+            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
         }
     }
 
@@ -291,7 +291,7 @@
             CloseOnEscapeKey = true
         };
 
-        var dialogRef = await Dialog.ShowAsync<WikipediaSearchDialog>(L["ActivityEdit_WikipediaDialogTitle"], parameters, options);
+        var dialogRef = await Dialog.ShowAsync<WikipediaSearchDialog>(L["Activity_WikipediaDialogTitle"], parameters, options);
         var result = await dialogRef.Result;
 
         if (result != null && !result.Canceled && result.Data is WikipediaSummaryDto summary)
@@ -305,7 +305,7 @@
             if (summary.Longitude.HasValue)
                 FormModel!.LocationModel.CoordinatesModel.Longitude = summary.Longitude;
 
-            Snackbar.Add(L["ActivityEdit_WikipediaSuccess"], Severity.Success);
+            Snackbar.Add(L["Success_WikipediaImported"], Severity.Success);
             StateHasChanged();
         }
     }

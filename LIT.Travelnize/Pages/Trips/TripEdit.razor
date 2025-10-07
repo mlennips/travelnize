@@ -10,8 +10,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="TripEditFormModel"
-                Title="@L["TripEdit_Title"]"
-                Subtitle="@L["TripEdit_Subtitle"]"
+                Title="@L["Trip_EditTitle"]"
+                Subtitle="@L["Trip_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -23,17 +23,17 @@
         <MudGrid Spacing="4">
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="@L["TripEdit_NameLabel"]"
+                              Label="@L["Trip_NameLabel"]"
                               For="@(() => FormModel!.Name)"
                               Required="true"
-                              Placeholder="@L["TripEdit_NamePlaceholder"]" />
+                              Placeholder="@L["Trip_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="@L["TripEdit_DescriptionLabel"]"
+                              Label="@L["Trip_DescriptionLabel"]"
                               For="@(() => FormModel!.Description)"
-                              Placeholder="@L["TripEdit_DescriptionPlaceholder"]"
+                              Placeholder="@L["Trip_DescriptionPlaceholder"]"
                               Lines="4" />
             </MudItem>
 
@@ -79,7 +79,7 @@
 
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["TripEdit_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
             else
             {
@@ -88,7 +88,7 @@
         }
         catch (Exception ex)
         {
-            LoadError = L["TripEdit_LoadError", ex.Message];
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -126,17 +126,17 @@
             var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
             if (ok)
             {
-                Snackbar.Add(L["TripEdit_Success"], Severity.Success);
+                Snackbar.Add(L["Success_Updated", L["Trip_Singular"]], Severity.Success);
                 Navigation.NavigateTo($"/trips/{TripId}", forceLoad: false);
             }
             else
             {
-                Snackbar.Add(L["TripEdit_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["TripEdit_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 
@@ -145,12 +145,12 @@
         var result = await TripsState.DeleteTripAsync(TripId);
         if (result)
         {
-            Snackbar.Add(L["TripEdit_Deleted"], Severity.Success);
+            Snackbar.Add(L["Success_Deleted", L["Trip_Singular"]], Severity.Success);
             Navigation.NavigateTo("/trips");
         }
         else
         {
-            Snackbar.Add(L["TripEdit_DeleteFailed"], Severity.Error);
+            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
         }
     }
 

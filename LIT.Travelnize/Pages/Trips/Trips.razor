@@ -3,12 +3,13 @@
 @using LIT.Travelnize.Helpers
 @inject IAuthService AuthService
 @inject TripsState TripsState
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudGrid Spacing="6">
         <MudItem xs="12">
-            <PageHeader Title="Reisen"
-                        Subtitle="Alle deine Abenteuer im Überblick." />
+            <PageHeader Title="@L["Trips_Title"]"
+                        Subtitle="@L["Trips_Subtitle"]" />
         </MudItem>
 
         <!-- Horizontale Timeline Darstellung aller Reisen -->
@@ -37,98 +38,103 @@
 
         @foreach (var tripGroup in GroupedTrips.Where(x => x.Value.Any()))
         {
+            string groupLabel = tripGroup.Key switch
             {
-                <MudItem xs="12">
-                    <MudPaper Elevation="0">
-                        <MudText GutterBottom Typo="Typo.caption" Color="Color.Secondary">
-                            @tripGroup.Key.Value
-                        </MudText>
-                    </MudPaper>
-                    <MudStack Spacing="2">
-                        @foreach (var trip in tripGroup.Value)
+                var s when s == TripStatus.Ongoing => L["Trips_Status_Ongoing"],
+                var s when s == TripStatus.Upcoming => L["Trips_Status_Upcoming"],
+                var s when s == TripStatus.Pending => L["Trips_Status_Pending"],
+                var s when s == TripStatus.Past => L["Trips_Status_Past"],
+                _ => tripGroup.Key.Value
+            };
+
+            <MudItem xs="12">
+                <MudPaper Elevation="0">
+                    <MudText GutterBottom Typo="Typo.caption" Color="Color.Secondary">
+                        @groupLabel
+                    </MudText>
+                </MudPaper>
+                <MudStack Spacing="2">
+                    @foreach (var trip in tripGroup.Value)
+                    {
+                        string statusDetail = trip.Status switch
                         {
-                            <MudCard Class="my-2" Elevation="25">
-                                <MudCardContent Class="pa-4">
-                                    <MudStack Breakpoint="Breakpoint.Xs" Row="true" StretchItems="StretchItems.Start">
-                                        <MudStack Row="false" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.Middle" Justify="Justify.FlexEnd"  Spacing="0">
-                                            <MudLink Href="@LinkHelper.TripLink(trip.Id)" Underline="Underline.None" Class="text-trip fw-semibold" Typo="Typo.h6">
-                                                @trip.Name
-                                            </MudLink>
-                                          
-                                            @if (!string.IsNullOrWhiteSpace(trip.Description))
-                                            {
-                                                <MudText Typo="Typo.body2" Class="opacity-85">
-                                                    @trip.Description
+                            var s when s == TripStatus.Upcoming =>
+                                trip.Slot.DaysUntilStart == 0
+                                    ? L["Trips_StatusDetail_UpcomingToday"]
+                                    : L["Trips_StatusDetail_UpcomingInDays", trip.Slot.DaysUntilStart],
+                            var s when s == TripStatus.Ongoing =>
+                                L["Trips_StatusDetail_Ongoing", trip.Slot.ActiveDays, trip.Slot.TotalDaysInclusive, trip.Slot.RemainingDays],
+                            var s when s == TripStatus.Past => L["Trips_StatusDetail_Past"],
+                            var s when s == TripStatus.Pending => L["Trips_StatusDetail_Pending"],
+                            _ => ""
+                        };
+
+                        <MudCard Class="my-2" Elevation="25">
+                            <MudCardContent Class="pa-4">
+                                <MudStack Breakpoint="Breakpoint.Xs" Row="true" StretchItems="StretchItems.Start">
+                                    <MudStack Row="false" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.Middle" Justify="Justify.FlexEnd"  Spacing="0">
+                                        <MudLink Href="@LinkHelper.TripLink(trip.Id)" Underline="Underline.None" Class="text-trip fw-semibold" Typo="Typo.h6">
+                                            @trip.Name
+                                        </MudLink>
+                                      
+                                        @if (!string.IsNullOrWhiteSpace(trip.Description))
+                                        {
+                                            <MudText Typo="Typo.body2" Class="opacity-85">
+                                                @trip.Description
+                                            </MudText>
+                                        }
+
+                                        <MudPaper Elevation="0">
+                                            <MudText Typo="Typo.caption" Class="mt-1">
+                                                <PlanningSlotDisplay Slot="@trip.Slot" />
+                                                <MudText Typo="Typo.caption" Class="opacity-75 ml-1">
+                                                    @statusDetail
                                                 </MudText>
-                                            }
+                                            </MudText>
 
-                                            <MudPaper Elevation="0">
-                                                @{
-                                                    string statusDetail = trip.Status switch
-                                                    {
-                                                        var s when s == TripStatus.Upcoming =>
-                                                        trip.Slot.DaysUntilStart == 0
-                                                        ? "Startet heute"
-                                                        : $"Startet in {trip.Slot.DaysUntilStart} Tagen",
-                                                        var s when s == TripStatus.Ongoing =>
-                                                        $"Tag {trip.Slot.ActiveDays} von {trip.Slot.TotalDaysInclusive} • {trip.Slot.RemainingDays} Tage verbleiben",
-                                                        var s when s == TripStatus.Past => "Abgeschlossen",
-                                                        var s when s == TripStatus.Pending => "In Planung",
-                                                        _ => ""
-                                                    };
-                                                }
-
-                                                <MudText Typo="Typo.caption" Class="mt-1">
-                                                    <PlanningSlotDisplay Slot="@trip.Slot" />
-                                                    <MudText Typo="Typo.caption" Class="opacity-75 ml-1">
-                                                        @statusDetail
-                                                    </MudText>
-                                                </MudText>
-
-                                                @if (trip.Status == TripStatus.Ongoing && trip.Slot.TotalDaysInclusive > 0)
-                                                {
-                                                    var progress = Math.Clamp(
-                                                    trip.Slot.TotalDaysInclusive == 0
-                                                    ? 0
-                                                    : (double)trip.Slot.ActiveDays / trip.Slot.TotalDaysInclusive * 100d,
-                                                    0, 100);
-
-                                                    <MudProgressLinear Class="mt-1" Color="Color.Primary" Value="@progress" Rounded="true" />
-                                                }
-                                            </MudPaper>
-                                        </MudStack>
-                                        <MudStack Row="false" Justify="Justify.FlexStart" StretchItems="StretchItems.End" Breakpoint="Breakpoint.Xs" Spacing="0">                                           
-                                            <MudChip T="string" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">@trip.UserRole</MudChip>
-                                            @if (trip.Slot.Nights > 0)
+                                            @if (trip.Status == TripStatus.Ongoing && trip.Slot.TotalDaysInclusive > 0)
                                             {
-                                                <MudChip T="string" Color="Color.Tertiary" Variant="Variant.Outlined" Size="Size.Small">
-                                                    @($"{trip.Slot.Nights} Nächte")
-                                                </MudChip>
+                                                var progress = Math.Clamp(
+                                                trip.Slot.TotalDaysInclusive == 0
+                                                ? 0
+                                                : (double)trip.Slot.ActiveDays / trip.Slot.TotalDaysInclusive * 100d,
+                                                0, 100);
+
+                                                <MudProgressLinear Class="mt-1" Color="Color.Primary" Value="@progress" Rounded="true" />
                                             }
-                                            <MudButton Variant="Variant.Text"
-                                                       Class="mt-1"
-                                                       Color="Color.Primary"
-                                                       Size="Size.Small"
-                                                       Href="@LinkHelper.TripLink(trip.Id)"
-                                                       StartIcon="@Icons.Material.Filled.OpenInNew">
-                                                Öffnen
-                                            </MudButton>
-                                        </MudStack>
+                                        </MudPaper>
                                     </MudStack>
-                                </MudCardContent>
-                            </MudCard>
-                        }
+                                    <MudStack Row="false" Justify="Justify.FlexStart" StretchItems="StretchItems.End" Breakpoint="Breakpoint.Xs" Spacing="0">                                           
+                                        <MudChip T="string" Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">@trip.UserRole</MudChip>
+                                        @if (trip.Slot.Nights > 0)
+                                        {
+                                            <MudChip T="string" Color="Color.Tertiary" Variant="Variant.Outlined" Size="Size.Small">
+                                                @($"{trip.Slot.Nights} {L["Trips_NightsLabel"]}")
+                                            </MudChip>
+                                        }
+                                        <MudButton Variant="Variant.Text"
+                                                   Class="mt-1"
+                                                   Color="Color.Primary"
+                                                   Size="Size.Small"
+                                                   Href="@LinkHelper.TripLink(trip.Id)"
+                                                   StartIcon="@Icons.Material.Filled.OpenInNew">
+                                            @L["Common_Open"]
+                                        </MudButton>
+                                    </MudStack>
+                                </MudStack>
+                            </MudCardContent>
+                        </MudCard>
+                    }
 
-                    </MudStack>
+                </MudStack>
 
-                </MudItem>
-            }
+            </MudItem>
         }
         <MudItem xs="12">
             @if (!TripsState.IsLoading && TripsState.Trips?.Count() == 0)
             {
                 <MudAlert Severity="Severity.Info" Elevation="0" Variant="Variant.Filled" Dense="true" Class="mt-4">
-                    Es wurden noch keine Reisen angelegt.
+                    @L["Trips_NoTrips"]
                 </MudAlert>
             }
         </MudItem>

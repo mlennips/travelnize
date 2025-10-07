@@ -47,9 +47,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-trip">
                 <MudIcon Icon="@IconHelper.TripTwoTone" Size="Size.Large" Class="mb-2 text-trip" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-trip">@L["Home_Trips"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-trip">@L["Trip_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    @L["Home_TripsDesc"]
+                    @L["Home_TripsStatsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -58,9 +58,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-travelsegment">
                 <MudIcon Icon="@IconHelper.TravelSegmentTwoTone" Size="Size.Large" Class="mb-2 text-travelsegment" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-travelsegment">@L["Home_TravelSegments"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-travelsegment">@L["TravelSegment_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    @L["Home_TravelSegmentsDesc"]
+                    @L["Home_TravelSegmentDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -69,9 +69,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-destination">
                 <MudIcon Icon="@IconHelper.DestinationTwoTone" Size="Size.Large" Class="mb-2 text-destination" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-destination">@L["Home_Destinations"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-destination">@L["Destination_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    @L["Home_DestinationsDesc"]
+                    @L["Home_DestinationsStatsDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -80,9 +80,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-accommodation">
                 <MudIcon Icon="@IconHelper.AccommodationTwoTone" Size="Size.Large" Class="mb-2 text-accommodation" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-accommodation">@L["Home_Accommodations"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-accommodation">@L["Accommodation_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    @L["Home_AccommodationsDesc"]
+                    @L["Home_AccommodationDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -91,9 +91,9 @@
                       Style="min-height:180px;"
                       Class="d-flex flex-column align-center justify-center mud-width-full pa-4 text-center card-activity">
                 <MudIcon Icon="@IconHelper.AccommodationTwoTone" Size="Size.Large" Class="mb-2 text-activity" />
-                <MudText Typo="Typo.h6" Class="mb-1 text-activity">@L["Home_Activities"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1 text-activity">@L["Activity_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
-                    @L["Home_ActivitiesDesc"]
+                    @L["Home_ActivityDesc"]
                 </MudText>
             </MudPaper>
         </MudItem>
@@ -104,7 +104,7 @@
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center mud-width-full py-2 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.EventNote" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                <MudText Typo="Typo.h6" Class="mb-1">@L["Home_Trips"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1">@L["Trip_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
                     @L["Home_TripsStatsDesc"]
                 </MudText>
@@ -113,7 +113,7 @@
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center mud-width-full py-2 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                <MudText Typo="Typo.h6" Class="mb-1">@L["Home_Destinations"]</MudText>
+                <MudText Typo="Typo.h6" Class="mb-1">@L["Destination_Plural"]</MudText>
                 <MudText Typo="Typo.body2" Class="mb-0">
                     @L["Home_DestinationsStatsDesc"]
                 </MudText>
@@ -143,6 +143,7 @@
                 @L["Home_EnjoyExploring"]
             </MudText>
         </MudItem>
+
     </MudGrid>
 </MudContainer>
 

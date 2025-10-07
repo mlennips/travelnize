@@ -6,8 +6,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="TravelSegmentCreateFormModel"
-                Title="@L["TravelSegmentCreate_Title"]"
-                Subtitle="@L["TravelSegmentCreate_Subtitle"]"
+                Title="@L["TravelSegment_CreateTitle"]"
+                Subtitle="@L["TravelSegment_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -71,12 +71,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["TravelSegmentCreate_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = "Fehler beim Laden: " + ex.Message;
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -122,17 +122,17 @@
             var newId = await TripsState.AddTravelSegmentAsync(FormModel.TripId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add(L["TravelSegmentCreate_Success"], Severity.Success);
+                Snackbar.Add(string.Format(L["Success_Created"], L["TravelSegment_Singular"]), Severity.Success);
                 Navigation.NavigateTo(LinkHelper.TravelSegmentLinkEdit(TripId, newId.Value));
             }
             else
             {
-                Snackbar.Add(L["TravelSegmentCreate_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["TravelSegmentCreate_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 

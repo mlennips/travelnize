@@ -6,8 +6,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="AccommodationCreateFormModel"
-                Title="@L["AccommodationCreate_Title"]"
-                Subtitle="@L["AccommodationCreate_Subtitle"]"
+                Title="@L["Accommodation_CreateTitle"]"
+                Subtitle="@L["Accommodation_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -18,15 +18,15 @@
 
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="@L["AccommodationCreate_NameLabel"]"
+                              Label="@L["Accommodation_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="@L["AccommodationCreate_NamePlaceholder"]" />
+                              Placeholder="@L["Accommodation_NamePlaceholder"]" />
             </MudItem>
 
             <MudItem xs="12" sm="4">
                 <MudSelect T="string" @bind-Value="FormModel!.Type"
-                           Label="@L["AccommodationCreate_TypeLabel"]"
+                           Label="@L["Accommodation_TypeLabel"]"
                            For="@(()=>FormModel!.Type)"
                            Required="true">
                     @foreach (var t in AccommodationType.DefaultValues)
@@ -42,7 +42,7 @@
 
             <MudItem xs="12">
                 <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">@L["AccommodationCreate_AddressLabel"]</MudText>
+                <MudText Typo="Typo.subtitle2">@L["Accommodation_AddressLabel"]</MudText>
             </MudItem>
             <MudItem xs="12">
                 <AddressEdit Model="AddressModel" />
@@ -92,12 +92,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["AccommodationCreate_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = L["AccommodationCreate_LoadError", ex.Message];
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -113,14 +113,14 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["AccommodationCreate_SegmentNotFound"];
+            LoadError = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = L["AccommodationCreate_DestinationNotFound"];
+            LoadError = L["Errors_DestinationNotFound"];
             return;
         }
 
@@ -161,17 +161,17 @@
             var newId = await TripsState.AddAccommodationAsync(FormModel.TripId, FormModel.DestinationId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add(L["AccommodationCreate_Success"], Severity.Success);
+                Snackbar.Add(string.Format(L["Success_Created"], L["Accommodation_Singular"]), Severity.Success);
                 Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{DestinationId}/accommodations/{newId}/edit");
             }
             else
             {
-                Snackbar.Add(L["AccommodationCreate_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["AccommodationCreate_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 

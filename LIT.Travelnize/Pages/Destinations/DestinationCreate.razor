@@ -6,8 +6,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="DestinationCreateFormModel"
-                Title="@L["DestinationCreate_Title"]"
-                Subtitle="@L["DestinationCreate_Subtitle"]"
+                Title="@L["Destination_CreateTitle"]"
+                Subtitle="@L["Destination_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
@@ -17,16 +17,16 @@
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
-                              Label="@L["DestinationCreate_NameLabel"]"
+                              Label="@L["Destination_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
-                              Placeholder="@L["DestinationCreate_NamePlaceholder"]" />
+                              Placeholder="@L["Destination_NamePlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="@L["DestinationCreate_DescriptionLabel"]"
+                              Label="@L["Destination_DescriptionLabel"]"
                               For="@(()=>FormModel!.Description)"
-                              Placeholder="@L["DestinationCreate_DescriptionPlaceholder"]"
+                              Placeholder="@L["Destination_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12">
@@ -74,12 +74,12 @@
             await TripsState.LoadTripAsync(TripId);
             if (TripsState.SelectedTrip == null)
             {
-                LoadError = L["DestinationCreate_TripNotFound"];
+                LoadError = L["Errors_TripNotFound"];
             }
         }
         catch (Exception ex)
         {
-            LoadError = L["DestinationCreate_LoadError", ex.Message];
+            LoadError = L["Errors_Load", ex.Message];
         }
         finally
         {
@@ -95,7 +95,7 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["DestinationCreate_SegmentNotFound"];
+            LoadError = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
@@ -134,17 +134,17 @@
             var newId = await TripsState.AddDestinationAsync(FormModel.TripId, FormModel.TravelSegmentId, command);
             if (newId.HasValue)
             {
-                Snackbar.Add(L["DestinationCreate_Success"], Severity.Success);
+                Snackbar.Add(string.Format(L["Success_Created"], L["Destination_Singular"]), Severity.Success);
                 Navigation.NavigateTo(LinkHelper.DestinationLinkEdit(TripId, TravelSegmentId, newId.Value));
             }
             else
             {
-                Snackbar.Add(L["DestinationCreate_Failed"], Severity.Error);
+                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add(L["DestinationCreate_Error", ex.Message], Severity.Error);
+            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
         }
     }
 

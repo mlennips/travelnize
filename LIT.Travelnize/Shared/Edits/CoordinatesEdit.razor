@@ -7,20 +7,20 @@
 <MudGrid Spacing="4">
     <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Latitude"
-                         Label="@L["CoordinatesEdit_Latitude"]"
+                         Label="@L["Coordinates_LatitudeLabel"]"
                          For="@(() => Model.Latitude)"
                          Immediate="true"
                          Clearable="true"
-                         Placeholder="@L["CoordinatesEdit_LatitudePlaceholder"]"
+                         Placeholder="@L["Coordinates_LatitudePlaceholder"]"
                          Min="-90" Max="90" />
     </MudItem>
     <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Longitude"
-                         Label="@L["CoordinatesEdit_Longitude"]"
+                         Label="@L["Coordinates_LongitudeLabel"]"
                          For="@(() => Model.Longitude)"
                          Immediate="true"
                          Clearable="true"
-                         Placeholder="@L["CoordinatesEdit_LongitudePlaceholder"]"
+                         Placeholder="@L["Coordinates_LongitudePlaceholder"]"
                          Min="-180" Max="180" />
     </MudItem>
     <MudItem xs="12" sm="4" lg="2" Class="d-flex align-items-end">
@@ -29,7 +29,7 @@
                    Color="Color.Tertiary"
                    StartIcon="@(_showMap ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Map)"
                    OnClick="@ToggleMap">
-            @(_showMap ? L["CoordinatesEdit_HideMap"] : L["CoordinatesEdit_ShowMap"])
+            @(_showMap ? L["Coordinates_HideMap"] : L["Coordinates_ShowMap"])
         </MudButton>
     </MudItem>
     @if (_showMap)
