@@ -4,7 +4,6 @@
 @using LIT.Travelnize.Shared.External
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject IDialogService Dialog
 @inject IWikipediaApiClient Wikipedia
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
@@ -107,25 +106,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeActivityModel()
@@ -172,44 +161,36 @@
     {
         if (FormModel == null) return;
 
-        try
+        TimeSpan? duration = null;
+        if (FormModel.DurationHours.HasValue || FormModel.DurationMinutes.HasValue)
         {
-            TimeSpan? duration = null;
-            if (FormModel.DurationHours.HasValue || FormModel.DurationMinutes.HasValue)
-            {
-                var h = FormModel.DurationHours ?? 0;
-                var m = FormModel.DurationMinutes ?? 0;
-                duration = new TimeSpan(h, m, 0);
-            }
-
-            var location = FormModel.LocationModel.ToLocation();
-
-            var command = new UpdateActivityCommand(
-                FormModel.TripId,
-                FormModel.SegmentId,
-                FormModel.DestinationId,
-                FormModel.ActivityId,
-                FormModel.Name!.Trim(),
-                FormModel.Description?.Trim() ?? string.Empty,
-                location,
-                FormModel.Date,
-                duration
-            );
-
-            var success = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
-            if (success)
-            {
-                Snackbar.Add(string.Format(L["Success_Updated"], L["Activity_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.TripLink(TripId));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
-            }
+            var h = FormModel.DurationHours ?? 0;
+            var m = FormModel.DurationMinutes ?? 0;
+            duration = new TimeSpan(h, m, 0);
         }
-        catch (Exception ex)
+
+        var location = FormModel.LocationModel.ToLocation();
+
+        var command = new UpdateActivityCommand(
+            FormModel.TripId,
+            FormModel.SegmentId,
+            FormModel.DestinationId,
+            FormModel.ActivityId,
+            FormModel.Name!.Trim(),
+            FormModel.Description?.Trim() ?? string.Empty,
+            location,
+            FormModel.Date,
+            duration
+        );
+
+        var success = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
+        if (success)
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
         }
     }
 
@@ -236,12 +217,11 @@
         var result = await TripsState.RemoveActivityAsync(TripId, DestinationId, ActivityId);
         if (result)
         {
-            Snackbar.Add(string.Format(L["Success_Deleted"], L["Activity_Singular"]), Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
         }
     }
 
@@ -305,8 +285,7 @@
             if (summary.Longitude.HasValue)
                 FormModel!.LocationModel.CoordinatesModel.Longitude = summary.Longitude;
 
-            Snackbar.Add(L["Success_WikipediaImported"], Severity.Success);
-            StateHasChanged();
+            // Wikipedia-Import bleibt lokal, Snackbar kann hier optional bleiben
         }
     }
 }

@@ -5,7 +5,6 @@
 @using LIT.Travelnize.Shared.Edits
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject HttpClient Http
 @inject IDialogService Dialog
 @inject IWikipediaApiClient Wikipedia
@@ -93,25 +92,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeDestinationModel()
@@ -150,41 +139,33 @@
     {
         if (FormModel == null) return;
 
-        try
+        var location = FormModel.LocationModel.ToLocation();
+
+        ResourceReference? image = null;
+        if (!string.IsNullOrWhiteSpace(FormModel.ImageModel.Source))
         {
-            var location = FormModel.LocationModel.ToLocation();
-
-            ResourceReference? image = null;
-            if (!string.IsNullOrWhiteSpace(FormModel.ImageModel.Source))
-            {
-                image = FormModel.ImageModel.ToResourceReference();
-            }
-
-            var command = new UpdateDestinationCommand(
-                FormModel.TripId,
-                FormModel.SegmentId,
-                FormModel.DestinationId,
-                FormModel.Name!.Trim(),
-                FormModel.Description?.Trim() ?? string.Empty,
-                location,
-                image,
-                null
-            );
-
-            var success = await TripsState.UpdateDestinationAsync(FormModel.TripId, command);
-            if (success)
-            {
-                Snackbar.Add(string.Format(L["Success_Updated"], L["Destination_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.TripLink(TripId));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
-            }
+            image = FormModel.ImageModel.ToResourceReference();
         }
-        catch (Exception ex)
+
+        var command = new UpdateDestinationCommand(
+            FormModel.TripId,
+            FormModel.SegmentId,
+            FormModel.DestinationId,
+            FormModel.Name!.Trim(),
+            FormModel.Description?.Trim() ?? string.Empty,
+            location,
+            image,
+            null
+        );
+
+        var success = await TripsState.UpdateDestinationAsync(FormModel.TripId, command);
+        if (success)
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
         }
     }
 
@@ -206,12 +187,11 @@
         var result = await TripsState.RemoveDestinationAsync(TripId, TravelSegmentId, DestinationId);
         if (result)
         {
-            Snackbar.Add(string.Format(L["Success_Deleted"], L["Destination_Singular"]), Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
         }
     }
 
@@ -288,7 +268,7 @@
                 );
             }           
 
-            Snackbar.Add(L["Success_WikipediaImported"], Severity.Success);
+            // Snackbar für Wikipedia-Import bleibt optional
             StateHasChanged();
         }
     }

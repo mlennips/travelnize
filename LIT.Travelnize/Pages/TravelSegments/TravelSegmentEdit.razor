@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="TravelSegmentEditFormModel"
@@ -70,25 +69,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeModel()
@@ -119,30 +108,22 @@
     {
         if (FormModel == null) return;
 
-        try
-        {
-            var command = new UpdateTravelSegmentCommand(
-                FormModel.TripId,
-                FormModel.SegmentId,
-                FormModel.SlotModel.ToPlanningSlot(),
-                FormModel.Name!.Trim(),
-                FormModel.Description!.Trim()
-            );
+        var command = new UpdateTravelSegmentCommand(
+            FormModel.TripId,
+            FormModel.SegmentId,
+            FormModel.SlotModel.ToPlanningSlot(),
+            FormModel.Name!.Trim(),
+            FormModel.Description!.Trim()
+        );
 
-            var ok = await TripsState.UpdateTravelSegmentAsync(FormModel.TripId, FormModel.SegmentId, command);
-            if (ok)
-            {
-                Snackbar.Add(string.Format(L["Success_Updated"], L["TravelSegment_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.TripLink(TripId));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
-            }
-        }
-        catch (Exception ex)
+        var ok = await TripsState.UpdateTravelSegmentAsync(FormModel.TripId, FormModel.SegmentId, command);
+        if (ok)
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
         }
     }
 
@@ -163,12 +144,11 @@
         var result = await TripsState.RemoveTravelSegmentAsync(TripId, TravelSegmentId);
         if (result)
         {
-            Snackbar.Add(string.Format(L["Success_Deleted"], L["TravelSegment_Singular"]), Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
         }
     }
 

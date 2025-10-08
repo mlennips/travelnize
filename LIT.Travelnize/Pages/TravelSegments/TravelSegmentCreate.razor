@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="TravelSegmentCreateFormModel"
@@ -64,25 +63,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeFormModel()
@@ -108,31 +97,23 @@
     {
         if (FormModel == null) return;
 
-        try
+        var slot = FormModel.SlotModel.ToPlanningSlot();
+
+        var command = new AddTravelSegmentCommand(
+            FormModel.TripId,
+            FormModel.Name!.Trim(),
+            FormModel.Description ?? string.Empty,
+            slot
+        );
+
+        var newId = await TripsState.AddTravelSegmentAsync(FormModel.TripId, command);
+        if (newId.HasValue)
         {
-            var slot = FormModel.SlotModel.ToPlanningSlot();
-
-            var command = new AddTravelSegmentCommand(
-                FormModel.TripId,
-                FormModel.Name!.Trim(),
-                FormModel.Description ?? string.Empty,
-                slot
-            );
-
-            var newId = await TripsState.AddTravelSegmentAsync(FormModel.TripId, command);
-            if (newId.HasValue)
-            {
-                Snackbar.Add(string.Format(L["Success_Created"], L["TravelSegment_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.TravelSegmentLinkEdit(TripId, newId.Value));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
-            }
+            Navigation.NavigateTo(LinkHelper.TravelSegmentLinkEdit(TripId, newId.Value));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
         }
     }
 

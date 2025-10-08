@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="AccommodationEditFormModel"
@@ -86,25 +85,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeAccommodationModel()
@@ -149,33 +138,25 @@
     {
         if (FormModel == null) return;
 
-        try
-        {
-            var command = new UpdateAccommodationCommand(
-                FormModel.TripId,
-                FormModel.DestinationId,
-                FormModel.AccommodationId,
-                FormModel.Name!.Trim(),
-                new AccommodationType(FormModel.Type!),
-                FormModel.AddressModel.ToAddress(),
-                FormModel.CheckInOutModel.ToPlanningSlot(),
-                FormModel.BookingInfoModel.ToBookingInfo()
-            );
+        var command = new UpdateAccommodationCommand(
+            FormModel.TripId,
+            FormModel.DestinationId,
+            FormModel.AccommodationId,
+            FormModel.Name!.Trim(),
+            new AccommodationType(FormModel.Type!),
+            FormModel.AddressModel.ToAddress(),
+            FormModel.CheckInOutModel.ToPlanningSlot(),
+            FormModel.BookingInfoModel.ToBookingInfo()
+        );
 
-            var success = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
-            if (success)
-            {
-                Snackbar.Add(string.Format(L["Success_Updated"], L["Accommodation_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.TripLink(TripId));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
-            }
-        }
-        catch (Exception ex)
+        var success = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
+        if (success)
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
         }
     }
 
@@ -197,12 +178,11 @@
         var result = await TripsState.RemoveAccommodationAsync(TripId, DestinationId, AccommodationId);
         if (result)
         {
-            Snackbar.Add(string.Format(L["Success_Deleted"], L["Accommodation_Singular"]), Severity.Success);
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
         }
     }
 
@@ -216,7 +196,6 @@
         public Guid TripId { get; set; }
         public Guid DestinationId { get; set; }
         public Guid AccommodationId { get; set; }
-
 
         [Required(ErrorMessage = "Name ist erforderlich.")]
         [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]

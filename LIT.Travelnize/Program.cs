@@ -24,7 +24,7 @@ internal class Program
         builder.Services.AddScoped<IAuthService, JwtAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider>(p => (JwtAuthenticationStateProvider)p.GetRequiredService<IAuthService>());
         builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
-        builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
+        builder.Services.AddScoped<IAccessTokenService, AccessTokenService>(); 
 
         builder.Services.AddSingleton(s =>
         {
@@ -53,8 +53,9 @@ internal class Program
         builder.Services.AddAuthorizationCore();
         builder.Services.AddScoped<LocalStorageService>();
         builder.Services.AddMudServices();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<ScrollService>();
-        builder.Services.AddSingleton<TripsState>();
+        builder.Services.AddScoped<TripsState>();
 
         var host = builder.Build();
 

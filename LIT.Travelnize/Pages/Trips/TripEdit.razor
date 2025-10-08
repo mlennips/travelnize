@@ -6,7 +6,6 @@
 @inject TripsState TripsState
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
-@inject ISnackbar Snackbar
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout TModel="TripEditFormModel"
@@ -71,30 +70,20 @@
 
     private async Task LoadAsync()
     {
-        try
-        {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
 
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
-            else
-            {
-                InitializeForm(TripsState.SelectedTrip);
-            }
-        }
-        catch (Exception ex)
+        if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_Load", ex.Message];
+            LoadError = L["Errors_TripNotFound"];
         }
-        finally
+        else
         {
-            IsLoading = false;
-            StateHasChanged();
+            InitializeForm(TripsState.SelectedTrip);
         }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeForm(GetTripResponse trip)
@@ -114,29 +103,21 @@
     {
         if (FormModel == null) return;
 
-        try
-        {
-            var command = new UpdateTripCommand(
-                FormModel.TripId,
-                FormModel.Name!.Trim(),
-                FormModel.Description?.Trim() ?? string.Empty,
-                FormModel.SlotEditModel.ToPlanningSlot()
-            );
+        var command = new UpdateTripCommand(
+            FormModel.TripId,
+            FormModel.Name!.Trim(),
+            FormModel.Description?.Trim() ?? string.Empty,
+            FormModel.SlotEditModel.ToPlanningSlot()
+        );
 
-            var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
-            if (ok)
-            {
-                Snackbar.Add(L["Success_Updated", L["Trip_Singular"]], Severity.Success);
-                Navigation.NavigateTo($"/trips/{TripId}", forceLoad: false);
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_UpdateFailed"], Severity.Error);
-            }
-        }
-        catch (Exception ex)
+        var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
+        if (ok)
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            Navigation.NavigateTo($"/trips/{TripId}", forceLoad: false);
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
         }
     }
 
@@ -145,12 +126,11 @@
         var result = await TripsState.DeleteTripAsync(TripId);
         if (result)
         {
-            Snackbar.Add(L["Success_Deleted", L["Trip_Singular"]], Severity.Success);
             Navigation.NavigateTo("/trips");
         }
         else
         {
-            Snackbar.Add(L["Errors_DeleteFailed"], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
         }
     }
 

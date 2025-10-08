@@ -187,11 +187,13 @@
   <data name="Errors_PasswordResetFailed" xml:space="preserve"><value>Passwort zurücksetzen fehlgeschlagen. Bitte überprüfe deine Eingaben.</value></data>
   <data name="Errors_RegisterFailed" xml:space="preserve"><value>Registrierung fehlgeschlagen. Bitte versuche es erneut.</value></data>
 
-  <!-- Erfolge (optionale generische Einträge) -->
+  <!-- Erfolge -->
   <data name="Success_Created" xml:space="preserve"><value>{0} erstellt.</value></data>
-  <data name="Success_Updated" xml:space="preserve"><value>{0} aktualisiert.</value></data>
+  <data name="Success_Updated" xml:space="preserve"><value>{0} gespeichert.</value></data>
   <data name="Success_Deleted" xml:space="preserve"><value>{0} gelöscht.</value></data>
   <data name="Success_WikipediaImported" xml:space="preserve"><value>Wikipedia-Daten übernommen.</value></data>
+  <data name="Success_TripsStateRefreshed" xml:space="preserve"><value>Trips aktualisiert.</value></data>
+  <data name="Success_TripStateRefreshed" xml:space="preserve"><value>Trip aktualisiert.</value></data>
 
   <!-- Home -->
   <data name="Home_WelcomeTitle" xml:space="preserve"><value>Willkommen bei Travelnize</value></data>

@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="ActivityCreateFormModel"
@@ -86,25 +85,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeFormModel()
@@ -144,36 +133,28 @@
     {
         if (FormModel == null) return;
 
-        try
+        TimeSpan? duration = null;
+        if (FormModel.DurationHours > 0 || FormModel.DurationMinutes > 0)
+            duration = new TimeSpan(FormModel.DurationHours, FormModel.DurationMinutes, 0);
+
+        var command = new AddActivityCommand(
+            FormModel.TripId,
+            FormModel.DestinationId,
+            FormModel.Name!.Trim(),
+            FormModel.Description ?? string.Empty,
+            Location.Empty,
+            FormModel.Date,
+            duration
+        );
+
+        var newId = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
+        if (newId.HasValue)
         {
-            TimeSpan? duration = null;
-            if (FormModel.DurationHours > 0 || FormModel.DurationMinutes > 0)
-                duration = new TimeSpan(FormModel.DurationHours, FormModel.DurationMinutes, 0);
-
-            var command = new AddActivityCommand(
-                FormModel.TripId,
-                FormModel.DestinationId,
-                FormModel.Name!.Trim(),
-                FormModel.Description ?? string.Empty,
-                Location.Empty,
-                FormModel.Date,
-                duration
-            );
-
-            var newId = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
-            if (newId.HasValue)
-            {
-                Snackbar.Add(string.Format(L["Success_Created"], L["Activity_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
-            }
+            Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
         }
     }
 

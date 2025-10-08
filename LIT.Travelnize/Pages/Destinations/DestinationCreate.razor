@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @inject TripsState TripsState
 @inject NavigationManager Navigation
-@inject ISnackbar Snackbar
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="DestinationCreateFormModel"
@@ -67,25 +66,15 @@
 
     private async Task LoadTripAsync()
     {
-        try
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
         {
-            IsLoading = true;
-            LoadError = null;
-            await TripsState.LoadTripAsync(TripId);
-            if (TripsState.SelectedTrip == null)
-            {
-                LoadError = L["Errors_TripNotFound"];
-            }
+            LoadError = L["Errors_TripNotFound"];
         }
-        catch (Exception ex)
-        {
-            LoadError = L["Errors_Load", ex.Message];
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
+        IsLoading = false;
+        StateHasChanged();
     }
 
     private void InitializeFormModel()
@@ -116,35 +105,26 @@
     {
         if (FormModel == null) return;
 
-        try
+        var location = Location.Empty;
+        var slot = FormModel.SlotModel.ToPlanningSlot();
+
+        var command = new AddDestinationCommand(
+            FormModel.TripId,
+            FormModel.TravelSegmentId,
+            FormModel.Name!.Trim(),
+            FormModel.Description ?? string.Empty,
+            location,
+            slot
+        );
+
+        var newId = await TripsState.AddDestinationAsync(FormModel.TripId, FormModel.TravelSegmentId, command);
+        if (newId.HasValue)
         {
-            var location = Location.Empty;
-
-            var slot = FormModel.SlotModel.ToPlanningSlot();
-
-            var command = new AddDestinationCommand(
-                FormModel.TripId,
-                FormModel.TravelSegmentId,
-                FormModel.Name!.Trim(),
-                FormModel.Description ?? string.Empty,
-                location,
-                slot
-            );
-
-            var newId = await TripsState.AddDestinationAsync(FormModel.TripId, FormModel.TravelSegmentId, command);
-            if (newId.HasValue)
-            {
-                Snackbar.Add(string.Format(L["Success_Created"], L["Destination_Singular"]), Severity.Success);
-                Navigation.NavigateTo(LinkHelper.DestinationLinkEdit(TripId, TravelSegmentId, newId.Value));
-            }
-            else
-            {
-                Snackbar.Add(L["Errors_CreateFailed"], Severity.Error);
-            }
+            Navigation.NavigateTo(LinkHelper.DestinationLinkEdit(TripId, TravelSegmentId, newId.Value));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add(L["Errors_Generic", ex.Message], Severity.Error);
+            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
         }
     }
 
