@@ -5,60 +5,73 @@
 
 <EditForm Model="Model">
     <MudGrid Spacing="4">
-        <MudItem xs="6" sm="3" lg="4">
-            <MudStack Row AlignItems="AlignItems.Center">
+        @if (!HideTitle)
+        {
+            <MudItem xs="12">
+                <MudDivider Class="my-4" />
+                <MudText Typo="Typo.subtitle2">@GetKindDisplayText(Model.Kind)</MudText>
+            </MudItem>
+        }
+        @if (ForceKind == ResourceKind.Website)
+        {
+            <MudItem xs="12">
                 <MudTextField @bind-Value="Model.Source"
                               Label="@L["ResourceReference_SourceLabel"]"
                               For="@(() => Model.Source)"
-                              HelperText="@($"{GetKindDisplayText(Model.Kind)} {L["ResourceReference_UrlLabel"]}")"
+                              HelperText="@L["ResourceReference_UrlLabel"]"
                               Clearable />
-
-                @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
-                {
-                    <MudImage Src="@Model.Source"
-                              Height="26"
-                              Alt="@L["ResourceReference_SourceLabel"]" />
-                }
-            </MudStack>
-        </MudItem>
-        <MudItem xs="6" sm="3" lg="4">
-            <MudStack Row AlignItems="AlignItems.Center">
-                <MudTextField @bind-Value="Model.Thumbnail"
-                              Label="@L["ResourceReference_ThumbnailLabel"]"
-                              HelperText="@L["ResourceReference_OptionalLabel"]"
-                              For="@(() => Model.Thumbnail)"
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="6" sm="3" lg="4">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudTextField @bind-Value="Model.Source"
+                                  Label="@L["ResourceReference_SourceLabel"]"
+                                  For="@(() => Model.Source)"
+                                  HelperText="@($"{GetKindDisplayText(Model.Kind)} {L["ResourceReference_UrlLabel"]}")"
+                                  Clearable />
+                    @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
+                    {
+                        <MudImage Src="@Model.Source"
+                                  Height="26"
+                                  Alt="@L["ResourceReference_SourceLabel"]" />
+                    }
+                </MudStack>
+            </MudItem>
+            <MudItem xs="6" sm="3" lg="4">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudTextField @bind-Value="Model.Thumbnail"
+                                  Label="@L["ResourceReference_ThumbnailLabel"]"
+                                  HelperText="@L["ResourceReference_OptionalLabel"]"
+                                  For="@(() => Model.Thumbnail)"
+                                  Clearable />
+                    @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
+                    {
+                        <MudImage Src="@Model.Thumbnail"
+                                  Height="26"
+                                  Alt="@L["ResourceReference_ThumbnailLabel"]" />
+                    }
+                </MudStack>
+            </MudItem>
+            <MudItem xs="9" sm="3" lg="2">
+                <MudTextField @bind-Value="Model.Name"
+                              Label="@L["ResourceReference_NameLabel"]"
+                              HelperText="@L["ResourceReference_OptionalLabel"]"                          
+                              For="@(() => Model.Name)" 
                               Clearable />
-
-                @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
-                {
-                    <MudImage Src="@Model.Thumbnail"
-                              Height="26"
-                              Alt="@L["ResourceReference_ThumbnailLabel"]" />
-                }
-            </MudStack>
-        </MudItem>
-        <MudItem xs="9" sm="3" lg="2">
-            <MudTextField @bind-Value="Model.Name"
-                          Label="@L["ResourceReference_NameLabel"]"
-                          HelperText="@L["ResourceReference_OptionalLabel"]"                          
-                          For="@(() => Model.Name)" 
-                          Clearable />
-        </MudItem>
-        <MudItem xs="3" sm="3" lg="2" Class="d-flex align-items-center justify-content-end">
-            <MudButtonGroup Color="Color.Tertiary">
-                <MudIconButton Variant="Variant.Filled"
-                                Disabled="ForceKind != null"
-                                OnClick="OpenKindDialog" 
-                                Icon="@Icons.Material.Filled.Category"
-                                title="@GetKindDisplayText(Model.Kind)">                    
-                </MudIconButton>
-            </MudButtonGroup>
-        </MudItem>
-        @* Optional: Extern-Flag, falls benötigt
-        <MudItem xs="12" sm="6">
-            <MudSwitch @bind-Checked="Model.IsExternal" Color="Color.Primary" Label="@L["ResourceReference_ExternalLabel"]" />
-        </MudItem>
-        *@
+            </MudItem>
+            <MudItem xs="3" sm="3" lg="2" Class="d-flex align-items-center justify-content-end">
+                <MudButtonGroup Color="Color.Tertiary">
+                    <MudIconButton Variant="Variant.Filled"
+                                    Disabled="ForceKind != null"
+                                    OnClick="OpenKindDialog" 
+                                    Icon="@Icons.Material.Filled.Category"
+                                    title="@GetKindDisplayText(Model.Kind)">                    
+                    </MudIconButton>
+                </MudButtonGroup>
+            </MudItem>
+        }
     </MudGrid>
 </EditForm>
 
@@ -67,6 +80,7 @@
 
     [Parameter, EditorRequired] public ResourceReferenceEditModel Model { get; set; } = new();
     [Parameter] public ResourceKind? ForceKind { get; set; }
+    [Parameter] public bool HideTitle { get; set; } = false;
 
     protected override void OnParametersSet()
     {
@@ -76,6 +90,17 @@
             Model.Kind = ForceKind.Value;
         }
     }
+
+    private bool ShowSource =>
+        ForceKind is null || ForceKind == ResourceKind.Website || ForceKind == ResourceKind.Image ||
+        ForceKind == ResourceKind.Document || ForceKind == ResourceKind.Audio || ForceKind == ResourceKind.Video;
+
+    private bool ShowThumbnail =>
+        ForceKind is null || ForceKind == ResourceKind.Image;
+
+    private bool ShowName =>
+        ForceKind is null || ForceKind == ResourceKind.Image || ForceKind == ResourceKind.Document ||
+        ForceKind == ResourceKind.Audio || ForceKind == ResourceKind.Video;
 
     private async Task OpenKindDialog()
     {
@@ -131,6 +156,6 @@
         }
 
         public ResourceReference ToResourceReference()
-            => ResourceReference.FromUrl(Name, Source, Thumbnail, Kind);
+            => string.IsNullOrEmpty(Source) ? ResourceReference.Empty : ResourceReference.FromUrl(Name, Source, Thumbnail, Kind);
     }
 }

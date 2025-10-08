@@ -153,6 +153,9 @@
   <data name="Coordinate_Singular" xml:space="preserve"><value>Koordinate</value></data>
   <data name="Coordinate_Plural" xml:space="preserve"><value>Koordinaten</value></data>
 
+  <data name="BookingInfo_Singular" xml:space="preserve"><value>Buchung</value></data>
+
+  
   <!-- Gemeinsame / Generische Labels -->
   <data name="Common_DaySingular" xml:space="preserve"><value>Tag</value></data>
   <data name="Common_DayPlural" xml:space="preserve"><value>Tage</value></data>
@@ -236,7 +239,7 @@
   <data name="Auth_TabForgotPassword" xml:space="preserve"><value>Passwort vergessen</value></data>
   <data name="Auth_RequestNewPassword" xml:space="preserve"><value>Neues Passwort anfordern</value></data>
 
-  <!-- Address (zusammengeführt) -->
+  <!-- Address -->
   <data name="Address_Line1Label" xml:space="preserve"><value>Adresszeile 1</value></data>
   <data name="Address_Line2Label" xml:space="preserve"><value>Adresszeile 2</value></data>
   <data name="Address_StreetLabel" xml:space="preserve"><value>Straße</value></data>
@@ -276,6 +279,20 @@
   <data name="ResourceReference_Kind_Document" xml:space="preserve"><value>Dokument</value></data>
   <data name="ResourceReference_Kind_Website" xml:space="preserve"><value>Webseite</value></data>
   <data name="ResourceReference_Kind_Other" xml:space="preserve"><value>Sonstiges</value></data>
+
+  <!-- BookingInfo -->
+  <data name="BookingInfo_ProviderLabel" xml:space="preserve">
+    <value>Anbieter</value>
+  </data>
+  <data name="BookingInfo_BookingNumberLabel" xml:space="preserve">
+    <value>Buchungsnummer</value>
+  </data>
+  <data name="BookingInfo_BookingDateLabel" xml:space="preserve">
+    <value>Buchungsdatum</value>
+  </data>
+  <data name="BookingInfo_DetailsLabel" xml:space="preserve">
+    <value>Details</value>
+  </data>
 
   <!-- Wikipedia Suche -->
   <data name="Wikipedia_QueryLabel" xml:space="preserve"><value>Suchbegriff</value></data>

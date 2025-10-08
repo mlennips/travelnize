@@ -32,6 +32,10 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
             }
         }
 
+        public bool IsEmpty => Start == null && End == null;
+
+        public bool HasStartAndEnd => Start != null && End != null;
+
         public int ActiveDays
         {
             get
@@ -83,10 +87,12 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
                 var pattern = culture.DateTimeFormat.ShortDatePattern;
 
                 // Jahr-Anteil entfernen (alle y-Gruppen) und abschließende Trenner säubern
+#pragma warning disable SYSLIB1045 // In „GeneratedRegexAttribute“ konvertieren.
                 var patternWithoutYear = System.Text.RegularExpressions.Regex
                     .Replace(pattern, "y+", "")
                     .TrimEnd('.', '-', '/', ',', ' ')
                     .Trim();
+#pragma warning restore SYSLIB1045 // In „GeneratedRegexAttribute“ konvertieren.
 
                 if (string.IsNullOrWhiteSpace(patternWithoutYear))
                     return Start.Value.ToShortDateString() + " - " + End.Value.ToShortDateString();

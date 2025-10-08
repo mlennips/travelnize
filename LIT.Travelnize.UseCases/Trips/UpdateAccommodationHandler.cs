@@ -16,7 +16,8 @@ namespace LIT.Travelnize.UseCases.Trips
                 request.Name,
                 request.Type,
                 request.Address,
-                request.CheckInOut);
+                request.CheckInOut,
+                request.BookingInfo);
 
             if (result.IsSuccess)
             {

@@ -16,7 +16,6 @@
                 OnDeleteConfirmed="DeleteAccommodationAsync">
     <FormContent>
         <MudGrid Spacing="4">
-
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="FormModel!.Name"
                               Label="@L["Accommodation_NameLabel"]"
@@ -42,12 +41,11 @@
             </MudItem>
 
             <MudItem xs="12">
-                <MudDivider Class="my-2" />
-                <MudText Typo="Typo.subtitle2">@L["Accommodation_AddressLabel"]</MudText>
+                <AddressEdit Model="FormModel!.AddressModel" />
             </MudItem>
 
             <MudItem xs="12">
-                <AddressEdit Model="FormModel!.AddressModel" />
+                <BookingInfoEdit Model="FormModel!.BookingInfoModel" />
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -142,7 +140,8 @@
             Name = _accommodation.Name,
             Type = _accommodation.Type.Value,
             AddressModel = new AddressEdit.AddressEditModel(_accommodation.Address),
-            CheckInOutModel = new PlanningSlotEdit.PlanningSlotEditModel(_accommodation.CheckInOut)
+            CheckInOutModel = new PlanningSlotEdit.PlanningSlotEditModel(_accommodation.CheckInOut),
+            BookingInfoModel = new BookingInfoEdit.BookingInfoEditModel(_accommodation.BookingInfo)
         };
     }
 
@@ -159,7 +158,8 @@
                 FormModel.Name!.Trim(),
                 new AccommodationType(FormModel.Type!),
                 FormModel.AddressModel.ToAddress(),
-                FormModel.CheckInOutModel.ToPlanningSlot()
+                FormModel.CheckInOutModel.ToPlanningSlot(),
+                FormModel.BookingInfoModel.ToBookingInfo()
             );
 
             var success = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
@@ -217,6 +217,7 @@
         public Guid DestinationId { get; set; }
         public Guid AccommodationId { get; set; }
 
+
         [Required(ErrorMessage = "Name ist erforderlich.")]
         [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
         public string? Name { get; set; }
@@ -227,6 +228,7 @@
 
         internal PlanningSlotEdit.PlanningSlotEditModel CheckInOutModel { get; set; } = new();
         internal AddressEdit.AddressEditModel AddressModel { get; set; } = new();
+        internal BookingInfoEdit.BookingInfoEditModel BookingInfoModel { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

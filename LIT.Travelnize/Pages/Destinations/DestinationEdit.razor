@@ -54,7 +54,6 @@
             </MudItem>
 
             <MudItem xs="12">
-                <MudText Typo="Typo.subtitle2">@L["Destination_ImageLabel"]</MudText>
                 <ResourceReferenceEdit Model="@FormModel!.ImageModel" ForceKind="@ResourceKind.Image" />
             </MudItem>
         </MudGrid>
@@ -142,23 +141,9 @@
             Description = _destination.Description,
             SlotStart = _destination.Slot.Start,
             SlotEnd = _destination.Slot.End,
-            Image = _destination.Image?.Source,
-            Thumbnail = _destination.Image?.Thumbnail,
             ImageModel = new ResourceReferenceEdit.ResourceReferenceEditModel(_destination.Image),
             LocationModel = new LocationEdit.LocationEditModel(_destination.Location)
         };
-    }
-
-    private async Task OnImageModelChanged(ResourceReferenceEdit.ResourceReferenceEditModel model)
-    {
-        if (FormModel != null && model is not null)
-        {
-            FormModel.ImageModel = model;
-            var rr = model.ToResourceReference();
-            FormModel.Image = rr.Source;
-            FormModel.Thumbnail = rr.Thumbnail;
-        }
-        await Task.CompletedTask;
     }
 
     private async Task HandleValidSubmit(EditContext _)
@@ -248,9 +233,6 @@
         [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
         public string? Description { get; set; }
 
-        [StringLength(500)] public string? Image { get; set; }
-        [StringLength(500)] public string? Thumbnail { get; set; }
-
         public DateTime? SlotStart { get; set; }
         public DateTime? SlotEnd { get; set; }
 
@@ -304,8 +286,6 @@
                         true
                     )
                 );
-                FormModel.Image = summary.OriginalImageUrl;
-                FormModel.Thumbnail = summary.ThumbnailUrl;
             }           
 
             Snackbar.Add(L["Success_WikipediaImported"], Severity.Success);

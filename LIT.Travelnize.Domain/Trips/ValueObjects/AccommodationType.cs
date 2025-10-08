@@ -4,7 +4,7 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
 {
     public record AccommodationType : SingleValueObject<string>
     {
-        public AccommodationType() : this("Other") { }
+        private AccommodationType() : this("Other") { }
 
         public AccommodationType(string value) : base(value)
         {

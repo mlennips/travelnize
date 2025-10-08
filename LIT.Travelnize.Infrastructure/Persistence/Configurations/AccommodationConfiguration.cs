@@ -20,7 +20,11 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
                 builder.ComplexProperty(a => a.Type);
                 builder.ComplexProperty(a => a.Address);
-                builder.ComplexProperty(a => a.CheckInOut); 
+                builder.ComplexProperty(a => a.CheckInOut);
+                builder.ComplexProperty(a => a.BookingInfo, a =>
+                {
+                    a.ComplexProperty(a => a.Url);
+                });
             }
         }
     }

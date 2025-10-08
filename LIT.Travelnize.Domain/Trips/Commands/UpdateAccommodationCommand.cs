@@ -7,6 +7,7 @@ namespace LIT.Travelnize.Domain.Trips.Commands
         string Name,
         AccommodationType Type,
         Address Address,
-        PlanningSlot CheckInOut
+        PlanningSlot CheckInOut,
+        BookingInfo BookingInfo
     ) : ICommand;
 }

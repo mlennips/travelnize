@@ -5,6 +5,10 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
 <MudGrid Spacing="4">
+    <MudItem xs="12">
+        <MudDivider Class="my-4" />
+        <MudText Typo="Typo.subtitle2">@L["Coordinate_Plural"]</MudText>
+    </MudItem>
     <MudItem xs="12" sm="4" lg="5">
         <MudNumericField T="double?" @bind-Value="Model.Latitude"
                          Label="@L["Coordinates_LatitudeLabel"]"

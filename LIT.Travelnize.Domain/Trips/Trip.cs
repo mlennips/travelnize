@@ -251,7 +251,7 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
         public Result UpdateAccommodation(Guid destinationId, Guid accommodationId, string name,
-            AccommodationType type, Address address, PlanningSlot checkInOut)
+            AccommodationType type, Address address, PlanningSlot checkInOut, BookingInfo bookingInfo)
         {
             var destination = _travelSegments
                 .SelectMany(s => s.Destinations)
@@ -262,6 +262,11 @@ namespace LIT.Travelnize.Domain.Trips
             if (accommodation is null) return TripErrors.AccommodationNotFound;
 
             var result = accommodation.Update(name, type, address, checkInOut);
+            if (result.IsSuccess)
+            {
+                result = accommodation.UpdateBookingInfo(bookingInfo, checkInOut);
+            }
+
             return result;
         }
 

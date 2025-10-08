@@ -10,6 +10,7 @@ public sealed record ResourceReference : ValueObject
 
     public string ThumbnailOrSource => Thumbnail ?? Source;
 
+
     private ResourceReference() { }
 
     public ResourceReference(string name, string source, ResourceKind kind, string? thumbnail, bool isExternal)
@@ -20,6 +21,8 @@ public sealed record ResourceReference : ValueObject
         Thumbnail = thumbnail;
         IsExternal = isExternal;
     }
+
+    public static ResourceReference Empty => new();
 
     public static ResourceReference FromUpload(string originalFileName, string storedPath, string? thumbnail = null, ResourceKind? forceKind = null)
     {

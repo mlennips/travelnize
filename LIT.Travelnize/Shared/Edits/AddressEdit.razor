@@ -4,6 +4,10 @@
 
 <EditForm Model="Model">
     <MudGrid Spacing="4">
+        <MudItem xs="12">
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.subtitle2">@Title</MudText>
+        </MudItem>
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="Model.Line1"
                           Label="@L["Address_Line1Label"]"
@@ -45,6 +49,8 @@
 @code {
     [Parameter, EditorRequired]
     public AddressEditModel Model { get; set; } = new();
+
+    public string Title => L["Address_Singular"];
 
     public class AddressEditModel(Address? address = null)
     {

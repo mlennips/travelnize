@@ -7,6 +7,7 @@
         public AccommodationType Type { get; init; } = default!;
         public Address Address { get; init; } = default!;
         public PlanningSlot CheckInOut { get; init; } = default!;
+        public BookingInfo BookingInfo { get; init; } = default!;
 
         public static AccommodationDto From(Accommodation accommodation)
         {
@@ -16,7 +17,8 @@
                 Name = accommodation.Name,
                 Type = accommodation.Type,
                 Address = accommodation.Address,
-                CheckInOut = accommodation.CheckInOut
+                CheckInOut = accommodation.CheckInOut,
+                BookingInfo = accommodation.BookingInfo
             };
         }
     }

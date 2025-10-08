@@ -25,8 +25,10 @@
         // Accommodation
         public static readonly ErrorDetail AccommodationNotFound = new("Accommodation.NotFound", "Accommodation not found.");
         public static readonly ErrorDetail InvalidAccommodationDates = new("Accommodation.InvalidDates", "Check-in date must be before check-out date.");
+        public static readonly ErrorDetail CheckInOutDatesRequiredWhenBooked = new ("Accommodation.CheckInOutDatesRequiredWhenBooked", "Check-in/out dates must be provided when booking info is set.");
 
         // Activity
         public static readonly ErrorDetail ActivityNotFound = new("Activity.NotFound", "Activity not found.");
+
     }
 }
