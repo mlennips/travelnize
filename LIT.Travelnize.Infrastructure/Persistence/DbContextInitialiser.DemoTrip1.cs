@@ -13,8 +13,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Europa-Roadtrip",
-                "Roadtrip durch Skandinavien, West- und Südeuropa",
-                tripSlot
+                "Roadtrip durch Skandinavien, West- und Südeuropa"
             );
 
             var travelSegment1 = trip.AddTravelSegment(

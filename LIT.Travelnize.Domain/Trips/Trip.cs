@@ -14,14 +14,14 @@ namespace LIT.Travelnize.Domain.Trips
 
         public string Name { get; private set; } = default!;
         public string Description { get; private set; } = default!;
-        public PlanningSlot Slot { get; private set; } = default!;
         public TripStatus Status => TripStatus.Create(Slot.Start, Slot.End);
+        public PlanningSlot Slot { get; private set; } = PlanningSlot.Empty;
 
         public IEnumerable<TravelSegment> TravelSegments => _travelSegments.OrderBy(x => x.Slot);
         public IEnumerable<Participant> Participants => _participants.AsReadOnly();
         public IEnumerable<Transportation> Transportations => _transportations.AsReadOnly();
 
-        public static Trip Create(IUser user, string name, string description, PlanningSlot slot)
+        public static Trip Create(IUser user, string name, string description)
         {
             var trip = new Trip()
             {
@@ -29,7 +29,6 @@ namespace LIT.Travelnize.Domain.Trips
                 UserId = user.Id,
                 Name = name,
                 Description = description,
-                Slot = slot
             };
             var participant = trip.AddParticipant(user.Id, user.UserName!, new Email(user.Email!)).Value!;
             trip.ChangeParticipantPermission(participant.Id, PermissionLevel.Organisator);
@@ -37,11 +36,10 @@ namespace LIT.Travelnize.Domain.Trips
             return trip;
         }
 
-        public Result Update(string name, string description, PlanningSlot slot)
+        public Result Update(string name, string description)
         {
             Name = name;
             Description = description;
-            Slot = slot;
             return Result.Success();
         }
 
@@ -49,7 +47,7 @@ namespace LIT.Travelnize.Domain.Trips
         {
             var newSegment = TravelSegment.Create(Id, name, description, slot);
             _travelSegments.Add(newSegment);
-
+            RefreshSlot();
             return newSegment;
         }
 
@@ -62,6 +60,7 @@ namespace LIT.Travelnize.Domain.Trips
             }
 
             _travelSegments.Remove(segment);
+            RefreshSlot();
 
             return Result.Success();
         }
@@ -75,6 +74,7 @@ namespace LIT.Travelnize.Domain.Trips
             }
 
             segment.Update(name, description, slot);
+            RefreshSlot();
 
             return Result.Success();
         }
@@ -314,6 +314,13 @@ namespace LIT.Travelnize.Domain.Trips
 
             var result = destination.RemoveActivity(activityId);
             return result;
+        }
+
+        private void RefreshSlot()
+        {
+            Slot = PlanningSlot.Create(
+                _travelSegments.Count == 0 ? null : _travelSegments.Min(s => s.Slot.Start),
+                _travelSegments.Count == 0 ? null : _travelSegments.Max(s => s.Slot.End));
         }
     }
 }

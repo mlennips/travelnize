@@ -155,7 +155,7 @@
 
   <data name="BookingInfo_Singular" xml:space="preserve"><value>Buchung</value></data>
 
-  
+
   <!-- Gemeinsame / Generische Labels -->
   <data name="Common_DaySingular" xml:space="preserve"><value>Tag</value></data>
   <data name="Common_DayPlural" xml:space="preserve"><value>Tage</value></data>
@@ -365,6 +365,20 @@
   <data name="Trip_HeaderDays" xml:space="preserve"><value>Tage</value></data>
   <data name="Trip_HeaderDaysUntilStart" xml:space="preserve"><value>Tage bis Start</value></data>
   <data name="Trip_HeaderParticipants" xml:space="preserve"><value>Teilnehmer</value></data>
+
+  <!-- Trip Create -->
+  <data name="Trip_CreateTitle" xml:space="preserve">
+    <value>Neue Reise anlegen</value>
+  </data>
+    <data name="Trip_CreateSubtitle" xml:space="preserve">
+    <value>Lege eine neue Reise mit Zeitraum und Beschreibung an.</value>
+  </data>
+    <data name="Trip_CreateDefaultTravelSegmentTitle" xml:space="preserve">
+    <value>Meine Reise</value>
+  </data>
+    <data name="Trip_CreateDefaultDestinationTitle" xml:space="preserve">
+    <value>Mein Reiseziel</value>
+  </data>
 
   <!-- Trip Edit -->
   <data name="Trip_EditTitle" xml:space="preserve"><value>Reise bearbeiten</value></data>

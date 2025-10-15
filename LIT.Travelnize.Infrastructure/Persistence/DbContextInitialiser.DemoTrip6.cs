@@ -15,13 +15,11 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var tripStart = today.AddDays(daysUntilSaturday);
             var tripEnd = tripStart.AddDays(7);
 
-            var tripSlot = PlanningSlot.Create(tripStart, tripEnd);
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Klassenfahrt Südtirol",
-                "Klassenfahrt mit 3 Organisatoren und 50 Schülern nach Südtirol und München.",
-                tripSlot 
+                "Klassenfahrt mit 3 Organisatoren und 50 Schülern nach Südtirol und München."
             );
 
             // 3 Organisatoren

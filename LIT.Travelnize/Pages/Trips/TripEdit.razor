@@ -35,10 +35,6 @@
                               Placeholder="@L["Trip_DescriptionPlaceholder"]"
                               Lines="4" />
             </MudItem>
-
-            <MudItem xs="12">
-                <PlanningSlotEdit Model="FormModel!.SlotEditModel" />
-            </MudItem>
         </MudGrid>
     </FormContent>
 </EditPageLayout>
@@ -94,8 +90,7 @@
         {
             TripId = trip.Id,
             Name = trip.Name,
-            Description = trip.Description,
-            SlotEditModel = new PlanningSlotEdit.PlanningSlotEditModel(trip.Slot)
+            Description = trip.Description
         };
     }
 
@@ -106,8 +101,7 @@
         var command = new UpdateTripCommand(
             FormModel.TripId,
             FormModel.Name!.Trim(),
-            FormModel.Description?.Trim() ?? string.Empty,
-            FormModel.SlotEditModel.ToPlanningSlot()
+            FormModel.Description?.Trim() ?? string.Empty
         );
 
         var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
@@ -162,8 +156,6 @@
 
         [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
         public string? Description { get; set; }
-
-        public PlanningSlotEdit.PlanningSlotEditModel SlotEditModel { get; set; } = default!;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

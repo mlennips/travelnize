@@ -13,8 +13,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Großbritannien-Rundreise",
-                "Entdecke die Vielfalt Großbritanniens: Von London über die Highlands bis nach Wales.",
-                tripSlot
+                "Entdecke die Vielfalt Großbritanniens: Von London über die Highlands bis nach Wales."
             );
 
             var travelSegment1 = trip.AddTravelSegment(

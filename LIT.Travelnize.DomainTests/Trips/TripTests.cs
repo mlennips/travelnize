@@ -21,7 +21,7 @@ namespace LIT.Travelnize.DomainTests.Trips
             _tripSlot = PlanningSlot.Create(DateTime.Today, DateTime.Today.AddDays(14));
             _location = new Location(new Address("Musterstraße", "", "Musterstraße", "1", "12345", "Berlin", "Deutschland"), new Coordinates { Latitude = 52.52, Longitude = 13.405 });
             _email = new Email("test@example.com");
-            _trip = Trip.Create(_user, "Reise", "Beschreibung", _tripSlot);
+            _trip = Trip.Create(_user, "Reise", "Beschreibung");
         }
 
         [TestMethod]
@@ -29,10 +29,9 @@ namespace LIT.Travelnize.DomainTests.Trips
         {
             // Arrange
             var user = new TestUser(Guid.NewGuid(), "User2", "Max", "Mustermann", "user2@example.com");
-            var slot = PlanningSlot.Create(DateTime.Today, DateTime.Today.AddDays(3));
 
             // Act
-            var trip = Trip.Create(user, "Urlaub", "Test", slot);
+            var trip = Trip.Create(user, "Urlaub", "Test");
 
             // Assert
             Assert.IsNotNull(trip);
@@ -46,16 +45,14 @@ namespace LIT.Travelnize.DomainTests.Trips
         public void Update_ShouldChangeTripProperties()
         {
             // Arrange
-            var newSlot = PlanningSlot.Create(DateTime.Today.AddDays(1), DateTime.Today.AddDays(6));
 
             // Act
-            var result = _trip.Update("Neu", "NeuDesc", newSlot);
+            var result = _trip.Update("Neu", "NeuDesc");
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual("Neu", _trip.Name);
             Assert.AreEqual("NeuDesc", _trip.Description);
-            Assert.AreEqual(newSlot, _trip.Slot);
         }
 
         [TestMethod]

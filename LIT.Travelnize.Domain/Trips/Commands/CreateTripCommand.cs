@@ -1,4 +1,8 @@
 ﻿namespace LIT.Travelnize.Domain.Trips.Commands
 {
-    public record CreateTripCommand(string Name, string Description, DateTime TravelStart, DateTime TravelEnd) : ICommand<Guid>;
+    public record CreateTripCommand(
+        string Name, 
+        string Description, 
+        string? DefaultTravelSegmentTitle,
+        string? DefaultDestinationTitle) : ICommand<Guid>;
 }

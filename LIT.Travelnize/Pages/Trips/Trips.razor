@@ -4,12 +4,14 @@
 @inject IAuthService AuthService
 @inject TripsState TripsState
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+@inject NavigationManager NavigationManager
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudGrid Spacing="6">
         <MudItem xs="12">
             <PageHeader Title="@L["Trips_Title"]"
-                        Subtitle="@L["Trips_Subtitle"]" />
+                        Subtitle="@L["Trips_Subtitle"]" 
+                        Actions="HeaderActions" />
         </MudItem>
 
         <!-- Horizontale Timeline Darstellung aller Reisen -->
@@ -163,6 +165,16 @@
             return dict;
         }
     }
+
+    IEnumerable<ButtonAction> HeaderActions => new[]
+    {
+        new ButtonAction 
+        { 
+            Text = L["Neue Reise"], 
+            OnClick = () => NavigationManager.NavigateTo(LinkHelper.TripLinkCreate()),
+            Icon = Icons.Material.Filled.Add
+        },
+    };
 
     protected override async Task OnInitializedAsync()
     {

@@ -13,8 +13,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Kanada-Abenteuer",
-                "Von Vancouver bis Montreal: Natur, Städte und Wildnis Kanadas erleben.",
-                tripSlot
+                "Von Vancouver bis Montreal: Natur, Städte und Wildnis Kanadas erleben."
             );
 
             var travelSegment1 = trip.AddTravelSegment(

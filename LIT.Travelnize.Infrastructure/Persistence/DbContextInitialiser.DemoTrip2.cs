@@ -13,8 +13,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var trip = Trip.Create(
                 user!,
                 "Amerika-Roadtrip",
-                "Abenteuer quer durch die USA: Von der Westküste über das Herzland bis zur Ostküste.",
-                tripSlot
+                "Abenteuer quer durch die USA: Von der Westküste über das Herzland bis zur Ostküste."
             );
 
             var travelSegment1 = trip.AddTravelSegment(

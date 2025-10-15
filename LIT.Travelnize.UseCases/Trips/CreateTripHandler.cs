@@ -9,8 +9,17 @@ namespace LIT.Travelnize.UseCases.Trips
         public async Task<Result<Guid>> Handle(CreateTripCommand request, CancellationToken cancellationToken)
         {
             var user = await uow.GetUserAsync();
-            var slot = PlanningSlot.Create(request.TravelStart, request.TravelEnd);
-            var trip = Trip.Create(user, request.Name, request.Description, slot);
+            var trip = Trip.Create(user, request.Name, request.Description);
+
+            if (!string.IsNullOrWhiteSpace(request.DefaultTravelSegmentTitle))
+            {
+                var travelSegment = trip.AddTravelSegment(request.DefaultTravelSegmentTitle, "", PlanningSlot.Empty).Value!;
+                if(!string.IsNullOrWhiteSpace(request.DefaultDestinationTitle))
+                {
+                    trip.AddDestinationToTravelSegment(travelSegment.Id, request.DefaultDestinationTitle, "", Location.Empty);
+                }
+            }
+
             await uow.AddAsync(trip);
             return trip.Id;
         }

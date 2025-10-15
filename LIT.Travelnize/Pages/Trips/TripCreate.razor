@@ -1,0 +1,86 @@
+﻿@page "/trips/create"
+@using System.ComponentModel.DataAnnotations
+@using LIT.Travelnize.Domain.Trips.Commands
+@inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+
+<EditPageLayout Mode="PageLayoutMode.Create" TModel="TripCreateFormModel"
+                Title="@L["Trip_CreateTitle"]"
+                Subtitle="@L["Trip_CreateSubtitle"]"
+                Model="FormModel"
+                IsLoading="IsLoading"
+                LoadError="LoadError"
+                CancelHref="/trips"
+                OnValidSubmit="HandleValidSubmit">
+    <FormContent>
+        <MudGrid Spacing="4">
+            <MudItem xs="12">
+                <MudTextField @bind-Value="FormModel!.Name"
+                              Label="@L["Trip_NameLabel"]"
+                              For="@(() => FormModel!.Name)"
+                              Required="true"
+                              Placeholder="@L["Trip_NamePlaceholder"]" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField @bind-Value="FormModel!.Description"
+                              Label="@L["Trip_DescriptionLabel"]"
+                              For="@(() => FormModel!.Description)"
+                              Placeholder="@L["Trip_DescriptionPlaceholder"]"
+                              Lines="4" />
+            </MudItem>
+        </MudGrid>
+    </FormContent>
+</EditPageLayout>
+
+@code {
+    internal TripCreateFormModel? FormModel = new();
+    internal bool IsLoading;
+    internal string? LoadError;
+
+    private async Task HandleValidSubmit(EditContext _)
+    {
+        if (FormModel == null) return;
+
+        var slot = FormModel.SlotEditModel.ToPlanningSlot();
+        var command = new CreateTripCommand(
+            FormModel.Name!.Trim(),
+            FormModel.Description?.Trim() ?? string.Empty,
+            L["Trip_CreateDefaultTravelSegmentTitle"],
+            L["Trip_CreateDefaultDestinationTitle"]
+        );
+
+        IsLoading = true;
+        var newId = await TripsState.CreateTripAsync(command);
+        IsLoading = false;
+
+        if (newId.HasValue)
+        {
+            Navigation.NavigateTo($"/trips/{newId.Value}");
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+        }
+    }
+
+    internal class TripCreateFormModel : IValidatableObject
+    {
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
+        public string? Name { get; set; }
+
+        [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
+        public string? Description { get; set; }
+
+        public PlanningSlotEdit.PlanningSlotEditModel SlotEditModel { get; set; } = new();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (SlotEditModel.Start.HasValue && SlotEditModel.End.HasValue && SlotEditModel.Start.Value >= SlotEditModel.End.Value)
+            {
+                yield return new ValidationResult("Start muss vor Ende liegen.", new[] { nameof(SlotEditModel.End) });
+            }
+        }
+    }
+}

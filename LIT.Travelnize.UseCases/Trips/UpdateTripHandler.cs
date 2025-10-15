@@ -1,6 +1,5 @@
 ﻿using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.Commands;
-using LIT.Travelnize.Domain.Trips.ValueObjects;
 
 namespace LIT.Travelnize.UseCases.Trips
 {
@@ -13,7 +12,7 @@ namespace LIT.Travelnize.UseCases.Trips
             {
                 return TripErrors.TripNotFound;
             }
-            var result = trip.Update(request.Name, request.Description, request.TravelSlot);
+            var result = trip.Update(request.Name, request.Description);
             await uow.UpdateAsync(trip);
             return result;
         }

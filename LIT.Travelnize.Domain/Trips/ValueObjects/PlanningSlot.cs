@@ -68,8 +68,8 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
             {
                 throw new ArgumentException("End date must be after start date.");
             }
-            Start = start;
-            End = end;
+            Start = start != null ? DateTime.SpecifyKind(start.Value, DateTimeKind.Utc) : start;
+            End = end != null ? DateTime.SpecifyKind(end.Value, DateTimeKind.Utc) : end;
         }
 
         public static PlanningSlot Create(DateTime? start, DateTime? end)

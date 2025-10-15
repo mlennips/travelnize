@@ -12,13 +12,11 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             var tripStart = new DateTime(nextYear, 6, 6, 14, 0, 0, DateTimeKind.Utc);
             var tripEnd = tripStart.AddDays(19);
 
-            var tripSlot = PlanningSlot.Create(tripStart, tripEnd);
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
                 "Elternzeit " + tripStart.Year,
-                "Kreuzfahrt ab Kiel und Ferienhaus in Dänemark",
-                tripSlot
+                "Kreuzfahrt ab Kiel und Ferienhaus in Dänemark"
             );
 
             var cruiseSegment = trip.AddTravelSegment(
