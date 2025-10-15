@@ -1,6 +1,4 @@
-﻿using LIT.Travelnize.Domain.Trips;
-
-namespace LIT.Travelnize.Domain.Base
+﻿namespace LIT.Travelnize.Domain.Base
 {
     public interface IUnitOfWork : IDisposable
     {

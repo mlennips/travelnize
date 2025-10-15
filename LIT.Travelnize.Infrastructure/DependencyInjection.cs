@@ -20,7 +20,7 @@ namespace LIT.Travelnize.Infrastructure
             services.AddMediatR();
             services.AddDatabase(configuration);
             services.AddIdentity(configuration);
-            services.AddAudtiLog();
+            services.AddAuditLog();
             services.AddRepository();
             services.AddUnitOfWork();
             services.AddSwaggerGen();
@@ -76,11 +76,12 @@ namespace LIT.Travelnize.Infrastructure
             return services;
         }
 
-        private static IServiceCollection AddAudtiLog(this IServiceCollection services)
+        private static IServiceCollection AddAuditLog(this IServiceCollection services)
         {
             services.AddScoped<AuditSaveChangesInterceptor>();
             return services;
         }
+
         private static void AddRepository(this IServiceCollection services)
         {
             services.AddScoped(typeof(IReadOnlyRepository<>), typeof(EFReadOnlyRepository<>));
@@ -110,7 +111,7 @@ namespace LIT.Travelnize.Infrastructure
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
-                    Description = "Please enter token",
+                    Description = "Please enter token: Bearer <token>",
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",
@@ -160,7 +161,7 @@ namespace LIT.Travelnize.Infrastructure
             {
                 connectionString = configuration.GetConnectionString("identity");
             }
-            return connectionString ?? throw new InvalidOperationException("Connection string 'travelnize' not found.");
+            return connectionString ?? throw new InvalidOperationException("Connection string 'identity' not found.");
         }
 
 
