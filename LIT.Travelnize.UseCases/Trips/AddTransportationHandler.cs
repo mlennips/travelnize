@@ -11,8 +11,8 @@ namespace LIT.Travelnize.UseCases.Trips
             if (trip is null) return TripErrors.TripNotFound;
 
             var result = trip.AddTransportation(request.Name, request.Description, request.Identifier,
-                request.Departure, request.Arrival, request.DepartureDate, request.ArrivalDate,
-                request.RouteWebsite, request.Type);
+                request.Departure, request.Arrival, request.TravelTime,
+                request.RouteWebsite, request.Type, request.TargetRefeference);
 
             if (!result.IsSuccess) return result.Error;
 

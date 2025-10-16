@@ -1,15 +1,148 @@
 @using LIT.Travelnize.Domain.Trips.Dtos
 @using LIT.Travelnize.Domain.Trips.Queries
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
-@if (Trip is null)
+@if (Trip?.Transportations == null || !Trip.Transportations.Any())
 {
-    <MudText Typo="Typo.caption">Keine Daten.</MudText>
+    <MudText Typo="Typo.caption">@L["TripTransport_NoData"]</MudText>
 }
 else
 {
-    <MudText Typo="Typo.caption">Transportplanung folgt...</MudText>
+    <MudStack Class="my-6" Spacing="4">
+        @foreach (var group in Trip.Transportations
+            .Where(t => t.Traveltime?.Start != null)
+            .GroupBy(t => t.Traveltime.Start?.Date!)
+            .OrderBy(g => g.Key))
+        {
+            <MudPaper Elevation="0">
+                <MudText Typo="Typo.caption" Class="mb-2 opacity-25 w-100 text-center" HtmlTag="div" Align="Align.Center" GutterBottom>
+                    @group.Key!.Value.ToLongDateString()
+                </MudText>
+                <MudStack Spacing="2">
+                    @foreach (var transportation in group.OrderBy(t => t.Traveltime.Start))
+                    {
+                        <MudPaper Elevation="8" Class="pa-4">
+                            <MudGrid>
+                                <MudItem xs="12" md="6">
+                                    <MudStack Spacing="1">
+                                        <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+                                            <MudText Typo="Typo.subtitle1" Class="fw-bold">@transportation.Name</MudText>
+                                            <MudChip T="string" Color="Color.Info" Size="Size.Small" Icon="@GetIconForType(transportation.Type)">
+                                                @((@transportation.Type.Value + " " + @transportation.Identifier).Trim())
+                                            </MudChip>
+                                            @if (transportation.RouteWebsite != null)
+                                            {
+                                                <MudChip T="ResourceReference" Size="Size.Small" Href="@transportation.RouteWebsite.Source" Icon="@MudBlazor.Icons.Material.Filled.Route" Target="_blank">
+                                                    @transportation.RouteWebsite.Name
+                                                </MudChip>
+                                            }
+                                        </MudStack>
+                                        <MudText Typo="Typo.body2">@transportation.Description</MudText>
+                                        <MudText Typo="Typo.caption">
+                                            <b>@L["Departure"]:</b> @transportation.Departure.Address?.ToString() <br />
+                                            <b>@L["Arrival"]:</b> @transportation.Arrival.Address?.ToString()
+                                        </MudText>
+                                        <MudText Typo="Typo.caption">
+                                            <b>@L["TripTransport_PlannedTransferDuration"]:</b> @transportation.Traveltime.ToLongDateString()
+                                        </MudText>
+                                    </MudStack>
+                                </MudItem>
+                                <MudItem xs="12" md="6">
+                                    <MudTimeline>
+                                        <MudTimelineItem Size="Size.Medium" Elevation="0" TimelineAlign="TimelineAlign.End">
+                                            <ItemDot>
+                                                <MudIcon Size="Size.Small" Icon="@MudBlazor.Icons.Material.Sharp.Hail" Color="Color.Secondary" />
+                                            </ItemDot>
+                                            <ItemContent>
+                                                <MudStack Spacing="0">
+                                                    <MudText Typo="Typo.caption">@transportation.Traveltime.Start?.ToLongDateString()</MudText>
+                                                    <MudText Typo="Typo.caption" Class="fw-bold">@transportation.Traveltime.Start?.ToShortTimeString()</MudText>
+                                                </MudStack>
+                                            </ItemContent>
+                                            <ItemOpposite>
+                                                <MudStack Spacing="0">
+                                                    <MudText Typo="Typo.caption">@L["Departure"]</MudText>
+                                                    <MudText Typo="Typo.caption">@transportation.Departure.Address?.ToString()</MudText>
+                                                </MudStack>
+                                            </ItemOpposite>
+                                        </MudTimelineItem>
+                                        <MudTimelineItem Size="Size.Large" Elevation="0" TimelineAlign="TimelineAlign.Default">
+                                            <ItemDot>
+                                                <MudIcon Size="Size.Medium" Icon="@GetIconForType(transportation.Type)" />
+                                            </ItemDot>
+                                            <ItemContent>
+                                                @{
+                                                    var targetDestination = GetTargetDestination(transportation);
+                                                    if (targetDestination != null)
+                                                    {
+                                                        <MudStack Row Spacing="0" Class="justify-content-end">
+                                                            <MudText Typo="Typo.caption" Align="Align.Right">@L["TripTransport_TransferTo"] @targetDestination.Name</MudText>
+                                                        </MudStack>
+                                                    }
+                                                }
+                                            </ItemContent>
+                                            <ItemOpposite>
+                                            </ItemOpposite>
+                                        </MudTimelineItem>
+                                        <MudTimelineItem Size="Size.Medium" Variant="Variant.Outlined" Elevation="0" TimelineAlign="TimelineAlign.End">
+                                            <ItemDot>
+                                                <MudIcon Size="Size.Small" Icon="@MudBlazor.Icons.Material.Sharp.Flag" Color="Color.Secondary" />
+                                            </ItemDot>
+                                            <ItemContent>
+                                                <MudStack Spacing="0">
+                                                    <MudText Typo="Typo.caption">@transportation.Traveltime.End?.ToLongDateString()</MudText>
+                                                    <MudText Typo="Typo.caption" Class="fw-bold">@transportation.Traveltime.End?.ToShortTimeString()</MudText>
+                                                </MudStack>
+                                            </ItemContent>
+                                            <ItemOpposite>
+                                                <MudStack Spacing="0">
+                                                    <MudText Typo="Typo.caption">@L["Arrival"]</MudText>
+                                                    <MudText Typo="Typo.caption">@transportation.Arrival.Address?.ToString()</MudText>
+                                                </MudStack>
+                                            </ItemOpposite>
+                                        </MudTimelineItem>
+                                    </MudTimeline>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                    }
+                </MudStack>
+            </MudPaper>
+        }
+    </MudStack>
 }
 
 @code {
     [Parameter] public GetTripResponse? Trip { get; set; }
+
+    private string GetIconForType(TransportationType type)
+    {
+        var typeName = type.Value;
+        return typeName switch
+        {
+            "Flight" => Icons.Material.Filled.Flight,
+            "Train" => Icons.Material.Filled.Train,
+            "Bus" => Icons.Material.Filled.DirectionsBus,
+            "Car" => Icons.Material.Filled.DirectionsCar,
+            "Boat" => Icons.Material.Filled.DirectionsBoat,
+            "Bicycle" => Icons.Material.Filled.DirectionsBike,
+            "Walk" => Icons.Material.Filled.DirectionsWalk,
+            _ => Icons.Material.Filled.DirectionsTransit
+        };
+    }
+
+    private DestinationDto? GetTargetDestination(TransportationDto transportation)
+    {
+        if (Trip?.TravelSegments == null || transportation.TargetReference == null)
+            return null;
+
+        if (transportation.TargetReference.IsDestination)
+        {
+            var destinationId = transportation.TargetReference.Id;
+            return Trip.TravelSegments
+                .SelectMany(seg => seg.Destinations)
+                .FirstOrDefault(dest => dest.Id == destinationId);
+        }
+        return null;
+    }
 }

@@ -22,7 +22,9 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                     l.ComplexProperty(l => l.Address);
                 });
                 builder.OwnsOne(t => t.RouteWebsite);
+                builder.OwnsOne(t => t.TargetReference);
                 builder.ComplexProperty(t => t.Type);
+                builder.ComplexProperty(x => x.Traveltime);
                 builder.HasMany(x => x.Passengers);
                 builder.Navigation(x => x.Passengers).AutoInclude();
             }

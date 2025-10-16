@@ -191,15 +191,15 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
         public Result<Transportation> AddTransportation(string name, string description, string identifier, Location departure,
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference routeWebsite,
-            TransportationType type)
+            Location arrival, PlanningSlot travelTime, ResourceReference routeWebsite,
+            TransportationType type, EntityReference? targetReference)
         {
-            if (departureDate >= arrivalDate)
+            if (travelTime.IsEmpty)
             {
                 return TripErrors.InvalidTransportationDates;
             }
             var transportation = Transportation.Create(Id, name, description, identifier, departure, arrival,
-                departureDate, arrivalDate, routeWebsite, type);
+                travelTime, routeWebsite, type, targetReference);
 
             _transportations.Add(transportation);
 
@@ -207,8 +207,8 @@ namespace LIT.Travelnize.Domain.Trips
         }
 
         public Result UpdateTransportation(Guid transportationId, string name, string description, string identifier,
-            Location departure, Location arrival, DateTime departureDate, DateTime arrivalDate,
-            ResourceReference routeWebsite, TransportationType type, Guid[] passengerIds)
+            Location departure, Location arrival, PlanningSlot travelTime,
+            ResourceReference routeWebsite, TransportationType type, Guid[] passengerIds, EntityReference? targetReference)
         {
             var transportation = _transportations.FirstOrDefault(t => t.Id == transportationId);
             if (transportation is null) return TripErrors.TransportationNotFound;
@@ -221,7 +221,7 @@ namespace LIT.Travelnize.Domain.Trips
             }
 
             return transportation.Update(name, description, identifier, departure, arrival,
-                departureDate, arrivalDate, routeWebsite, type, passengers!);
+                travelTime, routeWebsite, type, passengers!, targetReference);
         }
 
         public Result RemoveTransportation(Guid transportationId)

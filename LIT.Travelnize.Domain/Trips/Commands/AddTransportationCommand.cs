@@ -7,9 +7,9 @@ namespace LIT.Travelnize.Domain.Trips.Commands
         string Identifier,
         Location Departure,
         Location Arrival,
-        DateTime DepartureDate,
-        DateTime ArrivalDate,
+        PlanningSlot TravelTime,
         ResourceReference RouteWebsite,
-        TransportationType Type
+        TransportationType Type,
+        EntityReference? TargetRefeference
     ) : ICommand<Guid>;
 }

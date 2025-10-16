@@ -17,11 +17,11 @@ namespace LIT.Travelnize.UseCases.Trips
                 request.Identifier,
                 request.Departure,
                 request.Arrival,
-                request.DepartureDate,
-                request.ArrivalDate,
+                request.TravelTime,
                 request.RouteWebsite,
                 request.Type,
-                request.PassengerIds);
+                request.PassengerIds,
+                request.TargetReference);
 
             if (result.IsSuccess)
             {

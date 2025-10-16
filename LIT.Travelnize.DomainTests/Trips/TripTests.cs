@@ -239,11 +239,21 @@ namespace LIT.Travelnize.DomainTests.Trips
 
             // Act
             var result = _trip.AddTransportation("ICE", "Schnellzug", "123", departure, arrival,
-                departureDate, arrivalDate, routeLink, TransportationType.Train);
+                departureDate, arrivalDate, routeLink, TransportationType.Train, EntityReference.Create<Destination>(Guid.NewGuid()));
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual(1, _trip.Transportations.Count());
+            Assert.AreEqual("ICE", _trip.Transportations.First().Name);
+            Assert.AreEqual("Schnellzug", _trip.Transportations.First().Description);
+            Assert.AreEqual("123", _trip.Transportations.First().Identifier);
+            Assert.AreEqual(departure, _trip.Transportations.First().Departure);
+            Assert.AreEqual(arrival, _trip.Transportations.First().Arrival);
+            Assert.AreEqual(departureDate, _trip.Transportations.First().DepartureDate);
+            Assert.AreEqual(arrivalDate, _trip.Transportations.First().ArrivalDate);
+            Assert.AreEqual(routeLink, _trip.Transportations.First().RouteWebsite);
+            Assert.AreEqual(TransportationType.Train, _trip.Transportations.First().Type);
+            Assert.IsNotNull(_trip.Transportations.First().TargetReference);
         }
 
         [TestMethod]
@@ -258,7 +268,7 @@ namespace LIT.Travelnize.DomainTests.Trips
 
             // Act
             var result = _trip.AddTransportation("ICE", "Schnellzug", "123", departure, arrival,
-                departureDate, arrivalDate, routeLink, TransportationType.Train);
+                departureDate, arrivalDate, routeLink, TransportationType.Train, null);
 
             // Assert
             Assert.IsFalse(result.IsSuccess);

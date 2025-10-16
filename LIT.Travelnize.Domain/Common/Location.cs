@@ -24,6 +24,10 @@
 
         public static Location Empty => new(Address.Empty, Coordinates.Empty);
 
+        public static Location WithAddress(Address address) => new(address, Coordinates.Empty);
+
         public static Location WithCoordinates(double latitude, double longitude) => new(Address.Empty, new Coordinates { Latitude = latitude, Longitude = longitude });
+
+        public static Location Create(Address address, Coordinates coordinates) => new(address, coordinates);
     }
 }

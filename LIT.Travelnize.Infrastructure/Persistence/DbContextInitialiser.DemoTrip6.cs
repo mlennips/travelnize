@@ -6,6 +6,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 {
     public partial class DbContextInitialiser
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "<Ausstehend>")]
         private async Task AddDemoTrip6Async()
         {
             // Start am nächsten Samstag
@@ -94,6 +95,44 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddActivity(munichDestination.Id, "Stadtrallye", "Teamwettbewerb durch die Münchner Innenstadt.", Location.Empty, tripStart.AddDays(6).AddHours(11), TimeSpan.FromHours(2));
             trip.AddActivity(munichDestination.Id, "Englischer Garten", "Picknick und Freizeit im Englischen Garten.", Location.Empty, tripStart.AddDays(6).AddHours(15), TimeSpan.FromHours(2));
             trip.AddActivity(munichDestination.Id, "Abschlussabend", "Gemeinsamer Abschlussabend mit Spielen im Hostel.", Location.Empty, tripStart.AddDays(6).AddHours(19), TimeSpan.FromHours(2));
+
+            // An- und Abreise mit dem Bus
+            trip.AddTransportation(
+                "Reisebus Anreise",
+                "Anreise mit dem Reisebus von der Schule nach Bozen.",
+                "NOH-BE-123",
+                Location.WithCoordinates(50.1109, 8.6821), // Beispielkoordinaten der Schule
+                Location.WithCoordinates(46.4983, 11.3548), // Bozen
+                PlanningSlot.Create(tripStart.AddHours(8), tripStart.AddHours(14)),
+                ResourceReference.FromUrl("Maps", "https://www.examplemaps.com"),
+                TransportationType.Bus,
+                EntityReference.Create<Destination>(tirolDestination.Id)
+            );
+
+            trip.AddTransportation(
+                "Reisebus Bozen-München",
+                "Busfahrt von Bozen nach München.",
+                "NOH-BE-123",
+                Location.WithCoordinates(46.4983, 11.3548), // Bozen
+                Location.WithCoordinates(48.1351, 11.5820), // München
+                PlanningSlot.Create(tirolSegment.Slot.End!.Value.AddHours(9), munichSegment.Slot.Start!.Value.AddHours(13)),
+                ResourceReference.FromUrl("Maps", "https://www.examplemaps.com"),
+                TransportationType.Bus,
+                EntityReference.Create<Destination>(munichDestination.Id)
+            );
+
+            trip.AddTransportation(
+                "Reisebus Rückreise",
+                "Rückreise mit dem Reisebus von München zur Schule.",
+                "NOH-BE-123",
+                Location.WithCoordinates(48.1351, 11.5820), // München
+                Location.WithCoordinates(50.1109, 8.6821), // Beispielkoordinaten der Schule
+                PlanningSlot.Create(munichDestination.Slot.End!.Value.AddHours(9), munichDestination.Slot.End!.Value.AddHours(16)),
+                ResourceReference.FromUrl("Maps", "https://www.examplemaps.com"),
+                TransportationType.Bus,
+                null
+            );
+
 
             appContext.Trips.Add(trip);
         }

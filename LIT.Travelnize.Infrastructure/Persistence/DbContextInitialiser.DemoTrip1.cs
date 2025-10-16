@@ -6,6 +6,10 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 {
     public partial class DbContextInitialiser
     {
+#pragma warning disable S1075 // URIs should not be hardcoded
+        private const string DemoUrl = "https://www.example.com";
+#pragma warning restore S1075 // URIs should not be hardcoded
+
         private async Task AddDemoTrip1Async()
         {
             var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(24));
@@ -174,6 +178,115 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddActivity(destination3_2.Id, "Kolosseum & Forum Romanum", "Geführte Tour durch das antike Rom.", Location.Empty, tripSlot.Start?.AddDays(22), TimeSpan.FromHours(3));
             trip.AddActivity(destination3_2.Id, "Vatikanische Museen", "Besuch der Vatikanstadt und der Sixtinischen Kapelle.", Location.Empty, tripSlot.Start?.AddDays(23), TimeSpan.FromHours(4));
             trip.AddActivity(destination3_2.Id, "Piazza Navona & Pantheon", "Spaziergang durch das barocke Rom.", Location.Empty, tripSlot.Start?.AddDays(24), TimeSpan.FromHours(2));
+
+
+            // Beispiel-Adressen für die Transportations
+            var addressRostock = new Address("Ostseehafen", "Am Seehafen 1", "18147", "Rostock", "Deutschland", "", "");
+            var addressCopenhagen = new Address("Kopenhagen Hauptbahnhof", "Bernstorffsgade 16", "1577", "Kopenhagen", "Dänemark", "", "");
+            var addressStockholm = new Address("Stockholm Centralstation", "Centralplan 15", "11120", "Stockholm", "Schweden", "", "");
+            var addressOslo = new Address("Oslo Sentralstasjon", "Jernbanetorget 1", "0154", "Oslo", "Norwegen", "", "");
+            var addressHamburg = new Address("Hamburg Hauptbahnhof", "Hachmannplatz 16", "20099", "Hamburg", "Deutschland", "", "");
+            var addressAmsterdam = new Address("Amsterdam Centraal", "Stationsplein 9", "1012 AB", "Amsterdam", "Niederlande", "", "");
+            var addressParis = new Address("Gare du Nord", "18 Rue de Dunkerque", "75010", "Paris", "Frankreich", "", "");
+            var addressBarcelona = new Address("Barcelona Sants", "Plaça dels Països Catalans", "08014", "Barcelona", "Spanien", "", "");
+            var addressRome = new Address("Roma Termini", "Piazza dei Cinquecento", "00185", "Rom", "Italien", "", "");
+
+            // Transportations für die Reise zwischen den Destinationen
+            trip.AddTransportation(
+                "Fähre nach Dänemark",
+                "Überfahrt mit der Fähre von Deutschland nach Dänemark.",
+                "FERRY-DK-001",
+                Location.Create(addressRostock, Coordinates.Create(54.183333, 12.1)),
+                Location.Create(addressCopenhagen, Coordinates.Create(55.78333333, 9.78333333)),
+                PlanningSlot.Create(travelSegment1.Slot.Start!.Value.AddHours(6), travelSegment1.Slot.Start!.Value.AddHours(10)),
+                ResourceReference.FromUrl("Fähre", DemoUrl),
+                TransportationType.Ferry,
+                EntityReference.Create<Destination>(destination1_1.Id)
+            );
+
+            trip.AddTransportation(
+                "Zug nach Schweden",
+                "Fahrt mit dem Zug von Kopenhagen nach Stockholm.",
+                "TRAIN-SE-001",
+                Location.Create(addressCopenhagen, Coordinates.Create(55.78333333, 9.78333333)),
+                Location.Create(addressStockholm, Coordinates.Create(61.31666667, 14.83333333)),
+                PlanningSlot.Create(travelSegment1.Slot.Start!.Value.AddDays(4).AddHours(8), travelSegment1.Slot.Start!.Value.AddDays(4).AddHours(16)),
+                ResourceReference.FromUrl("Zug", DemoUrl),
+                TransportationType.Train,
+                EntityReference.Create<Destination>(destination1_2.Id)
+            );
+
+            trip.AddTransportation(
+                "Mietwagen Norwegen",
+                "Roadtrip mit dem Mietwagen durch Norwegen.",
+                "CAR-NO-001",
+                Location.Create(addressStockholm, Coordinates.Create(61.31666667, 14.83333333)),
+                Location.Create(addressOslo, Coordinates.Create(62.76666667, 9.45)),
+                PlanningSlot.Create(travelSegment1.Slot.Start!.Value.AddDays(8).AddHours(9), travelSegment1.Slot.Start!.Value.AddDays(8).AddHours(18)),
+                ResourceReference.FromUrl("Mietwagen", DemoUrl),
+                TransportationType.Car,
+                EntityReference.Create<Destination>(destination1_3.Id)
+            );
+
+            trip.AddTransportation(
+                "ICE Hamburg",
+                "Fahrt mit dem ICE von Oslo nach Hamburg.",
+                "TRAIN-HH-001",
+                Location.Create(addressOslo, Coordinates.Create(62.76666667, 9.45)),
+                Location.Create(addressHamburg, Coordinates.Create(53.550556, 9.993333)),
+                PlanningSlot.Create(travelSegment2.Slot.Start!.Value.AddHours(7), travelSegment2.Slot.Start!.Value.AddHours(17)),
+                ResourceReference.FromUrl("ICE", DemoUrl),
+                TransportationType.Train,
+                EntityReference.Create<Destination>(destination2_1.Id)
+            );
+
+            trip.AddTransportation(
+                "Bus nach Amsterdam",
+                "Busfahrt von Hamburg nach Amsterdam.",
+                "BUS-AMS-001",
+                Location.Create(addressHamburg, Coordinates.Create(53.550556, 9.993333)),
+                Location.Create(addressAmsterdam, Coordinates.Create(52.37019722, 4.89044444)),
+                PlanningSlot.Create(travelSegment2.Slot.Start!.Value.AddDays(1).AddHours(10), travelSegment2.Slot.Start!.Value.AddDays(1).AddHours(16)),
+                ResourceReference.FromUrl("Bus", DemoUrl),
+                TransportationType.Bus,
+                EntityReference.Create<Destination>(destination2_2.Id)
+            );
+
+            trip.AddTransportation(
+                "Thalys Paris",
+                "Schnellzugfahrt mit dem Thalys von Amsterdam nach Paris.",
+                "TRAIN-PAR-001",
+                Location.Create(addressAmsterdam, Coordinates.Create(52.37019722, 4.89044444)),
+                Location.Create(addressParis, Coordinates.Create(48.85666667, 2.35166667)),
+                PlanningSlot.Create(travelSegment2.Slot.Start!.Value.AddDays(3).AddHours(8), travelSegment2.Slot.Start!.Value.AddDays(3).AddHours(13)),
+                ResourceReference.FromUrl("Thalys", DemoUrl),
+                TransportationType.Train,
+                EntityReference.Create<Destination>(destination2_3.Id)
+            );
+
+            trip.AddTransportation(
+                "Flug nach Barcelona",
+                "Flug von Paris nach Barcelona.",
+                "FLIGHT-BCN-001",
+                Location.Create(addressParis, Coordinates.Create(48.85666667, 2.35166667)),
+                Location.Create(addressBarcelona, Coordinates.Create(41.4, 2.16666667)),
+                PlanningSlot.Create(travelSegment3.Slot.Start!.Value.AddHours(9), travelSegment3.Slot.Start!.Value.AddHours(12)),
+                ResourceReference.FromUrl("Flug", DemoUrl),
+                TransportationType.Flight,
+                EntityReference.Create<Destination>(destination3_1.Id)
+            );
+
+            trip.AddTransportation(
+                "Zug nach Rom",
+                "Fahrt mit dem Nachtzug von Barcelona nach Rom.",
+                "TRAIN-ROM-001",
+                Location.Create(addressBarcelona, Coordinates.Create(41.4, 2.16666667)),
+                Location.Create(addressRome, Coordinates.Create(41.88333333, 12.48333333)),
+                PlanningSlot.Create(travelSegment3.Slot.Start!.Value.AddDays(3).AddHours(20), travelSegment3.Slot.Start!.Value.AddDays(4).AddHours(8)),
+                ResourceReference.FromUrl("Zug", DemoUrl),
+                TransportationType.Train,
+                EntityReference.Create<Destination>(destination3_2.Id)
+            );
 
             appContext.Trips.Add(trip);
         }

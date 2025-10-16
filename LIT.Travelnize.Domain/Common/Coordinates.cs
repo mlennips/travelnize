@@ -12,5 +12,9 @@
             yield return Longitude;
         }
 
+        public static Coordinates Create(double latitude, double longitude)
+        {
+            return new Coordinates() { Latitude = latitude, Longitude = longitude };
+        }
     }
 }

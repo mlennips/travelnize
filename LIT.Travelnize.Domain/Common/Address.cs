@@ -2,6 +2,14 @@
 {
     public record Address : ValueObject
     {
+        public string Line1 { get; init; }
+        public string Line2 { get; init; }
+        public string Street { get; init; }
+        public string HouseNumber { get; init; }
+        public string PostalCode { get; init; }
+        public string City { get; init; }
+        public string Country { get; init; }
+
         public Address() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty)
         {
 
@@ -18,17 +26,19 @@
             Country = country;
         }
 
-        public string Line1 { get; init; }
-        public string Line2 { get; init; }
-        public string Street { get; init; }
-        public string HouseNumber { get; init; }
-        public string PostalCode { get; init; }
-        public string City { get; init; }
-        public string Country { get; init; }
+        public static Address Create(string line1, string line2, string street, string houseNumber, string postalCode, string city, string country)
+        {
+            return new Address(line1, line2, street, houseNumber, postalCode, city, country);
+        }
 
         public override string ToString()
         {
-            return $"{Line1}, {Street} {HouseNumber}, {PostalCode} {City}, {Country}";
+            return string.Join(", ", new[] {
+                Line1,
+                $"{Street} {HouseNumber}".Trim(),
+                $"{PostalCode} {City}".Trim(),
+                Country
+            }.Where(s => !string.IsNullOrWhiteSpace(s)));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

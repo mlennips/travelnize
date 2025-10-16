@@ -16,14 +16,15 @@ namespace LIT.Travelnize.Domain.Trips
         public string Identifier { get; private set; } = default!;
         public Location Departure { get; private set; } = default!;
         public Location Arrival { get; private set; } = default!;
-        public DateTime DepartureDate { get; private set; }
-        public DateTime ArrivalDate { get; private set; }
+        public PlanningSlot Traveltime { get; private set; } = default!;
         public ResourceReference? RouteWebsite { get; private set; } = default!;
         public TransportationType Type { get; private set; } = default!;
-        public IEnumerable<Participant> Passengers => _passengers.AsReadOnly();
+        public IEnumerable<Participant> Passengers { get => _passengers.AsReadOnly(); init => _passengers = value.ToList(); }
+        public EntityReference? TargetReference { get; private set; } = default!;
 
         internal static Transportation Create(Guid tripId, string name, string description, string identifier, Location departure, 
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference? RouteWebsite, TransportationType type)
+            Location arrival, PlanningSlot traveltime, ResourceReference? RouteWebsite, TransportationType type,
+            EntityReference? targetReference)
         {
             return new Transportation()
             {
@@ -34,18 +35,18 @@ namespace LIT.Travelnize.Domain.Trips
                 Identifier = identifier,
                 Departure = departure,
                 Arrival = arrival,
-                DepartureDate = departureDate,
-                ArrivalDate = arrivalDate,
+                Traveltime = traveltime,
                 RouteWebsite = RouteWebsite,
-                Type = type
+                Type = type,
+                TargetReference = targetReference,
             };
         }
 
         internal Result Update(string name, string description, string identifier, Location departure, 
-            Location arrival, DateTime departureDate, DateTime arrivalDate, ResourceReference routeWebsite, 
-            TransportationType type, Participant[] passengers)
+            Location arrival, PlanningSlot traveltime, ResourceReference? routeWebsite, 
+            TransportationType type, Participant[] passengers, EntityReference? targetReference)
         {
-            if (departureDate >= arrivalDate)
+            if (traveltime.IsEmpty)
             {
                 return TripErrors.InvalidTransportationDates;
             }
@@ -54,10 +55,10 @@ namespace LIT.Travelnize.Domain.Trips
             Identifier = identifier;
             Departure = departure;
             Arrival = arrival;
-            DepartureDate = departureDate;
-            ArrivalDate = arrivalDate;
+            Traveltime = traveltime;
             RouteWebsite = routeWebsite;
             Type = type;
+            TargetReference = targetReference;
             _passengers = passengers.ToList();
             return Result.Success();
         }

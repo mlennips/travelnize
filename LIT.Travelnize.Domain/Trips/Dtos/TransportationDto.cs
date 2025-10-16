@@ -7,10 +7,10 @@
         string Identifier,
         Location Departure,
         Location Arrival,
-        DateTime DepartureDate,
-        DateTime ArrivalDate,
+        PlanningSlot Traveltime,
         ResourceReference? RouteWebsite,
-        string Type
+        TransportationType Type,
+        EntityReference? TargetReference
     )
     {
         public static TransportationDto From(Transportation t) =>
@@ -21,10 +21,10 @@
                 t.Identifier,
                 t.Departure,
                 t.Arrival,
-                t.DepartureDate,
-                t.ArrivalDate,
+                t.Traveltime,
                 t.RouteWebsite,
-                t.Type.ToString()
+                t.Type,
+                t.TargetReference
             );
     }
 }
