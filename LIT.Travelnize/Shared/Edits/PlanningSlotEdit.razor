@@ -1,22 +1,37 @@
-﻿    @using System.ComponentModel.DataAnnotations
+﻿@using System.ComponentModel.DataAnnotations
 @using LIT.Travelnize.Domain.Trips.ValueObjects
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
-<EditForm Model="Model">
+@if (GutterTop)
+{
+    <GutterTop />
+}
+
+<EditForm Model="@Model">
     <MudGrid Spacing="4">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.subtitle2">@Label</MudText>
+            </MudItem>
+        }
         <MudItem xs="12" sm="6">
-            <MudDatePicker @bind-Date="Model.Start"
-                           Label="@L["PlanningSlot_StartDateLabel"]"
-                           For="@(() => Model.Start)"
-                           Clearable="true" />
+            <MudTextField T="DateTime?"
+                          @bind-Value="Model.Start"
+                          Label="@L["PlanningSlot_StartDateLabel"]"
+                          For="@(() => Model.Start)"
+                          InputType="@(ShowTime ? InputType.DateTimeLocal : InputType.Date)"
+                          Clearable="true" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudDatePicker @bind-Date="Model.End"
-                           Label="@L["PlanningSlot_EndDateLabel"]"
-                           For="@(() => Model.End)"
-                           MinDate="Model.Start"
-                           HelperText="@L["PlanningSlot_HelperText", Model.TotalDaysInclusive, Model.Nights]"
-                           Clearable="true" />
+            <MudTextField T="DateTime?"
+                          @bind-Value="Model.End"
+                          Label="@L["PlanningSlot_EndDateLabel"]"
+                          For="@(() => Model.End)"
+                          InputType="@(ShowTime ? InputType.DateTimeLocal : InputType.Date)"
+                          Min="@Model.Start?.ToString("yyyy-MM-ddTHH:mm")"
+                          HelperText="@L["PlanningSlot_HelperText", Model.TotalDaysInclusive, Model.Nights]"
+                          Clearable="true" />
         </MudItem>
     </MudGrid>
 </EditForm>
@@ -25,12 +40,14 @@
     [Parameter, EditorRequired]
     public PlanningSlotEditModel Model { get; set; } = new();
 
+    [Parameter] public bool ShowTime { get; set; } = false;
+    [Parameter] public string Label { get; set; } = default!;
+    [Parameter] public bool GutterTop { get; set; } = false;
+
     public class PlanningSlotEditModel
     {
-        [Required(ErrorMessage = "Startdatum ist erforderlich.")]
         public DateTime? Start { get; set; } 
 
-        [Required(ErrorMessage = "Enddatum ist erforderlich.")]
         public DateTime? End { get; set; }
 
         public int TotalDays =>

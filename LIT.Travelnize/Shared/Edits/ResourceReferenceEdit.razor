@@ -3,13 +3,20 @@
 @using LIT.Travelnize.Shared.Dialogs
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
+@if (GutterTop)
+{
+    <GutterTop />
+}
+
 <EditForm Model="Model">
     <MudGrid Spacing="4">
-        @if (!HideTitle)
+        @if (!HideLabel)
         {
+            var labelText = string.IsNullOrWhiteSpace(Label)
+                ? @GetKindDisplayText(Model.Kind)
+                : Label;
             <MudItem xs="12">
-                <MudDivider Class="my-4" />
-                <MudText Typo="Typo.subtitle2">@GetKindDisplayText(Model.Kind)</MudText>
+                <MudText Typo="Typo.subtitle2">@labelText</MudText>
             </MudItem>
         }
         @if (ForceKind == ResourceKind.Website)
@@ -80,7 +87,9 @@
 
     [Parameter, EditorRequired] public ResourceReferenceEditModel Model { get; set; } = new();
     [Parameter] public ResourceKind? ForceKind { get; set; }
-    [Parameter] public bool HideTitle { get; set; } = false;
+    [Parameter] public bool HideLabel { get; set; } = false;
+    [Parameter] public string Label { get; set; } = default!;
+    [Parameter] public bool GutterTop { get; set; } = false;
 
     protected override void OnParametersSet()
     {

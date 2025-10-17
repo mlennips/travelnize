@@ -1,0 +1,233 @@
+﻿@page "/trips/{TripId:guid}/transportations/{TransportationId:guid}/edit"
+@using System.ComponentModel.DataAnnotations
+@inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+
+<EditPageLayout TModel="TransportationEditFormModel"
+                Title="@L["Transportation_EditTitle"]"
+                Subtitle="@L["Transportation_EditSubtitle"]"
+                Model="FormModel"
+                IsLoading="IsLoading"
+                LoadError="LoadError"
+                CancelHref="@LinkHelper.TripLink(TripId)"
+                OnValidSubmit="HandleValidSubmit"
+                OnDeleteConfirmed="DeleteTransportationAsync">
+    <FormContent>
+        <MudGrid Spacing="4">
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="FormModel!.Name"
+                              Label="@L["Transportation_NameLabel"]"
+                              For="@(() => FormModel!.Name)"
+                              Required="true"
+                              Placeholder="@L["Transportation_NamePlaceholder"]" />
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudSelect T="string" @bind-Value="FormModel!.Type"
+                           Label="@L["Transportation_TypeLabel"]"
+                           Required="true">
+                    @foreach (var type in TransportationType.AllowedTypes)
+                    {
+                        <MudSelectItem Value="@type">@type</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudTextField @bind-Value="FormModel!.Identifier"
+                              Label="@L["Transportation_IdentifierLabel"]"
+                              For="@(() => FormModel!.Identifier)"
+                              Placeholder="@L["Transportation_IdentifierPlaceholder"]" />
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <MudTextField @bind-Value="FormModel!.Description"
+                              Label="@L["Transportation_DescriptionLabel"]"
+                              For="@(() => FormModel!.Description)"
+                              Placeholder="@L["Transportation_DescriptionPlaceholder"]"
+                              Lines="3" />
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" ShowTime Label="@L["Transportation_TraveltimeLabel"]" />
+            </MudItem>
+            <MudItem xs="12" sm="12">
+                <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" Label="@L["Transportation_RouteWebsite"]" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="pa-4">
+                    <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_DepartureLabel"]" />
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="pa-4">
+                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_ArrivalLabel"]" />
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </FormContent>
+</EditPageLayout>
+
+@code {
+    [Parameter] public Guid TripId { get; set; }
+    [Parameter] public Guid TransportationId { get; set; }
+
+    private TransportationEditFormModel? FormModel;
+    private bool IsLoading;
+    private string? LoadError;
+
+    private TransportationDto? _transportation;
+
+    protected override void OnInitialized()
+    {
+        TripsState.OnChange += StateChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await EnsureTripLoadedAsync();
+        InitializeTransportationModel();
+    }
+
+    private async Task EnsureTripLoadedAsync()
+    {
+        if (TripsState.SelectedTrip == null || TripsState.SelectedTrip.Id != TripId)
+        {
+            await LoadTripAsync();
+        }
+    }
+
+    private async Task LoadTripAsync()
+    {
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
+        {
+            LoadError = L["Errors_TripNotFound"];
+        }
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private void InitializeTransportationModel()
+    {
+        if (TripsState.SelectedTrip == null) return;
+
+        _transportation = TripsState.SelectedTrip.Transportations.FirstOrDefault(t => t.Id == TransportationId);
+        if (_transportation == null)
+        {
+            LoadError = L["Errors_TransportationNotFound"];
+            return;
+        }
+
+        FormModel = new TransportationEditFormModel
+        {
+            TripId = TripId,
+            TransportationId = TransportationId,
+            Name = _transportation.Name,
+            Description = _transportation.Description,
+            Identifier = _transportation.Identifier,
+            Type = _transportation.Type.Value,
+            DepartureModel = new LocationEdit.LocationEditModel(_transportation.Departure),
+            ArrivalModel = new LocationEdit.LocationEditModel(_transportation.Arrival),
+            TraveltimeModel = new PlanningSlotEdit.PlanningSlotEditModel(_transportation.Traveltime),
+            RouteWebsiteModel = new ResourceReferenceEdit.ResourceReferenceEditModel(_transportation.RouteWebsite)
+        };
+    }
+
+    private async Task HandleValidSubmit(EditContext _)
+    {
+        if (FormModel == null) return;
+
+        var departure = FormModel.DepartureModel.ToLocation();
+        var arrival = FormModel.ArrivalModel.ToLocation();
+        var traveltime = FormModel.TraveltimeModel.ToPlanningSlot();
+        var routeWebsite = !string.IsNullOrWhiteSpace(FormModel.RouteWebsiteModel.Source)
+            ? FormModel.RouteWebsiteModel.ToResourceReference()
+            : ResourceReference.Empty; // Fix: Immer ein gültiges Objekt übergeben
+
+        var command = new UpdateTransportationCommand(
+            FormModel.TripId,
+            FormModel.TransportationId,
+            FormModel.Name!.Trim(),
+            FormModel.Description ?? string.Empty,
+            FormModel.Identifier ?? string.Empty,
+            departure,
+            arrival,
+            traveltime,
+            routeWebsite,
+            new TransportationType(FormModel.Type),
+            Array.Empty<Guid>(), // Fix: Leeres Array statt null für Passengers
+            null  // TargetReference (optional, kann ergänzt werden)
+        );
+
+        // Fix: Korrekte Signatur mit TripId, TransportationId, command, false
+        var success = await TripsState.UpdateTransportationAsync(FormModel.TripId, FormModel.TransportationId, command, false);
+        if (success)
+        {
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
+        }
+    }
+
+    private void StateChanged()
+    {
+        InvokeAsync(() =>
+        {
+            if (TripsState.SelectedTrip != null &&
+                TripsState.SelectedTrip.Id == TripId)
+            {
+                InitializeTransportationModel();
+            }
+            StateHasChanged();
+        });
+    }
+
+    private async Task DeleteTransportationAsync()
+    {
+        var result = await TripsState.RemoveTransportationAsync(TripId, TransportationId);
+        if (result)
+        {
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
+        }
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= StateChanged;
+    }
+
+    private class TransportationEditFormModel : IValidatableObject
+    {
+        public Guid TripId { get; set; }
+        public Guid TransportationId { get; set; }
+
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
+        public string? Name { get; set; }
+
+        [StringLength(500, ErrorMessage = "Maximal 500 Zeichen.")]
+        public string? Description { get; set; }
+
+        [StringLength(50, ErrorMessage = "Maximal 50 Zeichen.")]
+        public string? Identifier { get; set; }
+
+        [Required(ErrorMessage = "Typ ist erforderlich.")]
+        public string Type { get; set; } = "";
+
+        public LocationEdit.LocationEditModel DepartureModel { get; set; } = new();
+        public LocationEdit.LocationEditModel ArrivalModel { get; set; } = new();
+        public PlanningSlotEdit.PlanningSlotEditModel TraveltimeModel { get; set; } = new();
+        public ResourceReferenceEdit.ResourceReferenceEditModel RouteWebsiteModel { get; set; } = new();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            return Array.Empty<ValidationResult>();
+        }
+    }
+}

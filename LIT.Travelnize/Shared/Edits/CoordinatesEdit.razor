@@ -4,9 +4,13 @@
 @inject IJSRuntime JS
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
+@if (GutterTop)
+{
+    <GutterTop />
+}
+
 <MudGrid Spacing="4">
     <MudItem xs="12">
-        <MudDivider Class="my-4" />
         <MudText Typo="Typo.subtitle2">@L["Coordinate_Plural"]</MudText>
     </MudItem>
     <MudItem xs="12" sm="4" lg="5">
@@ -47,6 +51,7 @@
 @code {
     [Parameter, EditorRequired]
     public CoordinatesEditModel Model { get; set; }
+    [Parameter] public bool GutterTop { get; set; } = false;
 
     private bool _mapInitialized;
     private double? _lastLat;

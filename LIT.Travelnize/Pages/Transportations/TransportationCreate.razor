@@ -1,0 +1,203 @@
+﻿@page "/trips/{TripId:guid}/transportations/create"
+@using System.ComponentModel.DataAnnotations
+@inject TripsState TripsState
+@inject NavigationManager Navigation
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+
+<EditPageLayout Mode="PageLayoutMode.Create" TModel="TransportationCreateFormModel"
+                Title="@L["Transportation_CreateTitle"]"
+                Subtitle="@L["Transportation_CreateSubtitle"]"
+                Model="FormModel"
+                IsLoading="IsLoading"
+                LoadError="LoadError"
+                CancelHref="@LinkHelper.TripLink(TripId)"
+                OnValidSubmit="HandleValidSubmit">
+    <FormContent>
+        <MudGrid Spacing="4">
+            <MudItem xs="12" sm="8">
+                <MudTextField @bind-Value="FormModel!.Name"
+                              Label="@L["Transportation_NameLabel"]"
+                              For="@(()=>FormModel!.Name)"
+                              Required="true"
+                              Placeholder="@L["Transportation_NamePlaceholder"]" />
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudSelect T="string" @bind-Value="FormModel!.Type"
+                           Label="@L["Transportation_TypeLabel"]"
+                           Required="true">
+                    @foreach (var type in TransportationType.AllowedTypes)
+                    {
+                        <MudSelectItem Value="@type">@type</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="FormModel!.Identifier"
+                              Label="@L["Transportation_IdentifierLabel"]"
+                              For="@(()=>FormModel!.Identifier)"
+                              Placeholder="@L["Transportation_IdentifierPlaceholder"]" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="FormModel!.Description"
+                              Label="@L["Transportation_DescriptionLabel"]"
+                              For="@(()=>FormModel!.Description)"
+                              Placeholder="@L["Transportation_DescriptionPlaceholder"]"
+                              Lines="3" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_DepartureLabel"]" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_ArrivalLabel"]" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" />
+            </MudItem>
+        </MudGrid>
+    </FormContent>
+</EditPageLayout>
+
+@code {
+    [Parameter] public Guid TripId { get; set; }
+
+    internal TransportationCreateFormModel? FormModel;
+    internal bool IsLoading;
+    internal string? LoadError;
+
+    protected override void OnInitialized()
+    {
+        TripsState.OnChange += StateChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await EnsureTripLoadedAsync();
+        InitializeFormModel();
+    }
+
+    private async Task EnsureTripLoadedAsync()
+    {
+        if (TripsState.SelectedTrip == null || TripsState.SelectedTrip.Id != TripId)
+        {
+            await LoadTripAsync();
+        }
+    }
+
+    private async Task LoadTripAsync()
+    {
+        IsLoading = true;
+        LoadError = null;
+        await TripsState.LoadTripAsync(TripId);
+        if (TripsState.SelectedTrip == null)
+        {
+            LoadError = L["Errors_TripNotFound"];
+        }
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private void InitializeFormModel()
+    {
+        if (TripsState.SelectedTrip == null) return;
+
+        FormModel ??= new TransportationCreateFormModel(L)
+        {
+            TripId = TripId,
+            Name = string.Empty,
+            Description = string.Empty,
+            Identifier = string.Empty,
+            Type = TransportationType.AllowedTypes.FirstOrDefault() ?? "",
+            DepartureModel = new LocationEdit.LocationEditModel(Location.Empty),
+            ArrivalModel = new LocationEdit.LocationEditModel(Location.Empty),
+            TraveltimeModel = new PlanningSlotEdit.PlanningSlotEditModel(PlanningSlot.Empty),
+            RouteWebsiteModel = new ResourceReferenceEdit.ResourceReferenceEditModel(ResourceReference.Empty)
+        };
+    }
+
+    private async Task HandleValidSubmit(EditContext _)
+    {
+        if (FormModel == null) return;
+
+        var departure = FormModel.DepartureModel.ToLocation();
+        var arrival = FormModel.ArrivalModel.ToLocation();
+        var traveltime = FormModel.TraveltimeModel.ToPlanningSlot();
+        var routeWebsite = !string.IsNullOrWhiteSpace(FormModel.RouteWebsiteModel.Source)
+            ? FormModel.RouteWebsiteModel.ToResourceReference()
+            : ResourceReference.Empty; // Fix: Immer ein gültiges Objekt übergeben
+
+        var command = new AddTransportationCommand(
+            FormModel.TripId,
+            FormModel.Name!.Trim(),
+            FormModel.Description ?? string.Empty,
+            FormModel.Identifier ?? string.Empty,
+            departure,
+            arrival,
+            traveltime,
+            routeWebsite,
+            new TransportationType(FormModel.Type),
+            null // TargetReference kann später ergänzt werden
+        );
+
+        var newId = await TripsState.AddTransportationAsync(FormModel.TripId, command);
+        if (newId.HasValue)
+        {
+            // Fix: Fallback auf TripLink, da TransportationLinkEdit nicht existiert
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+        }
+        else
+        {
+            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+        }
+    }
+
+    private void StateChanged()
+    {
+        InvokeAsync(() =>
+        {
+            if (TripsState.SelectedTrip != null &&
+                TripsState.SelectedTrip.Id == TripId)
+            {
+                InitializeFormModel();
+            }
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        TripsState.OnChange -= StateChanged;
+    }
+
+    internal class TransportationCreateFormModel : IValidatableObject
+    {
+        public TransportationCreateFormModel(Microsoft.Extensions.Localization.IStringLocalizer<App> localizer) { }
+
+        public Guid TripId { get; set; }
+
+        [Required(ErrorMessage = "Name ist erforderlich.")]
+        [StringLength(150, ErrorMessage = "Maximal 150 Zeichen.")]
+        public string? Name { get; set; }
+
+        [StringLength(500, ErrorMessage = "Maximal 500 Zeichen.")]
+        public string? Description { get; set; }
+
+        [StringLength(50, ErrorMessage = "Maximal 50 Zeichen.")]
+        public string? Identifier { get; set; }
+
+        [Required(ErrorMessage = "Typ ist erforderlich.")]
+        public string Type { get; set; } = "";
+
+        public LocationEdit.LocationEditModel DepartureModel { get; set; } = new();
+        public LocationEdit.LocationEditModel ArrivalModel { get; set; } = new();
+        public PlanningSlotEdit.PlanningSlotEditModel TraveltimeModel { get; set; } = new();
+        public ResourceReferenceEdit.ResourceReferenceEditModel RouteWebsiteModel { get; set; } = new();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            return [];
+        }
+    }
+}

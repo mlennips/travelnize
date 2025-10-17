@@ -2,43 +2,47 @@
 @using LIT.Travelnize.Domain.Common
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
-<EditForm Model="Model">
+@if (GutterTop)
+{
+    <GutterTop />
+}
+
+<EditForm Model="Model" >
     <MudGrid Spacing="4">
         <MudItem xs="12">
-            <MudDivider Class="my-4" />
-            <MudText Typo="Typo.subtitle2">@Title</MudText>
+            <MudText Typo="Typo.subtitle2">@Label</MudText>
         </MudItem>
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" sm="6" lg="3">
             <MudTextField @bind-Value="Model.Line1"
                           Label="@L["Address_Line1Label"]"
                           For="@(() => Model.Line1)" />
         </MudItem>
-        <MudItem xs="12" sm="6">
+        <MudItem xs="12" sm="6" lg="3">
             <MudTextField @bind-Value="Model.Line2"
                           Label="@L["Address_Line2Label"]"
                           For="@(() => Model.Line2)" />
         </MudItem>
-        <MudItem xs="12" sm="5">
+        <MudItem xs="9" sm="8" lg="5">
             <MudTextField @bind-Value="Model.Street"
                           Label="@L["Address_StreetLabel"]"
                           For="@(() => Model.Street)" />
         </MudItem>
-        <MudItem xs="6" sm="2">
+        <MudItem xs="3" sm="4" lg="1">
             <MudTextField @bind-Value="Model.HouseNumber"
                           Label="@L["Address_HouseNumberLabel"]"
                           For="@(() => Model.HouseNumber)" />
         </MudItem>
-        <MudItem xs="6" sm="2">
+        <MudItem xs="3" sm="2" lg="2">
             <MudTextField @bind-Value="Model.PostalCode"
                           Label="@L["Address_PostalCodeLabel"]"
                           For="@(() => Model.PostalCode)" />
         </MudItem>
-        <MudItem xs="12" sm="3">
+        <MudItem xs="9" sm="5" lg="5">
             <MudTextField @bind-Value="Model.City"
                           Label="@L["Address_CityLabel"]"
                           For="@(() => Model.City)" />
         </MudItem>
-        <MudItem xs="12" sm="4">
+        <MudItem xs="12" sm="5" lg="5">
             <MudTextField @bind-Value="Model.Country"
                           Label="@L["Address_CountryLabel"]"
                           For="@(() => Model.Country)" />
@@ -50,7 +54,15 @@
     [Parameter, EditorRequired]
     public AddressEditModel Model { get; set; } = new();
 
-    public string Title => L["Address_Singular"];
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter] public bool GutterTop { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        Label ??= L["Address_Singular"];
+    }
 
     public class AddressEditModel(Address? address = null)
     {

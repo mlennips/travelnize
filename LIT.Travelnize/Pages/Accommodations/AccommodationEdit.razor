@@ -36,15 +36,19 @@
             </MudItem>
 
             <MudItem xs="12">
-                <PlanningSlotEdit Model="FormModel!.CheckInOutModel" />
+                <PlanningSlotEdit Model="FormModel!.CheckInOutModel" Label="@L["Accommodation_CheckInOut"]" GutterTop />
             </MudItem>
 
             <MudItem xs="12">
-                <AddressEdit Model="FormModel!.AddressModel" />
+                <MudPaper Class="pa-4">
+                    <AddressEdit Model="FormModel!.AddressModel" />
+                </MudPaper>
             </MudItem>
 
-            <MudItem xs="12">
-                <BookingInfoEdit Model="FormModel!.BookingInfoModel" />
+            <MudItem xs="12">                
+                <MudPaper Class="pa-4">
+                    <BookingInfoEdit Model="FormModel!.BookingInfoModel" />
+                </MudPaper>
             </MudItem>
         </MudGrid>
     </FormContent>

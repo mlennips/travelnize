@@ -26,5 +26,10 @@
         public static string ActivityLink(Guid tripId, Guid travelSegmentId, Guid destinationId, Guid activityId) => $"/trips/{tripId}/travelsegments/{travelSegmentId}/destinations/{destinationId}/activities/{activityId}";
         public static string ActivityLinkCreate(Guid tripId, Guid travelSegmentId, Guid destinationId) => $"/trips/{tripId}/travelsegments/{travelSegmentId}/destinations/{destinationId}/activities/create";
         public static string ActivityLinkEdit(Guid tripId, Guid travelSegmentId, Guid destinationId, Guid activityId) => $"/trips/{tripId}/travelsegments/{travelSegmentId}/destinations/{destinationId}/activities/{activityId}/edit";
+
+        // Transportations
+        public static string TransportationLink(Guid tripId, Guid transportationId) => $"/trips/{tripId}/transportations/{transportationId}";
+        public static string TransportationLinkCreate(Guid tripId) => $"/trips/{tripId}/transportations/create";
+        public static string TransportationLinkEdit(Guid tripId, Guid transportationId) => $"/trips/{tripId}/transportations/{transportationId}/edit";
     }
 }

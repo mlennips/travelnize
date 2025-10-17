@@ -26,7 +26,10 @@ else
                                 <MudItem xs="12" md="6">
                                     <MudStack Spacing="1">
                                         <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
-                                            <MudText Typo="Typo.subtitle1" Class="fw-bold">@transportation.Name</MudText>
+                                            <MudLink Href="@LinkHelper.TransportationLinkEdit(Trip.Id, transportation.Id)">
+                                                <MudText Typo="Typo.subtitle1" Class="fw-bold">@transportation.Name</MudText>
+                                             </MudLink>
+                                            
                                             <MudChip T="string" Color="Color.Info" Size="Size.Small" Icon="@GetIconForType(transportation.Type)">
                                                 @((@transportation.Type.Value + " " + @transportation.Identifier).Trim())
                                             </MudChip>

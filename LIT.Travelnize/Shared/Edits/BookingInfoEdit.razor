@@ -2,11 +2,15 @@
 @using LIT.Travelnize.Domain.Common
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
+@if (GutterTop)
+{
+    <GutterTop />
+}
+
 <EditForm Model="Model">
     <MudGrid Spacing="4">
         <MudItem xs="12">
-            <MudDivider Class="my-4" />
-            <MudText Typo="Typo.subtitle2">@Title</MudText>
+            <MudText Typo="Typo.subtitle2">@Label</MudText>
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="Model.Provider"
@@ -24,7 +28,7 @@
                            For="@(() => Model.BookingDate)" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <ResourceReferenceEdit Model="Model.UrlModel" ForceKind="ResourceKind.Website" HideTitle />
+            <ResourceReferenceEdit Model="Model.UrlModel" ForceKind="ResourceKind.Website" HideLabel />
         </MudItem>
         <MudItem xs="12">
             <MudTextField @bind-Value="Model.Details"
@@ -39,7 +43,15 @@
     [Parameter, EditorRequired]
     public BookingInfoEditModel Model { get; set; } = new();
 
-    public string Title => L["BookingInfo_Singular"];
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter] public bool GutterTop { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        Label ??= L["BookingInfo_Singular"];
+    }
 
     public class BookingInfoEditModel
     {

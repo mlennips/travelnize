@@ -2,18 +2,32 @@
 @using LIT.Travelnize.Domain.Common
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
+@if (GutterTop)
+{
+    <GutterTop />
+}
+
 <MudGrid Spacing="4">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <MudItem xs="12">
+            <MudText Typo="Typo.subtitle2">@Label</MudText>
+        </MudItem>
+    }
     <MudItem xs="12">
         <AddressEdit Model="Model.AddressModel" />
     </MudItem>
     <MudItem xs="12">
-        <CoordinatesEdit Model="Model.CoordinatesModel" />
+        <CoordinatesEdit Model="Model.CoordinatesModel" GutterTop />
     </MudItem>
 </MudGrid>
 
 @code {
     [Parameter, EditorRequired]
     public LocationEditModel Model { get; set; } = new();
+
+    [Parameter] public string Label { get; set; } = default!;
+    [Parameter] public bool GutterTop { get; set; } = false;
 
     public class LocationEditModel
     {
