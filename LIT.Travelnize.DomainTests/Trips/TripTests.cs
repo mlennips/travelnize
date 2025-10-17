@@ -239,7 +239,7 @@ namespace LIT.Travelnize.DomainTests.Trips
 
             // Act
             var result = _trip.AddTransportation("ICE", "Schnellzug", "123", departure, arrival,
-                departureDate, arrivalDate, routeLink, TransportationType.Train, EntityReference.Create<Destination>(Guid.NewGuid()));
+                PlanningSlot.Create(departureDate, arrivalDate), routeLink, TransportationType.Train, EntityReference.Create<Destination>(Guid.NewGuid()));
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
@@ -249,8 +249,8 @@ namespace LIT.Travelnize.DomainTests.Trips
             Assert.AreEqual("123", _trip.Transportations.First().Identifier);
             Assert.AreEqual(departure, _trip.Transportations.First().Departure);
             Assert.AreEqual(arrival, _trip.Transportations.First().Arrival);
-            Assert.AreEqual(departureDate, _trip.Transportations.First().DepartureDate);
-            Assert.AreEqual(arrivalDate, _trip.Transportations.First().ArrivalDate);
+            Assert.AreEqual(departureDate, _trip.Transportations.First().Traveltime.Start);
+            Assert.AreEqual(arrivalDate, _trip.Transportations.First().Traveltime.End);
             Assert.AreEqual(routeLink, _trip.Transportations.First().RouteWebsite);
             Assert.AreEqual(TransportationType.Train, _trip.Transportations.First().Type);
             Assert.IsNotNull(_trip.Transportations.First().TargetReference);
@@ -262,13 +262,11 @@ namespace LIT.Travelnize.DomainTests.Trips
             // Arrange
             var departure = _location;
             var arrival = new Location(new Address("Hauptstraße", "", "Hauptstraße", "2", "20095", "Hamburg", "Deutschland"), new Coordinates{ Latitude = 53.55, Longitude = 10.0 });
-            var departureDate = DateTime.Today.AddHours(2);
-            var arrivalDate = DateTime.Today;
             var routeLink = ResourceReference.FromUrl("DB", "https://bahn.de");
 
             // Act
             var result = _trip.AddTransportation("ICE", "Schnellzug", "123", departure, arrival,
-                departureDate, arrivalDate, routeLink, TransportationType.Train, null);
+                PlanningSlot.Empty, routeLink, TransportationType.Train, null);
 
             // Assert
             Assert.IsFalse(result.IsSuccess);
