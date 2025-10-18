@@ -2,7 +2,7 @@
 using LIT.Travelnize.Domain.Trips.Commands;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 
-namespace LIT.Travelnize.UseCases.Trips
+namespace LIT.Travelnize.UseCases.TravelSegments
 {
     public class UpdateTravelSegmentHandler(IUnitOfWork uow) : ICommandHandler<UpdateTravelSegmentCommand>
     {

@@ -1,7 +1,7 @@
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.Commands;
 
-namespace LIT.Travelnize.UseCases.Trips
+namespace LIT.Travelnize.UseCases.Transportations
 {
     public class AddTransportationHandler(IUnitOfWork uow) : ICommandHandler<AddTransportationCommand, Guid>
     {

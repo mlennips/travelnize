@@ -1,16 +1,17 @@
 using LIT.Travelnize.Domain.Trips;
 using LIT.Travelnize.Domain.Trips.Commands;
 
-namespace LIT.Travelnize.UseCases.Trips
+namespace LIT.Travelnize.UseCases.TravelSegments
 {
-    public class AddParticipantHandler(IUnitOfWork uow) : ICommandHandler<AddParticipantCommand, Guid>
+    public class AddTravelSegmentHandler(IUnitOfWork uow) : ICommandHandler<AddTravelSegmentCommand, Guid>
     {
-        public async Task<Result<Guid>> Handle(AddParticipantCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(AddTravelSegmentCommand request, CancellationToken cancellationToken)
         {
             var trip = await uow.GetByIdAsync<Trip>(request.TripId);
             if (trip is null) return TripErrors.TripNotFound;
 
-            var result = trip.AddParticipant(request.UserId, request.Name, request.Email);
+            var result = trip.AddTravelSegment(request.Name, request.Description, request.Slot);
+
             if (!result.IsSuccess) return result.Error;
 
             await uow.UpdateAsync(trip);
