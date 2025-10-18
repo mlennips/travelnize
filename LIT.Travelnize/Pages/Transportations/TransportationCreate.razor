@@ -14,14 +14,14 @@
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
         <MudGrid Spacing="4">
-            <MudItem xs="12" sm="8">
+            <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="FormModel!.Name"
                               Label="@L["Transportation_NameLabel"]"
                               For="@(()=>FormModel!.Name)"
                               Required="true"
                               Placeholder="@L["Transportation_NamePlaceholder"]" />
             </MudItem>
-            <MudItem xs="12" sm="4">
+            <MudItem xs="12" sm="3">
                 <MudSelect T="string" @bind-Value="FormModel!.Type"
                            Label="@L["Transportation_TypeLabel"]"
                            Required="true">
@@ -31,30 +31,34 @@
                     }
                 </MudSelect>
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" sm="3">
                 <MudTextField @bind-Value="FormModel!.Identifier"
                               Label="@L["Transportation_Identifier"]"
                               For="@(()=>FormModel!.Identifier)"
                               Placeholder="@L["Transportation_IdentifierPlaceholder"]" />
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
                               Label="@L["Transportation_Description"]"
                               For="@(()=>FormModel!.Description)"
                               Placeholder="@L["Transportation_DescriptionPlaceholder"]"
-                              Lines="3" />
+                              Lines="1" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_Departure"]" />
+                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" ShowTime />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_Arrival"]" />
+                <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" Label="@L["Transportation_RouteWebsite"]" />
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" />
+            <MudItem xs="12">
+                <MudPaper Class="pa-4">
+                    <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_Departure"]" />
+                </MudPaper>
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" />
+            <MudItem xs="12">
+                <MudPaper Class="pa-4">
+                    <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_Arrival"]" />
+                </MudPaper>
             </MudItem>
         </MudGrid>
     </FormContent>
@@ -145,7 +149,7 @@
         if (newId.HasValue)
         {
             // Fix: Fallback auf TripLink, da TransportationLinkEdit nicht existiert
-            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId, "transport"));
         }
         else
         {

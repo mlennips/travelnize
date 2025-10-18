@@ -162,7 +162,7 @@
   <data name="Common_NoPeriod" xml:space="preserve"><value>Kein Zeitraum definiert</value></data>
   <data name="Common_DaysNights" xml:space="preserve"><value>{0} Tage, {1} Nächte</value></data>
   <data name="Common_Hours" xml:space="preserve"><value>Stunden</value></data>
-  <data name="Common_HoursMinutes" xml:space="preserve"><value>Stunden/Minuten</value></data>
+  <data name="Common_Minutes" xml:space="preserve"><value>Minuten</value></data>
   <data name="Common_Open" xml:space="preserve"><value>Öffnen</value></data>
 
   <!-- Fehler (konsolidiert) -->
@@ -419,6 +419,8 @@
   <data name="TripOverview_Activities" xml:space="preserve"><value>Aktivitäten</value></data>
   <data name="TripOverview_AddSegment" xml:space="preserve"><value>Neuen Reiseabschnitt hinzufügen</value></data>
   <data name="TripOverview_SelectDestination" xml:space="preserve"><value>Reiseziel auswählen</value></data>
+  <data name="TripOverview_AddTransportation" xml:space="preserve"><value>Transport hinzufügen</value></data>
+ 
 
   <!-- Trip Participants -->
   <data name="Participants_NameLabel" xml:space="preserve"><value>Name</value></data>

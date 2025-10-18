@@ -182,7 +182,7 @@
                            FullWidth
                            StartIcon="@Icons.Material.Filled.Add"
                            Class="text-travelsegment"
-                           Href="@($"/trips/{TripId}/travelsegments/create")">
+                           Href="@LinkHelper.TravelSegmentLinkCreate(TripId)">
                     @L["TripOverview_AddSegment"]
                 </MudButton>
             </MudStack>

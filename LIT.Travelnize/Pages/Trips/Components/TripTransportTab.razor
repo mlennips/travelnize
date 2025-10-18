@@ -33,7 +33,7 @@ else
                                             <MudChip T="string" Color="Color.Info" Size="Size.Small" Icon="@GetIconForType(transportation.Type)">
                                                 @((@transportation.Type.Value + " " + @transportation.Identifier).Trim())
                                             </MudChip>
-                                            @if (transportation.RouteWebsite != null)
+                                            @if (!string.IsNullOrWhiteSpace(transportation.RouteWebsite?.Source))
                                             {
                                                 <MudChip T="ResourceReference" Size="Size.Small" Href="@transportation.RouteWebsite.Source" Icon="@MudBlazor.Icons.Material.Filled.Route" Target="_blank">
                                                     @transportation.RouteWebsite.Name
@@ -46,8 +46,8 @@ else
                                                 @L["Transportation_Departure"]:
                                             </MudText>
                                             <MudText Typo="Typo.caption">
-                                                @transportation.Departure.Address?.ToString()<br />
                                                 @transportation.Traveltime.Start?.ToLongDateString() @transportation.Traveltime.Start?.ToShortTimeString()
+                                                <br />@transportation.Departure.Address?.ToString()
                                             </MudText>
                                         </MudStack>
 
@@ -56,14 +56,15 @@ else
                                                 @L["Transportation_Arrival"]:
                                             </MudText>
                                             <MudText Typo="Typo.caption">
-                                                @transportation.Arrival.Address?.ToString()<br />
                                                 @transportation.Traveltime.End?.ToLongDateString() @transportation.Traveltime.End?.ToShortTimeString()
+                                                <br />@transportation.Arrival.Address?.ToString()
                                             </MudText>
                                         </MudStack>
 
                                         <MudStack Row>
                                             <MudText Typo="Typo.caption">
-                                                <b>@L["Transportation_PlannedTransferDuration"]:</b> @transportation.Traveltime.Duration.ToString(@"hh\:mm") @L["Common_HoursMinutes"]
+                                                <b>@L["Transportation_PlannedTransferDuration"]:</b>
+                                                @transportation.Traveltime.Duration.Hours.ToString("00") @L["Common_Hours"] @transportation.Traveltime.Duration.Minutes.ToString("00") @L["Common_Minutes"]
                                             </MudText>
                                         </MudStack>
                                     </MudStack>
@@ -140,6 +141,16 @@ else
         }
     </MudStack>
 }
+
+<MudStack Row>
+    <MudButton Variant="Variant.Text"
+               FullWidth
+               StartIcon="@Icons.Material.Filled.Add"
+               Class="text-travelsegment"
+               Href="@LinkHelper.TransportationLinkCreate(Trip!.Id)">
+        @L["TripOverview_AddTransportation"]
+    </MudButton>
+</MudStack>
 
 @code {
     [Parameter] public GetTripResponse? Trip { get; set; }
