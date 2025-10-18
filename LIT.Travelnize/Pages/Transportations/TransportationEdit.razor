@@ -34,31 +34,31 @@
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudTextField @bind-Value="FormModel!.Identifier"
-                              Label="@L["Transportation_IdentifierLabel"]"
+                              Label="@L["Transportation_Identifier"]"
                               For="@(() => FormModel!.Identifier)"
                               Placeholder="@L["Transportation_IdentifierPlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="@L["Transportation_DescriptionLabel"]"
+                              Label="@L["Transportation_Description"]"
                               For="@(() => FormModel!.Description)"
                               Placeholder="@L["Transportation_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12" sm="12">
-                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" ShowTime Label="@L["Transportation_TraveltimeLabel"]" />
+                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" ShowTime Label="@L["Transportation_Traveltime"]" />
             </MudItem>
             <MudItem xs="12" sm="12">
                 <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" Label="@L["Transportation_RouteWebsite"]" />
             </MudItem>
             <MudItem xs="12">
                 <MudPaper Class="pa-4">
-                    <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_DepartureLabel"]" />
+                    <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_Departure"]" />
                 </MudPaper>
             </MudItem>
             <MudItem xs="12">
                 <MudPaper Class="pa-4">
-                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_ArrivalLabel"]" />
+                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_Arrival"]" />
                 </MudPaper>
             </MudItem>
         </MudGrid>
@@ -137,9 +137,6 @@
     {
         if (FormModel == null) return;
 
-        var departure = FormModel.DepartureModel.ToLocation();
-        var arrival = FormModel.ArrivalModel.ToLocation();
-        var traveltime = FormModel.TraveltimeModel.ToPlanningSlot();
         var routeWebsite = !string.IsNullOrWhiteSpace(FormModel.RouteWebsiteModel.Source)
             ? FormModel.RouteWebsiteModel.ToResourceReference()
             : ResourceReference.Empty; // Fix: Immer ein gültiges Objekt übergeben
@@ -150,9 +147,9 @@
             FormModel.Name!.Trim(),
             FormModel.Description ?? string.Empty,
             FormModel.Identifier ?? string.Empty,
-            departure,
-            arrival,
-            traveltime,
+            FormModel.DepartureModel.ToLocation(),
+            FormModel.ArrivalModel.ToLocation(),
+            FormModel.TraveltimeModel.ToPlanningSlot(),
             routeWebsite,
             new TransportationType(FormModel.Type),
             Array.Empty<Guid>(), // Fix: Leeres Array statt null für Passengers
@@ -160,10 +157,10 @@
         );
 
         // Fix: Korrekte Signatur mit TripId, TransportationId, command, false
-        var success = await TripsState.UpdateTransportationAsync(FormModel.TripId, FormModel.TransportationId, command, false);
+        var success = await TripsState.UpdateTransportationAsync(FormModel.TripId, FormModel.TransportationId, command);
         if (success)
         {
-            Navigation.NavigateTo(LinkHelper.TripLink(TripId));
+            Navigation.NavigateTo(LinkHelper.TripLink(TripId, "transport"));
         }
         else
         {

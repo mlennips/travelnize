@@ -9,7 +9,7 @@
 
 @if (Trip is not null)
 {
-    <MudGrid Spacing="4" Class="mt-2">
+    <MudGrid Spacing="4" Class="my-2">
         @foreach (var travelSegment in Trip.TravelSegments)
         {
             <MudItem xs="12" id="@travelSegment.Id">

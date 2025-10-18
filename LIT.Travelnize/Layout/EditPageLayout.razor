@@ -11,6 +11,7 @@
         <MudItem xs="12">
             <PageHeader Title="@EffectiveTitle"
                         Subtitle="@Subtitle"
+                        Actions="HeaderActions"
                         Image="@Image" />
         </MudItem>
 
@@ -89,6 +90,7 @@
     [Parameter] public string Title { get; set; } = default!;
     [Parameter] public string? Subtitle { get; set; }
     [Parameter] public string? Image { get; set; }
+    [Parameter] public IEnumerable<ButtonAction> HeaderActions { get; set; } = default!;
 
     // Data / State
     [Parameter] public TModel? Model { get; set; }

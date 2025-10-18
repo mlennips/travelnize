@@ -33,5 +33,11 @@ namespace LIT.Travelnize.Helpers
         public static string ActivityRounded => MudBlazor.Icons.Material.Rounded.Attractions;
         public static string ActivitySharp => MudBlazor.Icons.Material.Sharp.Attractions;
         public static string ActivityTwoTone => MudBlazor.Icons.Material.TwoTone.Attractions;
+
+        public static string TransportationFilled => MudBlazor.Icons.Material.Filled.DirectionsTransit;
+        public static string TransportationOutlined => MudBlazor.Icons.Material.Outlined.DirectionsTransit;
+        public static string TransportationRounded => MudBlazor.Icons.Material.Rounded.DirectionsTransit;
+        public static string TransportationSharp => MudBlazor.Icons.Material.Sharp.DirectionsTransit;
+        public static string TransportationTwoTone => MudBlazor.Icons.Material.TwoTone.DirectionsTransit;
     }
 }

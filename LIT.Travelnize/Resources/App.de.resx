@@ -160,7 +160,9 @@
   <data name="Common_DaySingular" xml:space="preserve"><value>Tag</value></data>
   <data name="Common_DayPlural" xml:space="preserve"><value>Tage</value></data>
   <data name="Common_NoPeriod" xml:space="preserve"><value>Kein Zeitraum definiert</value></data>
-  <data name="Common_DurationHelper" xml:space="preserve"><value>{0} Tage, {1} Nächte</value></data>
+  <data name="Common_DaysNights" xml:space="preserve"><value>{0} Tage, {1} Nächte</value></data>
+  <data name="Common_Hours" xml:space="preserve"><value>Stunden</value></data>
+  <data name="Common_HoursMinutes" xml:space="preserve"><value>Stunden/Minuten</value></data>
   <data name="Common_Open" xml:space="preserve"><value>Öffnen</value></data>
 
   <!-- Fehler (konsolidiert) -->
@@ -169,6 +171,7 @@
   <data name="Errors_DestinationNotFound" xml:space="preserve"><value>Ziel wurde nicht gefunden.</value></data>
   <data name="Errors_AccommodationNotFound" xml:space="preserve"><value>Unterkunft wurde nicht gefunden.</value></data>
   <data name="Errors_ActivityNotFound" xml:space="preserve"><value>Aktivität wurde nicht gefunden.</value></data>
+  <data name="Errors_TransportationNotFound" xml:space="preserve"><value>Transport wurde nicht gefunden.</value></data>
   <data name="Errors_Load" xml:space="preserve"><value>Fehler beim Laden: {0}</value></data>
   <data name="Errors_CreateFailed" xml:space="preserve"><value>Erstellung fehlgeschlagen.</value></data>
   <data name="Errors_UpdateFailed" xml:space="preserve"><value>Aktualisierung fehlgeschlagen.</value></data>
@@ -297,14 +300,14 @@
   </data>
 
   <!-- Wikipedia Suche -->
-  <data name="Wikipedia_QueryLabel" xml:space="preserve"><value>Suchbegriff</value></data>
-  <data name="Wikipedia_QueryPlaceholder" xml:space="preserve"><value>Begriff eingeben und Enter drücken</value></data>
-  <data name="Wikipedia_NoResults" xml:space="preserve"><value>Keine Ergebnisse.</value></data>
-  <data name="Wikipedia_Close" xml:space="preserve"><value>Schließen</value></data>
-  <data name="Wikipedia_Search" xml:space="preserve"><value>Suchen</value></data>
-  <data name="Wikipedia_SearchError" xml:space="preserve"><value>Fehler bei der Suche: {0}</value></data>
-  <data name="Wikipedia_NoSummary" xml:space="preserve"><value>Kein Summary gefunden.</value></data>
-  <data name="Wikipedia_LoadError" xml:space="preserve"><value>Fehler beim Laden des Artikels: {0}</value></data>
+  <data name="WikipediaSearchDialog_QueryLabel" xml:space="preserve"><value>Suchbegriff</value></data>
+  <data name="WikipediaSearchDialog_QueryPlaceholder" xml:space="preserve"><value>Begriff eingeben und Enter drücken</value></data>
+  <data name="WikipediaSearchDialog_NoResults" xml:space="preserve"><value>Keine Ergebnisse gefunden.</value></data>
+  <data name="WikipediaSearchDialog_Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="WikipediaSearchDialog_Search" xml:space="preserve"><value>Suchen</value></data>
+  <data name="WikipediaSearchDialog_SearchError" xml:space="preserve"><value>Fehler bei der Suche: {0}</value></data>
+  <data name="WikipediaSearchDialog_NoSummary" xml:space="preserve"><value>Kein Wikipedia-Artikel gefunden.</value></data>
+  <data name="WikipediaSearchDialog_LoadError" xml:space="preserve"><value>Fehler beim Laden des Artikels: {0}</value></data>
 
   <!-- Accommodation (Felder zusammengeführt) -->
   <data name="Accommodation_CreateTitle" xml:space="preserve"><value>Unterkunft hinzufügen</value></data>
@@ -402,6 +405,7 @@
   <data name="Trips_StatusDetail_Pending" xml:space="preserve"><value>In Planung</value></data>
   <data name="Trips_NightsLabel" xml:space="preserve"><value>Nächte</value></data>
   <data name="Trips_NoTrips" xml:space="preserve"><value>Es wurden noch keine Reisen angelegt.</value></data>
+  <data name="Trips_CreateTrip" xml:space="preserve"><value>Neue Reise</value></data>
 
   <!-- Trip Day Plan -->
   <data name="DayPlan_CheckIn" xml:space="preserve"><value>Check-In {0}</value></data>
@@ -420,6 +424,23 @@
   <data name="Participants_NameLabel" xml:space="preserve"><value>Name</value></data>
   <data name="Participants_RoleLabel" xml:space="preserve"><value>Rolle</value></data>
 
-  <!-- Wikipedia / Entity Erfolg (bereits generisch aufgenommen) -->
+  <!-- Transportation -->
+  <data name="Transportation_EditTitle" xml:space="preserve"><value>Transport bearbeiten</value></data>
+  <data name="Transportation_EditSubtitle" xml:space="preserve"><value>Passe die Daten deines Transports an.</value></data>
+  <data name="Transportation_CreateTitle" xml:space="preserve"><value>Transport hinzufügen</value></data>
+  <data name="Transportation_CreateSubtitle" xml:space="preserve"><value>Lege einen neuen Transport für deine Reise an.</value></data>
+  <data name="Transportation_NameLabel" xml:space="preserve"><value>Name</value></data>
+  <data name="Transportation_NamePlaceholder" xml:space="preserve"><value>Name des Transports</value></data>
+  <data name="Transportation_TypeLabel" xml:space="preserve"><value>Typ</value></data>
+  <data name="Transportation_Identifier" xml:space="preserve"><value>Kennung</value></data>
+  <data name="Transportation_IdentifierPlaceholder" xml:space="preserve"><value>Kennung (z.B. Flugnummer)</value></data>
+  <data name="Transportation_Description" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="Transportation_DescriptionPlaceholder" xml:space="preserve"><value>Beschreibung des Transports</value></data>
+  <data name="Transportation_Traveltime" xml:space="preserve"><value>Reisezeit</value></data>
+  <data name="Transportation_RouteWebsite" xml:space="preserve"><value>Route Webseite</value></data>
+  <data name="Transportation_Departure" xml:space="preserve"><value>Abfahrt</value></data>
+  <data name="Transportation_Arrival" xml:space="preserve"><value>Ankunft</value></data>
+  <data name="Transportation_PlannedTransferDuration" xml:space="preserve"><value>Geplante Reisedauer</value></data>
+  <data name="Transportation_TransferTo" xml:space="preserve"><value>Transfer nach</value></data>
 
 </root>

@@ -12,7 +12,8 @@ namespace LIT.Travelnize.Infrastructure.Persistence
 
         private async Task AddDemoTrip1Async()
         {
-            var tripSlot = PlanningSlot.Create(DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(24));
+            var start = DateTime.UtcNow.AddDays(-2).Date.AddHours(10);
+            var tripSlot = PlanningSlot.Create(start, start.AddDays(24));
             var user = await userManager.FindByEmailAsync("demo@travelnize.de");
             var trip = Trip.Create(
                 user!,
@@ -107,38 +108,37 @@ namespace LIT.Travelnize.Infrastructure.Persistence
             trip.AddParticipantAsGuest("Lisa Schmidt", new Email("lisa.schmidt@travelnize.de"));
             trip.AddParticipantAsGuest("Tom Becker", new Email("tom.becker@travelnize.de"));
 
-            // Accommodations (angepasst: PlanningSlot statt Start/Ende einzeln)
             trip.AddAccommodationToDestination(destination1_1.Id, "Copenhagen City Hotel", AccommodationType.Hotel,
-                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start, travelSegment1.Slot.Start?.AddDays(2)));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddHours(4), travelSegment1.Slot.Start?.AddDays(2).AddHours(8)));
             trip.AddAccommodationToDestination(destination1_1.Id, "Nyhavn Boutique Hostel", AccommodationType.Hostel,
-                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2), travelSegment1.Slot.Start?.AddDays(3)));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(2).AddHours(10), travelSegment1.Slot.Start?.AddDays(4).AddHours(8)));
 
             trip.AddAccommodationToDestination(destination1_2.Id, "Stockholm Waterfront Hotel", AccommodationType.Hotel,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(4), tripSlot.Start?.AddDays(6)));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(4).AddHours(16), travelSegment1.Slot.Start?.AddDays(6).AddHours(10)));
             trip.AddAccommodationToDestination(destination1_2.Id, "Gamla Stan Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(6), tripSlot.Start?.AddDays(8)));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(6).AddHours(10), travelSegment1.Slot.Start?.AddDays(8).AddHours(9)));
 
             trip.AddAccommodationToDestination(destination1_3.Id, "Oslo Fjord Apartments", AccommodationType.Apartment,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(8), tripSlot.Start?.AddDays(11)));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(8).AddHours(18), travelSegment1.Slot.Start?.AddDays(9).AddHours(7)));
             trip.AddAccommodationToDestination(destination1_3.Id, "Bergen Mountain Lodge", AccommodationType.Lodge,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(11), tripSlot.Start?.AddDays(14)));
+                Address.Empty, PlanningSlot.Create(travelSegment1.Slot.Start?.AddDays(11).AddHours(7), travelSegment1.Slot.Start?.AddDays(14).AddHours(7)));
 
             trip.AddAccommodationToDestination(destination2_1.Id, "Hamburg Hafen Hotel", AccommodationType.Hotel,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(14), tripSlot.Start?.AddDays(15)));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start?.AddHours(17), travelSegment2.Slot.Start?.AddDays(1).AddHours(10)));
 
             trip.AddAccommodationToDestination(destination2_2.Id, "Amsterdam Canal Apartments", AccommodationType.Apartment,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(15), tripSlot.Start?.AddDays(17)));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(1).AddHours(16), travelSegment2.Slot.Start?.AddDays(3).AddHours(8)));
 
             trip.AddAccommodationToDestination(destination2_3.Id, "Paris Montmartre Hostel", AccommodationType.Hostel,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(17), tripSlot.Start?.AddDays(19)));
+                Address.Empty, PlanningSlot.Create(travelSegment2.Slot.Start?.AddDays(3).AddHours(13), travelSegment3.Slot.Start?.AddHours(9)));
 
             trip.AddAccommodationToDestination(destination3_1.Id, "Barcelona Beach Hotel", AccommodationType.Hotel,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(19), tripSlot.Start?.AddDays(22)));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddHours(12), travelSegment3.Slot.Start?.AddDays(3).AddHours(20)));
 
             trip.AddAccommodationToDestination(destination3_2.Id, "Rome Colosseum Guesthouse", AccommodationType.Guesthouse,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(22), tripSlot.Start?.AddDays(24)));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(4).AddHours(8), travelSegment3.Slot.Start?.AddDays(5).AddHours(10)));
             trip.AddAccommodationToDestination(destination3_2.Id, "Trastevere Boutique Hotel", AccommodationType.Hotel,
-                Address.Empty, PlanningSlot.Create(tripSlot.Start?.AddDays(24), tripSlot.Start?.AddDays(26)));
+                Address.Empty, PlanningSlot.Create(travelSegment3.Slot.Start?.AddDays(5).AddHours(10), travelSegment3.Slot.Start?.AddDays(7).AddHours(10)));
 
             // Activities (unverändert)
             trip.AddActivity(destination1_1.Id, "Stadtrundgang Kopenhagen", "Geführte Tour durch die Altstadt und den Nyhavn.", Location.Empty, travelSegment1.Slot.Start, TimeSpan.FromHours(3));
@@ -198,7 +198,7 @@ namespace LIT.Travelnize.Infrastructure.Persistence
                 "FERRY-DK-001",
                 Location.Create(addressRostock, Coordinates.Create(54.183333, 12.1)),
                 Location.Create(addressCopenhagen, Coordinates.Create(55.78333333, 9.78333333)),
-                PlanningSlot.Create(travelSegment1.Slot.Start!.Value.AddHours(6), travelSegment1.Slot.Start!.Value.AddHours(10)),
+                PlanningSlot.Create(travelSegment1.Slot.Start!.Value.AddHours(-12), travelSegment1.Slot.Start!.Value.AddHours(-1)),
                 ResourceReference.FromUrl("Fähre", DemoUrl),
                 TransportationType.Ferry,
                 EntityReference.Create<Destination>(destination1_1.Id)

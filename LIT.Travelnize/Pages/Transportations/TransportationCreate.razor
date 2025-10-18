@@ -33,22 +33,22 @@
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="FormModel!.Identifier"
-                              Label="@L["Transportation_IdentifierLabel"]"
+                              Label="@L["Transportation_Identifier"]"
                               For="@(()=>FormModel!.Identifier)"
                               Placeholder="@L["Transportation_IdentifierPlaceholder"]" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="FormModel!.Description"
-                              Label="@L["Transportation_DescriptionLabel"]"
+                              Label="@L["Transportation_Description"]"
                               For="@(()=>FormModel!.Description)"
                               Placeholder="@L["Transportation_DescriptionPlaceholder"]"
                               Lines="3" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_DepartureLabel"]" />
+                <LocationEdit Model="FormModel!.DepartureModel" Label="@L["Transportation_Departure"]" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_ArrivalLabel"]" />
+                <LocationEdit Model="FormModel!.ArrivalModel" Label="@L["Transportation_Arrival"]" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <PlanningSlotEdit Model="FormModel!.TraveltimeModel" />

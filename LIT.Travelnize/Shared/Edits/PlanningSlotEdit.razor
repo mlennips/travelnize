@@ -21,6 +21,7 @@
                           Label="@L["PlanningSlot_StartDateLabel"]"
                           For="@(() => Model.Start)"
                           InputType="@(ShowTime ? InputType.DateTimeLocal : InputType.Date)"
+                          Format="@(ShowTime ? "s" : "yyyy-MM-dd")"
                           Clearable="true" />
         </MudItem>
         <MudItem xs="12" sm="6">
@@ -29,7 +30,8 @@
                           Label="@L["PlanningSlot_EndDateLabel"]"
                           For="@(() => Model.End)"
                           InputType="@(ShowTime ? InputType.DateTimeLocal : InputType.Date)"
-                          Min="@Model.Start?.ToString("yyyy-MM-ddTHH:mm")"
+                          Format="@(ShowTime ? "s" : "yyyy-MM-dd")"
+                          Min="@Model.Start"
                           HelperText="@L["PlanningSlot_HelperText", Model.TotalDaysInclusive, Model.Nights]"
                           Clearable="true" />
         </MudItem>
@@ -69,8 +71,8 @@
 
         public PlanningSlotEditModel(PlanningSlot? slot)
         {
-            Start = slot?.Start;
-            End = slot?.End;
+            Start = slot?.Start.HasValue == true ? DateTime.SpecifyKind(slot.Start.Value, DateTimeKind.Utc) : (DateTime?)null;
+            End = slot?.End.HasValue == true ? DateTime.SpecifyKind(slot.End.Value, DateTimeKind.Utc) : (DateTime?)null;            
         }
 
         public PlanningSlot ToPlanningSlot() => PlanningSlot.Create(Start, End);

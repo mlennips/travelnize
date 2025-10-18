@@ -4,7 +4,7 @@
 
 @if (Trip?.Transportations == null || !Trip.Transportations.Any())
 {
-    <MudText Typo="Typo.caption">@L["TripTransport_NoData"]</MudText>
+    <MudText Typo="Typo.caption">@L["Errors_NoData"]</MudText>
 }
 else
 {
@@ -24,7 +24,7 @@ else
                         <MudPaper Elevation="8" Class="pa-4">
                             <MudGrid>
                                 <MudItem xs="12" md="6">
-                                    <MudStack Spacing="1">
+                                    <MudStack Spacing="2">
                                         <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
                                             <MudLink Href="@LinkHelper.TransportationLinkEdit(Trip.Id, transportation.Id)">
                                                 <MudText Typo="Typo.subtitle1" Class="fw-bold">@transportation.Name</MudText>
@@ -41,31 +41,53 @@ else
                                             }
                                         </MudStack>
                                         <MudText Typo="Typo.body2">@transportation.Description</MudText>
-                                        <MudText Typo="Typo.caption">
-                                            <b>@L["Departure"]:</b> @transportation.Departure.Address?.ToString() <br />
-                                            <b>@L["Arrival"]:</b> @transportation.Arrival.Address?.ToString()
-                                        </MudText>
-                                        <MudText Typo="Typo.caption">
-                                            <b>@L["TripTransport_PlannedTransferDuration"]:</b> @transportation.Traveltime.ToLongDateString()
-                                        </MudText>
+                                        <MudStack Row >
+                                            <MudText Typo="Typo.caption">
+                                                @L["Transportation_Departure"]:
+                                            </MudText>
+                                            <MudText Typo="Typo.caption">
+                                                @transportation.Departure.Address?.ToString()<br />
+                                                @transportation.Traveltime.Start?.ToLongDateString() @transportation.Traveltime.Start?.ToShortTimeString()
+                                            </MudText>
+                                        </MudStack>
+
+                                        <MudStack Row>
+                                            <MudText Typo="Typo.caption">
+                                                @L["Transportation_Arrival"]:
+                                            </MudText>
+                                            <MudText Typo="Typo.caption">
+                                                @transportation.Arrival.Address?.ToString()<br />
+                                                @transportation.Traveltime.End?.ToLongDateString() @transportation.Traveltime.End?.ToShortTimeString()
+                                            </MudText>
+                                        </MudStack>
+
+                                        <MudStack Row>
+                                            <MudText Typo="Typo.caption">
+                                                <b>@L["Transportation_PlannedTransferDuration"]:</b> @transportation.Traveltime.Duration.ToString(@"hh\:mm") @L["Common_HoursMinutes"]
+                                            </MudText>
+                                        </MudStack>
                                     </MudStack>
                                 </MudItem>
                                 <MudItem xs="12" md="6">
                                     <MudTimeline>
-                                        <MudTimelineItem Size="Size.Medium" Elevation="0" TimelineAlign="TimelineAlign.End">
+                                        <MudTimelineItem Size="Size.Medium" Elevation="0" TimelineAlign="TimelineAlign.End" Class="align-items-center">
                                             <ItemDot>
                                                 <MudIcon Size="Size.Small" Icon="@MudBlazor.Icons.Material.Sharp.Hail" Color="Color.Secondary" />
                                             </ItemDot>
                                             <ItemContent>
                                                 <MudStack Spacing="0">
-                                                    <MudText Typo="Typo.caption">@transportation.Traveltime.Start?.ToLongDateString()</MudText>
+                                                    <MudText Typo="Typo.caption">@transportation.Traveltime.Start?.ToShortDateString()</MudText>
                                                     <MudText Typo="Typo.caption" Class="fw-bold">@transportation.Traveltime.Start?.ToShortTimeString()</MudText>
                                                 </MudStack>
                                             </ItemContent>
                                             <ItemOpposite>
                                                 <MudStack Spacing="0">
-                                                    <MudText Typo="Typo.caption">@L["Departure"]</MudText>
-                                                    <MudText Typo="Typo.caption">@transportation.Departure.Address?.ToString()</MudText>
+                                                    <MudText Typo="Typo.caption">@L["Transportation_Departure"]</MudText>
+                                                    <MudText Typo="Typo.caption" 
+                                                             Class="fw-bold"
+                                                             title="@transportation.Departure.Address?.ToString()">
+                                                        @transportation.Departure.Address?.Line1.ToString()
+                                                    </MudText>
                                                 </MudStack>
                                             </ItemOpposite>
                                         </MudTimelineItem>
@@ -79,7 +101,7 @@ else
                                                     if (targetDestination != null)
                                                     {
                                                         <MudStack Row Spacing="0" Class="justify-content-end">
-                                                            <MudText Typo="Typo.caption" Align="Align.Right">@L["TripTransport_TransferTo"] @targetDestination.Name</MudText>
+                                                            <MudText Typo="Typo.caption" Align="Align.Right">@L["Transportation_TransferTo"] @targetDestination.Name</MudText>
                                                         </MudStack>
                                                     }
                                                 }
@@ -87,20 +109,24 @@ else
                                             <ItemOpposite>
                                             </ItemOpposite>
                                         </MudTimelineItem>
-                                        <MudTimelineItem Size="Size.Medium" Variant="Variant.Outlined" Elevation="0" TimelineAlign="TimelineAlign.End">
+                                        <MudTimelineItem Size="Size.Medium" Variant="Variant.Outlined" Elevation="0" TimelineAlign="TimelineAlign.End" Class="align-items-center">
                                             <ItemDot>
                                                 <MudIcon Size="Size.Small" Icon="@MudBlazor.Icons.Material.Sharp.Flag" Color="Color.Secondary" />
                                             </ItemDot>
                                             <ItemContent>
                                                 <MudStack Spacing="0">
-                                                    <MudText Typo="Typo.caption">@transportation.Traveltime.End?.ToLongDateString()</MudText>
+                                                    <MudText Typo="Typo.caption">@transportation.Traveltime.End?.ToShortDateString()</MudText>
                                                     <MudText Typo="Typo.caption" Class="fw-bold">@transportation.Traveltime.End?.ToShortTimeString()</MudText>
                                                 </MudStack>
                                             </ItemContent>
                                             <ItemOpposite>
                                                 <MudStack Spacing="0">
-                                                    <MudText Typo="Typo.caption">@L["Arrival"]</MudText>
-                                                    <MudText Typo="Typo.caption">@transportation.Arrival.Address?.ToString()</MudText>
+                                                    <MudText Typo="Typo.caption">@L["Transportation_Arrival"]</MudText>
+                                                    <MudText Typo="Typo.caption"
+                                                             Class="fw-bold"
+                                                             title="@transportation.Arrival.Address?.ToString()">
+                                                        @transportation.Arrival.Address?.Line1.ToString()
+                                                    </MudText>
                                                 </MudStack>
                                             </ItemOpposite>
                                         </MudTimelineItem>

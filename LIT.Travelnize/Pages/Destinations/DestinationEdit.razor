@@ -16,28 +16,18 @@
                 Model="FormModel"
                 IsLoading="IsLoading"
                 LoadError="LoadError"
+                HeaderActions="HeaderActions"
                 CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit"
                 OnDeleteConfirmed="DeleteDestinationAsync">
     <FormContent>
         <MudGrid Spacing="4">
-            <MudItem xs="12" sm="10">
+            <MudItem xs="12" sm="12">
                 <MudTextField @bind-Value="FormModel!.Name"
                               Label="@L["Destination_NameLabel"]"
                               For="@(() => FormModel!.Name)"
                               Required="true"
                               Placeholder="@L["Destination_NamePlaceholder"]" />
-            </MudItem>
-
-            <MudItem xs="12" sm="2">
-                <MudButtonGroup>
-                    <MudButton Disabled="@(string.IsNullOrWhiteSpace(FormModel?.Name))"
-                               OnClick="OpenWikipediaDialogAsync"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary">
-                        @L["Destination_WikipediaButton"]
-                    </MudButton>
-                </MudButtonGroup>
             </MudItem>
 
             <MudItem xs="12">
@@ -49,17 +39,26 @@
             </MudItem>
 
             <MudItem xs="12">
-                <LocationEdit Model="FormModel!.LocationModel" GutterTop />
+                <PlanningSlotEdit Model="FormModel!.Slot" />
             </MudItem>
 
             <MudItem xs="12">
                 <ResourceReferenceEdit Model="@FormModel!.ImageModel" ForceKind="@ResourceKind.Image" GutterTop />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudPaper Class="pa-4">
+                    <LocationEdit Model="FormModel!.LocationModel" />
+                </MudPaper>
             </MudItem>
         </MudGrid>
     </FormContent>
 </EditPageLayout>
 
 @code {
+    private TravelSegmentDto? _segment;
+    private DestinationDto? _destination;
+
     [Parameter] public Guid TripId { get; set; }
     [Parameter] public Guid TravelSegmentId { get; set; }
     [Parameter] public Guid DestinationId { get; set; }
@@ -68,8 +67,17 @@
     private bool IsLoading;
     private string? LoadError;
 
-    private TravelSegmentDto? _segment;
-    private DestinationDto? _destination;
+
+    IEnumerable<ButtonAction> HeaderActions => new[]
+    {
+        new ButtonAction
+        {
+            Text = L["Destination_WikipediaButton"],
+            OnClick = async () => await OpenWikipediaDialogAsync(),
+            Icon = Icons.Material.Filled.Update,
+            Disabled = string.IsNullOrWhiteSpace(FormModel?.Name)
+        },
+    };
 
     protected override void OnInitialized()
     {
@@ -128,8 +136,7 @@
             DestinationId = DestinationId,
             Name = _destination.Name,
             Description = _destination.Description,
-            SlotStart = _destination.Slot.Start,
-            SlotEnd = _destination.Slot.End,
+            Slot = new PlanningSlotEdit.PlanningSlotEditModel(_destination.Slot),
             ImageModel = new ResourceReferenceEdit.ResourceReferenceEditModel(_destination.Image),
             LocationModel = new LocationEdit.LocationEditModel(_destination.Location)
         };
@@ -213,8 +220,7 @@
         [StringLength(1500, ErrorMessage = "Maximal 1500 Zeichen.")]
         public string? Description { get; set; }
 
-        public DateTime? SlotStart { get; set; }
-        public DateTime? SlotEnd { get; set; }
+        public PlanningSlotEdit.PlanningSlotEditModel? Slot { get; set; }
 
         public ResourceReferenceEdit.ResourceReferenceEditModel ImageModel { get; set; } = new();
         public LocationEdit.LocationEditModel LocationModel { get; set; } = new();

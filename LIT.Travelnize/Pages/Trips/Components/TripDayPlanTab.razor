@@ -115,6 +115,8 @@ else
             }))
             .ToList();
 
+        var allTransportations = Trip.Transportations;
+
         var dayCnt = 0;
         _days = Enumerable.Range(0, totalDays)
             .Select(i => start.AddDays(i))
@@ -130,7 +132,7 @@ else
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckInOut.Start?.ToString("HH:mm", _culture),
-                    SortKey: 102 + (acc.Accommodation.CheckInOut.Start?.Hour ?? 0),
+                    SortKey: acc.Accommodation.CheckInOut.Start?.ToString("yyyyMMddHHmm") + "-102" ?? "104",
                     Icon: IconHelper.AccommodationOutlined
                 ));
             }
@@ -142,7 +144,7 @@ else
                     Subtitle: acc.Destination.Name,
                     Url: BuildAccommodationEditUrl(acc.Segment.Id, acc.Destination.Id, acc.Accommodation.Id),
                     TimeHint: acc.Accommodation.CheckInOut.End?.ToString("HH:mm", _culture),
-                    SortKey: 101 + (acc.Accommodation.CheckInOut.End?.Hour ?? 0),
+                    SortKey: acc.Accommodation.CheckInOut.End?.ToString("yyyyMMddHHmm") + "-104" ?? "102",
                     Icon: IconHelper.AccommodationTwoTone
                 ));
             }
@@ -154,8 +156,32 @@ else
                     Subtitle: act.Destination.Name,
                     Url: $"/trips/{TripId}/travelsegments/{act.Activity.TravelSegmentId}/destinations/{act.Activity.DestinationId}/activities/{act.Activity.Id}/edit",
                     TimeHint: act.Activity.Date?.ToString("HH:mm", _culture),
-                    SortKey: 103 + (act.Activity.Date?.Hour ?? 0),
+                    SortKey: act.Activity.Date?.ToString("yyyyMMddHHmm") + "-105" ?? "105",
                     Icon: IconHelper.ActivityFilled
+                ));
+            }
+
+            foreach (var t in allTransportations.Where(t => t.Traveltime.Start?.Date == day.Date))
+            {
+                day.Events.Add(new DayEvent(
+                    Label: $"{L["Transportation_Departure"]}: {t.Name}",
+                    Subtitle: t.Departure.Address?.ToString(),
+                    Url: $"/trips/{TripId}/transportations/{t.Id}/edit",
+                    TimeHint: t.Traveltime.Start?.ToString("HH:mm", _culture),
+                    SortKey: t.Traveltime.Start?.ToString("yyyyMMddHHmm") + "-110" ?? "110",
+                    Icon: IconHelper.TransportationOutlined
+                ));
+            }
+
+            foreach (var t in allTransportations.Where(t => t.Traveltime.End?.Date == day.Date))
+            {
+                day.Events.Add(new DayEvent(
+                    Label: $"{L["Transportation_Arrival"]}: {t.Name}",
+                    Subtitle: t.Arrival.Address?.ToString(),
+                    Url: $"/trips/{TripId}/transportations/{t.Id}/edit",
+                    TimeHint: t.Traveltime.End?.ToString("HH:mm", _culture),
+                    SortKey: t.Traveltime.End?.ToString("yyyyMMddHHmm") + "-101" ?? "101",
+                    Icon: IconHelper.TransportationFilled
                 ));
             }
         }
@@ -179,7 +205,7 @@ else
         string? Subtitle,
         string Url,
         string? TimeHint,
-        int SortKey,
+        string SortKey,
         string Icon
     );
 }

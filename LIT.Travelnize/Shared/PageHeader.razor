@@ -15,7 +15,14 @@
             </MudAvatar>
         }
         <MudStack Spacing="0">
-            <MudText Typo="Typo.h5" Class="fw-bold">@Title</MudText>
+            @if(string.IsNullOrEmpty(Title))
+            {
+                <MudSkeleton SkeletonType="SkeletonType.Text" Height="42" Width="200"></MudSkeleton>
+            }
+            else
+            {
+                <MudText Typo="Typo.h5" Class="fw-bold">@Title</MudText>
+            }
             @if (!string.IsNullOrEmpty(Subtitle))
             {
                 <MudText Typo="Typo.subtitle2" Class="fw-light">

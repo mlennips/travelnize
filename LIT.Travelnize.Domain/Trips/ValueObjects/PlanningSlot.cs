@@ -32,6 +32,11 @@ namespace LIT.Travelnize.Domain.Trips.ValueObjects
             }
         }
 
+        public TimeSpan Duration => 
+            Start.HasValue && End.HasValue
+                ? End.Value - Start.Value
+                : TimeSpan.Zero;
+
         public bool IsEmpty => Start == null && End == null;
 
         public bool HasStartAndEnd => Start != null && End != null;
