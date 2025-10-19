@@ -18,7 +18,7 @@
         <MudItem xs="12" sm="6">
             <MudTextField T="DateTime?"
                           @bind-Value="Model.Start"
-                          Label="@L["PlanningSlot_StartDateLabel"]"
+                          Label="@StartLabel"
                           For="@(() => Model.Start)"
                           InputType="@(ShowTime ? InputType.DateTimeLocal : InputType.Date)"
                           Format="@(ShowTime ? "s" : "yyyy-MM-dd")"
@@ -27,7 +27,7 @@
         <MudItem xs="12" sm="6">
             <MudTextField T="DateTime?"
                           @bind-Value="Model.End"
-                          Label="@L["PlanningSlot_EndDateLabel"]"
+                          Label="@EndLabel"
                           For="@(() => Model.End)"
                           InputType="@(ShowTime ? InputType.DateTimeLocal : InputType.Date)"
                           Format="@(ShowTime ? "s" : "yyyy-MM-dd")"
@@ -45,6 +45,14 @@
     [Parameter] public bool ShowTime { get; set; } = false;
     [Parameter] public string Label { get; set; } = default!;
     [Parameter] public bool GutterTop { get; set; } = false;
+    [Parameter] public string StartLabel { get; set; } = default!;
+    [Parameter] public string EndLabel { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        StartLabel ??= L["PlanningSlot_StartDateLabel"];
+        EndLabel ??= L["PlanningSlot_EndDateLabel"];
+    }
 
     public class PlanningSlotEditModel
     {

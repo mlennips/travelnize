@@ -139,7 +139,7 @@
 
         var routeWebsite = !string.IsNullOrWhiteSpace(FormModel.RouteWebsiteModel.Source)
             ? FormModel.RouteWebsiteModel.ToResourceReference()
-            : ResourceReference.Empty; // Fix: Immer ein gültiges Objekt übergeben
+            : ResourceReference.Empty;
 
         var command = new UpdateTransportationCommand(
             FormModel.TripId,
@@ -152,19 +152,18 @@
             FormModel.TraveltimeModel.ToPlanningSlot(),
             routeWebsite,
             new TransportationType(FormModel.Type),
-            Array.Empty<Guid>(), // Fix: Leeres Array statt null für Passengers
-            null  // TargetReference (optional, kann ergänzt werden)
+            Array.Empty<Guid>(),
+            null
         );
 
-        // Fix: Korrekte Signatur mit TripId, TransportationId, command, false
-        var success = await TripsState.UpdateTransportationAsync(FormModel.TripId, FormModel.TransportationId, command);
-        if (success)
+        var result = await TripsState.UpdateTransportationAsync(FormModel.TripId, FormModel.TransportationId, command);
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo(LinkHelper.TripLink(TripId, "transport"));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -184,13 +183,13 @@
     private async Task DeleteTransportationAsync()
     {
         var result = await TripsState.RemoveTransportationAsync(TripId, TransportationId);
-        if (result)
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -227,4 +226,4 @@
             return Array.Empty<ValidationResult>();
         }
     }
-}
+}}

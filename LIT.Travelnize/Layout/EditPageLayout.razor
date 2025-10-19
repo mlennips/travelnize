@@ -39,6 +39,12 @@
                                 <ValidationSummary />
                             </MudPaper>
                         }
+                        @if (!string.IsNullOrWhiteSpace(LoadError))
+                        {
+                            <MudAlert Severity="Severity.Warning" Elevation="0" Variant="Variant.Filled" Class="mt-4">
+                                @LoadError
+                            </MudAlert>
+                        }
 
                         <MudPaper></MudPaper>
                         <MudPaper Elevation="0" Outlined="true" Class="mt-4 bg-light">
@@ -211,12 +217,14 @@
     private async Task ValidSubmitAsync()
     {
         IsSaving = true;
-        await Task.Delay(500); // Damit der Spinner sichtbar wird
+        await Task.Delay(250); // Damit der Spinner sichtbar wird
         if (OnValidSubmit.HasDelegate && CurrentEditContext is not null)
         {
             await OnValidSubmit.InvokeAsync(CurrentEditContext);
         }
+        await Task.Delay(250);
         IsSaving = false;
+        StateHasChanged();
     }
 
     private void Revalidate(bool triggerEvent)

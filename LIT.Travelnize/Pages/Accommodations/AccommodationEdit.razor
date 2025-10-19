@@ -153,8 +153,8 @@
             FormModel.BookingInfoModel.ToBookingInfo()
         );
 
-        var success = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
-        if (success)
+        var result = await TripsState.UpdateAccommodationAsync(FormModel.TripId, command);
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
@@ -180,7 +180,7 @@
     private async Task DeleteAccommodationAsync()
     {
         var result = await TripsState.RemoveAccommodationAsync(TripId, DestinationId, AccommodationId);
-        if (result)
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }

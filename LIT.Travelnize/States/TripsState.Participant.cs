@@ -1,48 +1,23 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
+using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.States
 {
     public partial class TripsState
     {
-        public Task<Guid?> AddParticipantAsync(Guid tripId, AddParticipantCommand command, bool reloadTrip = true)
-            => ExecuteCreateAsync(async () =>
-            {
-                var id = await _tripsApiClient.AddParticipantAsync(tripId, command);
-                if (id.HasValue)
-                {
-                    _dirtyTripIds.Add(tripId);
-                    if (reloadTrip && _selectedTrip?.Id == tripId)
-                        await LoadTripAsync(tripId, force: true);
-                }
-                return id;
-            }, "Participant_Singular");
+        public Task<Result<Guid>> AddParticipantAsync(Guid tripId, AddParticipantCommand command)
+            => ExecuteCreateAsync(() => _tripsApiClient.AddParticipantAsync(tripId, command), "Participant_Singular", tripId);
 
-        public Task<Guid?> AddGuestParticipantAsync(Guid tripId, AddGuestParticipantCommand command, bool reloadTrip = true)
-            => ExecuteCreateAsync(async () =>
-            {
-                var id = await _tripsApiClient.AddGuestParticipantAsync(tripId, command);
-                if (id.HasValue)
-                {
-                    _dirtyTripIds.Add(tripId);
-                    if (reloadTrip && _selectedTrip?.Id == tripId)
-                        await LoadTripAsync(tripId, force: true);
-                }
-                return id;
-            }, "Participant_Singular");
+        public Task<Result<Guid>> AddGuestParticipantAsync(Guid tripId, AddGuestParticipantCommand command)
+            => ExecuteCreateAsync(() => _tripsApiClient.AddGuestParticipantAsync(tripId, command), "Participant_Singular", tripId);
 
-        public Task<bool> UpdateParticipantAsync(Guid tripId, Guid participantId, UpdateParticipantCommand command, bool reloadTrip = true)
-            => ExecuteMutationAsync(tripId,
-                () => _tripsApiClient.UpdateParticipantAsync(tripId, participantId, command),
-                "Participant_Singular", reloadTrip: reloadTrip);
+        public Task<Result<bool>> UpdateParticipantAsync(Guid tripId, Guid participantId, UpdateParticipantCommand command)
+            => ExecuteMutationAsync(() => _tripsApiClient.UpdateParticipantAsync(tripId, participantId, command), "Participant_Singular", tripId);
 
-        public Task<bool> ChangeParticipantPermissionAsync(Guid tripId, Guid participantId, ChangeParticipantPermissionCommand command, bool reloadTrip = true)
-            => ExecuteMutationAsync(tripId,
-                () => _tripsApiClient.ChangeParticipantPermissionAsync(tripId, participantId, command),
-                "Participant_Singular", reloadTrip: reloadTrip);
+        public Task<Result<bool>> ChangeParticipantPermissionAsync(Guid tripId, Guid participantId, ChangeParticipantPermissionCommand command)
+            => ExecuteMutationAsync(() => _tripsApiClient.ChangeParticipantPermissionAsync(tripId, participantId, command), "Participant_Singular", tripId);
 
-        public Task<bool> RemoveParticipantAsync(Guid tripId, Guid participantId, bool reloadTrip = true)
-            => ExecuteMutationAsync(tripId,
-                () => _tripsApiClient.RemoveParticipantAsync(tripId, participantId),
-                "Participant_Singular", reloadTrip: reloadTrip, successKey: "Success_Deleted");
+        public Task<Result<bool>> RemoveParticipantAsync(Guid tripId, Guid participantId)
+            => ExecuteMutationAsync(() => _tripsApiClient.RemoveParticipantAsync(tripId, participantId), "Participant_Singular", tripId);
     }
 }

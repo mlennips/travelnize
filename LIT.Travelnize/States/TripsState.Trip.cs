@@ -1,18 +1,17 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
+using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.States
 {
     public partial class TripsState
     {
-        public Task<Guid?> CreateTripAsync(CreateTripCommand command)
-            => ExecuteCreateAsync(() => _tripsApiClient.CreateTripAsync(command), "Trip", markTripsDirty: true);
+        public Task<Result<Guid>> CreateTripAsync(CreateTripCommand command)
+            => ExecuteCreateAsync(() => _tripsApiClient.CreateTripAsync(command), "Trip", null);
 
-        public Task<bool> UpdateTripAsync(Guid tripId, UpdateTripCommand command)
-            => ExecuteMutationAsync(tripId, () => _tripsApiClient.UpdateTripAsync(tripId, command), "Trip",
-                markTripsDirty: true, reloadTrip: true);
+        public Task<Result<bool>> UpdateTripAsync(Guid tripId, UpdateTripCommand command)
+            => ExecuteMutationAsync(() => _tripsApiClient.UpdateTripAsync(tripId, command), "Trip", tripId);
 
-        public Task<bool> DeleteTripAsync(Guid tripId)
-            => ExecuteMutationAsync(tripId, () => _tripsApiClient.DeleteTripAsync(tripId), "Trip",
-                markTripsDirty: true, reloadTrip: false, successKey: "Success_Deleted");
+        public Task<Result<bool>> DeleteTripAsync(Guid tripId)
+            => ExecuteMutationAsync(() => _tripsApiClient.DeleteTripAsync(tripId), "Trip", tripId);
     }
 }

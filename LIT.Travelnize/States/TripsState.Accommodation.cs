@@ -1,30 +1,17 @@
 ﻿using LIT.Travelnize.Domain.Trips.Commands;
+using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.States
 {
     public partial class TripsState
     {
-        public Task<Guid?> AddAccommodationAsync(Guid tripId, Guid destinationId, AddAccommodationCommand command, bool reloadTrip = true)
-            => ExecuteCreateAsync(async () =>
-            {
-                var id = await _tripsApiClient.AddAccommodationAsync(tripId, destinationId, command);
-                if (id.HasValue)
-                {
-                    _dirtyTripIds.Add(tripId);
-                    if (reloadTrip && _selectedTrip?.Id == tripId)
-                        await LoadTripAsync(tripId, force: true);
-                }
-                return id;
-            }, "Accommodation_Singular");
+        public Task<Result<Guid>> AddAccommodationAsync(Guid tripId, Guid destinationId, AddAccommodationCommand command)
+            => ExecuteCreateAsync(() => _tripsApiClient.AddAccommodationAsync(tripId, destinationId, command), "Accommodation_Singular", tripId);
 
-        public Task<bool> UpdateAccommodationAsync(Guid tripId, UpdateAccommodationCommand command, bool reloadTrip = true)
-            => ExecuteMutationAsync(tripId,
-                () => _tripsApiClient.UpdateAccommodationAsync(tripId, command.DestinationId, command.AccommodationId, command),
-                "Accommodation_Singular", reloadTrip: reloadTrip);
+        public Task<Result<bool>> UpdateAccommodationAsync(Guid tripId, UpdateAccommodationCommand command)
+            => ExecuteMutationAsync(() => _tripsApiClient.UpdateAccommodationAsync(tripId, command.DestinationId, command.AccommodationId, command), "Accommodation_Singular", tripId);
 
-        public Task<bool> RemoveAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId, bool reloadTrip = true)
-            => ExecuteMutationAsync(tripId,
-                () => _tripsApiClient.RemoveAccommodationAsync(tripId, destinationId, accommodationId),
-                "Accommodation_Singular", reloadTrip: reloadTrip, successKey: "Success_Deleted");
+        public Task<Result<bool>> RemoveAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId)
+            => ExecuteMutationAsync(() => _tripsApiClient.RemoveAccommodationAsync(tripId, destinationId, accommodationId), "Accommodation_Singular", tripId);
     }
 }

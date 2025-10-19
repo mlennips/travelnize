@@ -117,175 +117,384 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
-
-  <!-- Allgemein / Bezeichnungen (Singular / Plural) -->
-  <data name="Trip_Singular" xml:space="preserve"><value>Reise</value></data>
-  <data name="Trip_Plural" xml:space="preserve"><value>Reisen</value></data>
-
-  <data name="TravelSegment_Singular" xml:space="preserve"><value>Reiseabschnitt</value></data>
-  <data name="TravelSegment_Plural" xml:space="preserve"><value>Reiseabschnitte</value></data>
-
-  <data name="Destination_Singular" xml:space="preserve"><value>Reiseziel</value></data>
-  <data name="Destination_Plural" xml:space="preserve"><value>Reiseziele</value></data>
-
-  <data name="Accommodation_Singular" xml:space="preserve"><value>Unterkunft</value></data>
-  <data name="Accommodation_Plural" xml:space="preserve"><value>Unterkünfte</value></data>
-
-  <data name="Activity_Singular" xml:space="preserve"><value>Aktivität</value></data>
-  <data name="Activity_Plural" xml:space="preserve"><value>Aktivitäten</value></data>
-
-  <data name="Participant_Singular" xml:space="preserve"><value>Teilnehmer</value></data>
-  <data name="Participant_Plural" xml:space="preserve"><value>Teilnehmer</value></data>
-
-  <data name="ResourceReference_Singular" xml:space="preserve"><value>Ressource</value></data>
-  <data name="ResourceReference_Plural" xml:space="preserve"><value>Ressourcen</value></data>
-
-  <data name="PlanningSlot_Singular" xml:space="preserve"><value>Zeitraum</value></data>
-  <data name="PlanningSlot_Plural" xml:space="preserve"><value>Zeiträume</value></data>
-
-  <data name="Address_Singular" xml:space="preserve"><value>Adresse</value></data>
-  <data name="Address_Plural" xml:space="preserve"><value>Adressen</value></data>
-
-  <data name="Location_Singular" xml:space="preserve"><value>Ort</value></data>
-  <data name="Location_Plural" xml:space="preserve"><value>Orte</value></data>
-
-  <data name="Coordinate_Singular" xml:space="preserve"><value>Koordinate</value></data>
-  <data name="Coordinate_Plural" xml:space="preserve"><value>Koordinaten</value></data>
-
-  <data name="BookingInfo_Singular" xml:space="preserve"><value>Buchung</value></data>
-
-
-  <!-- Gemeinsame / Generische Labels -->
-  <data name="Common_DaySingular" xml:space="preserve"><value>Tag</value></data>
-  <data name="Common_DayPlural" xml:space="preserve"><value>Tage</value></data>
-  <data name="Common_NoPeriod" xml:space="preserve"><value>Kein Zeitraum definiert</value></data>
-  <data name="Common_DaysNights" xml:space="preserve"><value>{0} Tage, {1} Nächte</value></data>
-  <data name="Common_Hours" xml:space="preserve"><value>Stunden</value></data>
-  <data name="Common_Minutes" xml:space="preserve"><value>Minuten</value></data>
-  <data name="Common_Open" xml:space="preserve"><value>Öffnen</value></data>
-
-  <!-- Fehler (konsolidiert) -->
-  <data name="Errors_TripNotFound" xml:space="preserve"><value>Reise wurde nicht gefunden.</value></data>
-  <data name="Errors_TravelSegmentNotFound" xml:space="preserve"><value>Reiseabschnitt wurde nicht gefunden.</value></data>
-  <data name="Errors_DestinationNotFound" xml:space="preserve"><value>Ziel wurde nicht gefunden.</value></data>
-  <data name="Errors_AccommodationNotFound" xml:space="preserve"><value>Unterkunft wurde nicht gefunden.</value></data>
-  <data name="Errors_ActivityNotFound" xml:space="preserve"><value>Aktivität wurde nicht gefunden.</value></data>
-  <data name="Errors_TransportationNotFound" xml:space="preserve"><value>Transport wurde nicht gefunden.</value></data>
-  <data name="Errors_Load" xml:space="preserve"><value>Fehler beim Laden: {0}</value></data>
-  <data name="Errors_CreateFailed" xml:space="preserve"><value>Erstellung fehlgeschlagen.</value></data>
-  <data name="Errors_UpdateFailed" xml:space="preserve"><value>Aktualisierung fehlgeschlagen.</value></data>
-  <data name="Errors_DeleteFailed" xml:space="preserve"><value>Löschen fehlgeschlagen.</value></data>
-  <data name="Errors_Generic" xml:space="preserve"><value>Fehler: {0}</value></data>
-  <data name="Errors_StartBeforeEnd" xml:space="preserve"><value>Start muss vor Ende liegen.</value></data>
-  <data name="Errors_EndBeforeStart" xml:space="preserve"><value>Enddatum darf nicht vor dem Startdatum liegen.</value></data>
-  <data name="Errors_MaxDuration_TravelSegment" xml:space="preserve"><value>Abschnitt darf maximal 365 Tage dauern.</value></data>
-  <data name="Errors_CheckInBeforeOut" xml:space="preserve"><value>Check-In muss vor Check-Out liegen.</value></data>
-  <data name="Errors_NoData" xml:space="preserve"><value>Keine Daten.</value></data>
-  <data name="Errors_InvalidDates" xml:space="preserve"><value>Der Trip hat kein gültiges Start- oder Enddatum.</value></data>
-  <data name="Errors_NoEntries" xml:space="preserve"><value>Keine Einträge vorhanden.</value></data>
-  <data name="Errors_NoEntriesDay" xml:space="preserve"><value>Keine Einträge</value></data>
-  <data name="Errors_LoginFailed" xml:space="preserve"><value>Login fehlgeschlagen. Bitte überprüfe deine Eingaben.</value></data>
-  <data name="Errors_Validation" xml:space="preserve"><value>Bitte fülle alle Felder korrekt aus.</value></data>
-  <data name="Errors_PasswordResetFailed" xml:space="preserve"><value>Passwort zurücksetzen fehlgeschlagen. Bitte überprüfe deine Eingaben.</value></data>
-  <data name="Errors_RegisterFailed" xml:space="preserve"><value>Registrierung fehlgeschlagen. Bitte versuche es erneut.</value></data>
-
-  <!-- Erfolge -->
-  <data name="Success_Created" xml:space="preserve"><value>{0} erstellt.</value></data>
-  <data name="Success_Updated" xml:space="preserve"><value>{0} gespeichert.</value></data>
-  <data name="Success_Deleted" xml:space="preserve"><value>{0} gelöscht.</value></data>
-  <data name="Success_WikipediaImported" xml:space="preserve"><value>Wikipedia-Daten übernommen.</value></data>
-  <data name="Success_TripsStateRefreshed" xml:space="preserve"><value>Trips aktualisiert.</value></data>
-  <data name="Success_TripStateRefreshed" xml:space="preserve"><value>Trip aktualisiert.</value></data>
-
-  <!-- Home -->
-  <data name="Home_WelcomeTitle" xml:space="preserve"><value>Willkommen bei Travelnize</value></data>
-  <data name="Home_WelcomeSubtitle" xml:space="preserve"><value>Dein smarter Begleiter für die Planung und Organisation deiner nächsten Reise.</value></data>
-  <data name="Home_IntroText" xml:space="preserve"><value>Ob Städtetrip, Weltreise oder Kurzurlaub – mit Travelnize behältst du alles im Blick und kannst schöne Momente planen. Egal, ob du alleine reist oder in einer Gruppe: Die Planung wird zum Kinderspiel. Lege individuelle Reiseabschnitte an und organisiere deine Reise ganz nach deinen Wünschen.</value></data>
-  <data name="Home_LoginNow" xml:space="preserve"><value>Jetzt einloggen</value></data>
-  <data name="Home_OrRegister" xml:space="preserve"><value>Oder registrieren</value></data>
-  <data name="Home_WelcomeBack" xml:space="preserve"><value>Willkommen zurück, {0}! Schön, dass du wieder da bist.</value></data>
-  <data name="Home_Features" xml:space="preserve"><value>Features</value></data>
-  <data name="Home_Statistics" xml:space="preserve"><value>Statistiken</value></data>
-  <data name="Home_TripsStatsDesc" xml:space="preserve"><value>Anzahl deiner geplanten und abgeschlossenen Reisen.</value></data>
-  <data name="Home_DestinationsStatsDesc" xml:space="preserve"><value>Orte und Sehenswürdigkeiten, die du besucht hast.</value></data>
-  <data name="Home_Companions" xml:space="preserve"><value>Mitreisende</value></data>
-  <data name="Home_CompanionsStatsDesc" xml:space="preserve"><value>Anzahl der Personen, mit denen du gereist bist.</value></data>
-  <data name="Home_Community" xml:space="preserve"><value>Community</value></data>
-  <data name="Home_CommunityStatsDesc" xml:space="preserve"><value>Werde Teil der Travelnize-Community und teile deine Erfahrungen.</value></data>
-  <data name="Home_EnjoyExploring" xml:space="preserve"><value>Viel Spaß beim Entdecken und gemeinsamen Erleben!</value></data>
+  <data name="Trip_Singular" xml:space="preserve">
+    <value>Reise</value>
+  </data>
+  <data name="Trip_Plural" xml:space="preserve">
+    <value>Reisen</value>
+  </data>
+  <data name="TravelSegment_Singular" xml:space="preserve">
+    <value>Reiseabschnitt</value>
+  </data>
+  <data name="TravelSegment_Plural" xml:space="preserve">
+    <value>Reiseabschnitte</value>
+  </data>
+  <data name="Destination_Singular" xml:space="preserve">
+    <value>Reiseziel</value>
+  </data>
+  <data name="Destination_Plural" xml:space="preserve">
+    <value>Reiseziele</value>
+  </data>
+  <data name="Accommodation_Singular" xml:space="preserve">
+    <value>Unterkunft</value>
+  </data>
+  <data name="Accommodation_Plural" xml:space="preserve">
+    <value>Unterkünfte</value>
+  </data>
+  <data name="Activity_Singular" xml:space="preserve">
+    <value>Aktivität</value>
+  </data>
+  <data name="Activity_Plural" xml:space="preserve">
+    <value>Aktivitäten</value>
+  </data>
+  <data name="Participant_Singular" xml:space="preserve">
+    <value>Teilnehmer</value>
+  </data>
+  <data name="Participant_Plural" xml:space="preserve">
+    <value>Teilnehmer</value>
+  </data>
+  <data name="ResourceReference_Singular" xml:space="preserve">
+    <value>Ressource</value>
+  </data>
+  <data name="ResourceReference_Plural" xml:space="preserve">
+    <value>Ressourcen</value>
+  </data>
+  <data name="PlanningSlot_Singular" xml:space="preserve">
+    <value>Zeitraum</value>
+  </data>
+  <data name="PlanningSlot_Plural" xml:space="preserve">
+    <value>Zeiträume</value>
+  </data>
+  <data name="Address_Singular" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Address_Plural" xml:space="preserve">
+    <value>Adressen</value>
+  </data>
+  <data name="Location_Singular" xml:space="preserve">
+    <value>Ort</value>
+  </data>
+  <data name="Location_Plural" xml:space="preserve">
+    <value>Orte</value>
+  </data>
+  <data name="Coordinate_Singular" xml:space="preserve">
+    <value>Koordinate</value>
+  </data>
+  <data name="Coordinate_Plural" xml:space="preserve">
+    <value>Koordinaten</value>
+  </data>
+  <data name="BookingInfo_Singular" xml:space="preserve">
+    <value>Buchung</value>
+  </data>
+  <data name="Common_DaySingular" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="Common_DayPlural" xml:space="preserve">
+    <value>Tage</value>
+  </data>
+  <data name="Common_NoPeriod" xml:space="preserve">
+    <value>Kein Zeitraum definiert</value>
+  </data>
+  <data name="Common_DaysNights" xml:space="preserve">
+    <value>{0} Tage, {1} Nächte</value>
+  </data>
+  <data name="Common_Hours" xml:space="preserve">
+    <value>Stunden</value>
+  </data>
+  <data name="Common_Minutes" xml:space="preserve">
+    <value>Minuten</value>
+  </data>
+  <data name="Common_Open" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="Errors_TripNotFound" xml:space="preserve">
+    <value>Reise wurde nicht gefunden.</value>
+  </data>
+  <data name="Errors_TravelSegmentNotFound" xml:space="preserve">
+    <value>Reiseabschnitt wurde nicht gefunden.</value>
+  </data>
+  <data name="Errors_DestinationNotFound" xml:space="preserve">
+    <value>Ziel wurde nicht gefunden.</value>
+  </data>
+  <data name="Errors_AccommodationNotFound" xml:space="preserve">
+    <value>Unterkunft wurde nicht gefunden.</value>
+  </data>
+  <data name="Errors_ActivityNotFound" xml:space="preserve">
+    <value>Aktivität wurde nicht gefunden.</value>
+  </data>
+  <data name="Errors_TransportationNotFound" xml:space="preserve">
+    <value>Transport wurde nicht gefunden.</value>
+  </data>
+  <data name="Errors_Load" xml:space="preserve">
+    <value>Fehler beim Laden: {0}</value>
+  </data>
+  <data name="Errors_CreateFailed" xml:space="preserve">
+    <value>Erstellung fehlgeschlagen.</value>
+  </data>
+  <data name="Errors_UpdateFailed" xml:space="preserve">
+    <value>Aktualisierung fehlgeschlagen.</value>
+  </data>
+  <data name="Errors_DeleteFailed" xml:space="preserve">
+    <value>Löschen fehlgeschlagen.</value>
+  </data>
+  <data name="Errors_Generic" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="Errors_StartBeforeEnd" xml:space="preserve">
+    <value>Start muss vor Ende liegen.</value>
+  </data>
+  <data name="Errors_EndBeforeStart" xml:space="preserve">
+    <value>Enddatum darf nicht vor dem Startdatum liegen.</value>
+  </data>
+  <data name="Errors_MaxDuration_TravelSegment" xml:space="preserve">
+    <value>Abschnitt darf maximal 365 Tage dauern.</value>
+  </data>
+  <data name="Errors_CheckInBeforeOut" xml:space="preserve">
+    <value>Check-In muss vor Check-Out liegen.</value>
+  </data>
+  <data name="Errors_NoData" xml:space="preserve">
+    <value>Keine Daten.</value>
+  </data>
+  <data name="Errors_InvalidDates" xml:space="preserve">
+    <value>Der Trip hat kein gültiges Start- oder Enddatum.</value>
+  </data>
+  <data name="Errors_NoEntries" xml:space="preserve">
+    <value>Keine Einträge vorhanden.</value>
+  </data>
+  <data name="Errors_NoEntriesDay" xml:space="preserve">
+    <value>Keine Einträge</value>
+  </data>
+  <data name="Errors_LoginFailed" xml:space="preserve">
+    <value>Login fehlgeschlagen. Bitte überprüfe deine Eingaben.</value>
+  </data>
+  <data name="Errors_Validation" xml:space="preserve">
+    <value>Bitte fülle alle Felder korrekt aus.</value>
+  </data>
+  <data name="Errors_PasswordResetFailed" xml:space="preserve">
+    <value>Passwort zurücksetzen fehlgeschlagen. Bitte überprüfe deine Eingaben.</value>
+  </data>
+  <data name="Errors_RegisterFailed" xml:space="preserve">
+    <value>Registrierung fehlgeschlagen. Bitte versuche es erneut.</value>
+  </data>
+  <data name="Success_Created" xml:space="preserve">
+    <value>{0} erstellt.</value>
+  </data>
+  <data name="Success_Updated" xml:space="preserve">
+    <value>{0} gespeichert.</value>
+  </data>
+  <data name="Success_Deleted" xml:space="preserve">
+    <value>{0} gelöscht.</value>
+  </data>
+  <data name="Success_WikipediaImported" xml:space="preserve">
+    <value>Wikipedia-Daten übernommen.</value>
+  </data>
+  <data name="Success_TripsStateRefreshed" xml:space="preserve">
+    <value>Trips aktualisiert.</value>
+  </data>
+  <data name="Success_TripStateRefreshed" xml:space="preserve">
+    <value>Trip aktualisiert.</value>
+  </data>
+  <data name="Home_WelcomeTitle" xml:space="preserve">
+    <value>Willkommen bei Travelnize</value>
+  </data>
+  <data name="Home_WelcomeSubtitle" xml:space="preserve">
+    <value>Dein smarter Begleiter für die Planung und Organisation deiner nächsten Reise.</value>
+  </data>
+  <data name="Home_IntroText" xml:space="preserve">
+    <value>Ob Städtetrip, Weltreise oder Kurzurlaub – mit Travelnize behältst du alles im Blick und kannst schöne Momente planen. Egal, ob du alleine reist oder in einer Gruppe: Die Planung wird zum Kinderspiel. Lege individuelle Reiseabschnitte an und organisiere deine Reise ganz nach deinen Wünschen.</value>
+  </data>
+  <data name="Home_LoginNow" xml:space="preserve">
+    <value>Jetzt einloggen</value>
+  </data>
+  <data name="Home_OrRegister" xml:space="preserve">
+    <value>Oder registrieren</value>
+  </data>
+  <data name="Home_WelcomeBack" xml:space="preserve">
+    <value>Willkommen zurück, {0}! Schön, dass du wieder da bist.</value>
+  </data>
+  <data name="Home_Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="Home_Statistics" xml:space="preserve">
+    <value>Statistiken</value>
+  </data>
+  <data name="Home_TripsStatsDesc" xml:space="preserve">
+    <value>Anzahl deiner geplanten und abgeschlossenen Reisen.</value>
+  </data>
+  <data name="Home_DestinationsStatsDesc" xml:space="preserve">
+    <value>Orte und Sehenswürdigkeiten, die du besucht hast.</value>
+  </data>
+  <data name="Home_Companions" xml:space="preserve">
+    <value>Mitreisende</value>
+  </data>
+  <data name="Home_CompanionsStatsDesc" xml:space="preserve">
+    <value>Anzahl der Personen, mit denen du gereist bist.</value>
+  </data>
+  <data name="Home_Community" xml:space="preserve">
+    <value>Community</value>
+  </data>
+  <data name="Home_CommunityStatsDesc" xml:space="preserve">
+    <value>Werde Teil der Travelnize-Community und teile deine Erfahrungen.</value>
+  </data>
+  <data name="Home_EnjoyExploring" xml:space="preserve">
+    <value>Viel Spaß beim Entdecken und gemeinsamen Erleben!</value>
+  </data>
   <data name="Home_TravelSegmentDesc" xml:space="preserve">
-  <value>Ein Kapitel deines Trips: ein paar Tage Road, eine Insel, ein Städteblock – verschiebbar, wenn Pläne mal wackeln.</value>
-</data>
+    <value>Ein Kapitel deines Trips: ein paar Tage Road, eine Insel, ein Städteblock – verschiebbar, wenn Pläne mal wackeln.</value>
+  </data>
   <data name="Home_AccommodationDesc" xml:space="preserve">
-  <value>Dein Ruheplatz unterwegs: Adresse griffbereit, Zeiten klar, Kopf frei – kein endloses Suchen in alten Mails mehr.</value>
-</data>
+    <value>Dein Ruheplatz unterwegs: Adresse griffbereit, Zeiten klar, Kopf frei – kein endloses Suchen in alten Mails mehr.</value>
+  </data>
   <data name="Home_ActivityDesc" xml:space="preserve">
-  <value>Das Salz im Reisealltag: Sonnenaufgang spotten, Markt schlendern, Kajak raus – Zeit festhalten und nicht vergessen.</value>
-</data>
-
-  <!-- Auth -->
-  <data name="Auth_Title" xml:space="preserve"><value>Anmeldung &amp; Registrierung</value></data>
-  <data name="Auth_Subtitle" xml:space="preserve"><value>Melde dich an oder erstelle ein neues Konto, um deine Reisen mit Travelnize zu planen.</value></data>
-  <data name="Auth_TabLogout" xml:space="preserve"><value>Abmelden</value></data>
-  <data name="Auth_LoggedInAs" xml:space="preserve"><value>Du bist angemeldet als</value></data>
-  <data name="Auth_Logout" xml:space="preserve"><value>Abmelden</value></data>
-  <data name="Auth_TabLogin" xml:space="preserve"><value>Login</value></data>
-  <data name="Auth_EmailLabel" xml:space="preserve"><value>E-Mail</value></data>
-  <data name="Auth_PasswordLabel" xml:space="preserve"><value>Passwort</value></data>
-  <data name="Auth_Login" xml:space="preserve"><value>Anmelden</value></data>
-  <data name="Auth_Demo" xml:space="preserve"><value>Demo</value></data>
-  <data name="Auth_NoAccount" xml:space="preserve"><value>Noch kein Konto? Registriere dich kostenlos und starte deine Reiseplanung!</value></data>
-  <data name="Auth_TabRegister" xml:space="preserve"><value>Registrieren</value></data>
-  <data name="Auth_ConfirmPasswordLabel" xml:space="preserve"><value>Passwort bestätigen</value></data>
-  <data name="Auth_FirstNameLabel" xml:space="preserve"><value>Vorname</value></data>
-  <data name="Auth_LastNameLabel" xml:space="preserve"><value>Nachname</value></data>
-  <data name="Auth_Register" xml:space="preserve"><value>Registrieren</value></data>
-  <data name="Auth_TabForgotPassword" xml:space="preserve"><value>Passwort vergessen</value></data>
-  <data name="Auth_RequestNewPassword" xml:space="preserve"><value>Neues Passwort anfordern</value></data>
-
-  <!-- Address -->
-  <data name="Address_Line1Label" xml:space="preserve"><value>Adresszeile 1</value></data>
-  <data name="Address_Line2Label" xml:space="preserve"><value>Adresszeile 2</value></data>
-  <data name="Address_StreetLabel" xml:space="preserve"><value>Straße</value></data>
-  <data name="Address_HouseNumberLabel" xml:space="preserve"><value>Nr.</value></data>
-  <data name="Address_PostalCodeLabel" xml:space="preserve"><value>PLZ</value></data>
-  <data name="Address_CityLabel" xml:space="preserve"><value>Stadt</value></data>
-  <data name="Address_CountryLabel" xml:space="preserve"><value>Land</value></data>
-
-  <!-- Coordinates -->
-  <data name="Coordinates_LatitudeLabel" xml:space="preserve"><value>Breitengrad (Latitude)</value></data>
-  <data name="Coordinates_LongitudeLabel" xml:space="preserve"><value>Längengrad (Longitude)</value></data>
-  <data name="Coordinates_LatitudePlaceholder" xml:space="preserve"><value>z.B. 52.5200</value></data>
-  <data name="Coordinates_LongitudePlaceholder" xml:space="preserve"><value>z.B. 13.4050</value></data>
-  <data name="Coordinates_ShowMap" xml:space="preserve"><value>Karte anzeigen</value></data>
-  <data name="Coordinates_HideMap" xml:space="preserve"><value>Karte ausblenden</value></data>
-
-  <!-- Location -->
-  <data name="Location_AddressTab" xml:space="preserve"><value>Adresse</value></data>
-  <data name="Location_CoordinatesTab" xml:space="preserve"><value>Koordinaten</value></data>
-
-  <!-- PlanningSlot -->
-  <data name="PlanningSlot_StartDateLabel" xml:space="preserve"><value>Startdatum</value></data>
-  <data name="PlanningSlot_EndDateLabel" xml:space="preserve"><value>Enddatum</value></data>
-  <data name="PlanningSlot_HelperText" xml:space="preserve"><value>{0} Tage, {1} Nächte</value></data>
-
-  <!-- ResourceReference -->
-  <data name="ResourceReference_SourceLabel" xml:space="preserve"><value>Quelle/URL</value></data>
-  <data name="ResourceReference_ThumbnailLabel" xml:space="preserve"><value>Thumbnail</value></data>
-  <data name="ResourceReference_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="ResourceReference_OptionalLabel" xml:space="preserve"><value>Optional</value></data>
-  <data name="ResourceReference_UrlLabel" xml:space="preserve"><value>URL</value></data>
-  <data name="ResourceReference_ExternalLabel" xml:space="preserve"><value>Extern</value></data>
-  <data name="ResourceReference_SelectType" xml:space="preserve"><value>Typ auswählen</value></data>
-  <data name="ResourceReference_Kind_Image" xml:space="preserve"><value>Bild</value></data>
-  <data name="ResourceReference_Kind_Video" xml:space="preserve"><value>Video</value></data>
-  <data name="ResourceReference_Kind_Audio" xml:space="preserve"><value>Audio</value></data>
-  <data name="ResourceReference_Kind_Document" xml:space="preserve"><value>Dokument</value></data>
-  <data name="ResourceReference_Kind_Website" xml:space="preserve"><value>Webseite</value></data>
-  <data name="ResourceReference_Kind_Other" xml:space="preserve"><value>Sonstiges</value></data>
-
-  <!-- BookingInfo -->
+    <value>Das Salz im Reisealltag: Sonnenaufgang spotten, Markt schlendern, Kajak raus – Zeit festhalten und nicht vergessen.</value>
+  </data>
+  <data name="Auth_Title" xml:space="preserve">
+    <value>Anmeldung &amp; Registrierung</value>
+  </data>
+  <data name="Auth_Subtitle" xml:space="preserve">
+    <value>Melde dich an oder erstelle ein neues Konto, um deine Reisen mit Travelnize zu planen.</value>
+  </data>
+  <data name="Auth_TabLogout" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="Auth_LoggedInAs" xml:space="preserve">
+    <value>Du bist angemeldet als</value>
+  </data>
+  <data name="Auth_Logout" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="Auth_TabLogin" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Auth_EmailLabel" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="Auth_PasswordLabel" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="Auth_Login" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="Auth_Demo" xml:space="preserve">
+    <value>Demo</value>
+  </data>
+  <data name="Auth_NoAccount" xml:space="preserve">
+    <value>Noch kein Konto? Registriere dich kostenlos und starte deine Reiseplanung!</value>
+  </data>
+  <data name="Auth_TabRegister" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
+  <data name="Auth_ConfirmPasswordLabel" xml:space="preserve">
+    <value>Passwort bestätigen</value>
+  </data>
+  <data name="Auth_FirstNameLabel" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
+  <data name="Auth_LastNameLabel" xml:space="preserve">
+    <value>Nachname</value>
+  </data>
+  <data name="Auth_Register" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
+  <data name="Auth_TabForgotPassword" xml:space="preserve">
+    <value>Passwort vergessen</value>
+  </data>
+  <data name="Auth_RequestNewPassword" xml:space="preserve">
+    <value>Neues Passwort anfordern</value>
+  </data>
+  <data name="Address_Line1Label" xml:space="preserve">
+    <value>Adresszeile 1</value>
+  </data>
+  <data name="Address_Line2Label" xml:space="preserve">
+    <value>Adresszeile 2</value>
+  </data>
+  <data name="Address_StreetLabel" xml:space="preserve">
+    <value>Straße</value>
+  </data>
+  <data name="Address_HouseNumberLabel" xml:space="preserve">
+    <value>Nr.</value>
+  </data>
+  <data name="Address_PostalCodeLabel" xml:space="preserve">
+    <value>PLZ</value>
+  </data>
+  <data name="Address_CityLabel" xml:space="preserve">
+    <value>Stadt</value>
+  </data>
+  <data name="Address_CountryLabel" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="Coordinates_LatitudeLabel" xml:space="preserve">
+    <value>Breitengrad (Latitude)</value>
+  </data>
+  <data name="Coordinates_LongitudeLabel" xml:space="preserve">
+    <value>Längengrad (Longitude)</value>
+  </data>
+  <data name="Coordinates_LatitudePlaceholder" xml:space="preserve">
+    <value>z.B. 52.5200</value>
+  </data>
+  <data name="Coordinates_LongitudePlaceholder" xml:space="preserve">
+    <value>z.B. 13.4050</value>
+  </data>
+  <data name="Coordinates_ShowMap" xml:space="preserve">
+    <value>Karte anzeigen</value>
+  </data>
+  <data name="Coordinates_HideMap" xml:space="preserve">
+    <value>Karte ausblenden</value>
+  </data>
+  <data name="Location_AddressTab" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Location_CoordinatesTab" xml:space="preserve">
+    <value>Koordinaten</value>
+  </data>
+  <data name="PlanningSlot_StartDateLabel" xml:space="preserve">
+    <value>Startdatum</value>
+  </data>
+  <data name="PlanningSlot_EndDateLabel" xml:space="preserve">
+    <value>Enddatum</value>
+  </data>
+  <data name="PlanningSlot_HelperText" xml:space="preserve">
+    <value>{0} Tage, {1} Nächte</value>
+  </data>
+  <data name="ResourceReference_SourceLabel" xml:space="preserve">
+    <value>Quelle/URL</value>
+  </data>
+  <data name="ResourceReference_ThumbnailLabel" xml:space="preserve">
+    <value>Thumbnail</value>
+  </data>
+  <data name="ResourceReference_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ResourceReference_OptionalLabel" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="ResourceReference_UrlLabel" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="ResourceReference_ExternalLabel" xml:space="preserve">
+    <value>Extern</value>
+  </data>
+  <data name="ResourceReference_SelectType" xml:space="preserve">
+    <value>Typ auswählen</value>
+  </data>
+  <data name="ResourceReference_Kind_Image" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="ResourceReference_Kind_Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="ResourceReference_Kind_Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="ResourceReference_Kind_Document" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="ResourceReference_Kind_Website" xml:space="preserve">
+    <value>Webseite</value>
+  </data>
+  <data name="ResourceReference_Kind_Other" xml:space="preserve">
+    <value>Sonstiges</value>
+  </data>
   <data name="BookingInfo_ProviderLabel" xml:space="preserve">
     <value>Anbieter</value>
   </data>
@@ -298,151 +507,337 @@
   <data name="BookingInfo_DetailsLabel" xml:space="preserve">
     <value>Details</value>
   </data>
-
-  <!-- Wikipedia Suche -->
-  <data name="WikipediaSearchDialog_QueryLabel" xml:space="preserve"><value>Suchbegriff</value></data>
-  <data name="WikipediaSearchDialog_QueryPlaceholder" xml:space="preserve"><value>Begriff eingeben und Enter drücken</value></data>
-  <data name="WikipediaSearchDialog_NoResults" xml:space="preserve"><value>Keine Ergebnisse gefunden.</value></data>
-  <data name="WikipediaSearchDialog_Close" xml:space="preserve"><value>Schließen</value></data>
-  <data name="WikipediaSearchDialog_Search" xml:space="preserve"><value>Suchen</value></data>
-  <data name="WikipediaSearchDialog_SearchError" xml:space="preserve"><value>Fehler bei der Suche: {0}</value></data>
-  <data name="WikipediaSearchDialog_NoSummary" xml:space="preserve"><value>Kein Wikipedia-Artikel gefunden.</value></data>
-  <data name="WikipediaSearchDialog_LoadError" xml:space="preserve"><value>Fehler beim Laden des Artikels: {0}</value></data>
-
-  <!-- Accommodation (Felder zusammengeführt) -->
-  <data name="Accommodation_CreateTitle" xml:space="preserve"><value>Unterkunft hinzufügen</value></data>
-  <data name="Accommodation_CreateSubtitle" xml:space="preserve"><value>Lege eine neue Unterkunft für dein Reiseziel an.</value></data>
-  <data name="Accommodation_EditTitle" xml:space="preserve"><value>Unterkunft bearbeiten</value></data>
-  <data name="Accommodation_EditSubtitle" xml:space="preserve"><value>Passe die Daten deiner Unterkunft an.</value></data>
-  <data name="Accommodation_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="Accommodation_NamePlaceholder" xml:space="preserve"><value>Name der Unterkunft</value></data>
-  <data name="Accommodation_TypeLabel" xml:space="preserve"><value>Typ</value></data>
-  <data name="Accommodation_AddressLabel" xml:space="preserve"><value>Adresse</value></data>
-
-  <!-- Activity -->
-  <data name="Activity_CreateTitle" xml:space="preserve"><value>Aktivität hinzufügen</value></data>
-  <data name="Activity_CreateSubtitle" xml:space="preserve"><value>Lege eine neue Aktivität für dein Reiseziel an.</value></data>
-  <data name="Activity_EditTitle" xml:space="preserve"><value>Aktivität bearbeiten</value></data>
-  <data name="Activity_EditSubtitle" xml:space="preserve"><value>Passe die Daten deiner Aktivität an.</value></data>
-  <data name="Activity_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="Activity_NamePlaceholder" xml:space="preserve"><value>Name der Aktivität</value></data>
-  <data name="Activity_DescriptionLabel" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="Activity_DescriptionPlaceholder" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="Activity_DateLabel" xml:space="preserve"><value>Datum</value></data>
-  <data name="Activity_DurationHoursLabel" xml:space="preserve"><value>Dauer (Std.)</value></data>
-  <data name="Activity_DurationMinutesLabel" xml:space="preserve"><value>Dauer (Min.)</value></data>
-  <data name="Activity_WikipediaButton" xml:space="preserve"><value>Aus Wikipedia ergänzen</value></data>
-  <data name="Activity_WikipediaDialogTitle" xml:space="preserve"><value>Wikipedia Suche</value></data>
-
-  <!-- Destination -->
-  <data name="Destination_CreateTitle" xml:space="preserve"><value>Reiseziel hinzufügen</value></data>
-  <data name="Destination_CreateSubtitle" xml:space="preserve"><value>Lege ein neues Reiseziel für deinen Reiseabschnitt an.</value></data>
-  <data name="Destination_EditTitle" xml:space="preserve"><value>Ziel bearbeiten</value></data>
-  <data name="Destination_EditSubtitle" xml:space="preserve"><value>Passe die Daten deines Reiseziels an.</value></data>
-  <data name="Destination_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="Destination_NamePlaceholder" xml:space="preserve"><value>Name des Reiseziels</value></data>
-  <data name="Destination_DescriptionLabel" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="Destination_DescriptionPlaceholder" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="Destination_ImageLabel" xml:space="preserve"><value>Bild</value></data>
-  <data name="Destination_WikipediaButton" xml:space="preserve"><value>Aus Wikipedia ergänzen</value></data>
-  <data name="Destination_WikipediaDialogTitle" xml:space="preserve"><value>Wikipedia Suche</value></data>
-
-  <!-- TravelSegment -->
-  <data name="TravelSegment_CreateTitle" xml:space="preserve"><value>Reiseabschnitt hinzufügen</value></data>
-  <data name="TravelSegment_CreateSubtitle" xml:space="preserve"><value>Lege einen neuen Reiseabschnitt für deine Reise an.</value></data>
-  <data name="TravelSegment_EditTitle" xml:space="preserve"><value>Reiseabschnitt bearbeiten</value></data>
-  <data name="TravelSegment_EditSubtitle" xml:space="preserve"><value>Passe Zeitraum und Beschreibung des Abschnitts an.</value></data>
-  <data name="TravelSegment_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="TravelSegment_NamePlaceholder" xml:space="preserve"><value>Name des Reiseabschnitts</value></data>
-  <data name="TravelSegment_DescriptionLabel" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="TravelSegment_DescriptionPlaceholder" xml:space="preserve"><value>Kurze Beschreibung des Reiseabschnitts</value></data>
-
-  <!-- Trip (Detail Tabs / Header) -->
-  <data name="Trip_TabSubtitle" xml:space="preserve"><value>Hier findest du alle Informationen zu deinem Trip.</value></data>
-  <data name="Trip_TabOverview" xml:space="preserve"><value>Übersicht</value></data>
-  <data name="Trip_TabDayPlan" xml:space="preserve"><value>Tagesplan</value></data>
-  <data name="Trip_TabParticipants" xml:space="preserve"><value>Teilnehmer</value></data>
-  <data name="Trip_TabTransport" xml:space="preserve"><value>Transport</value></data>
-  <data name="Trip_TabCosts" xml:space="preserve"><value>Reisekosten</value></data>
-  <data name="Trip_HeaderEditLink" xml:space="preserve"><value>(bearbeiten)</value></data>
-  <data name="Trip_HeaderDays" xml:space="preserve"><value>Tage</value></data>
-  <data name="Trip_HeaderDaysUntilStart" xml:space="preserve"><value>Tage bis Start</value></data>
-  <data name="Trip_HeaderParticipants" xml:space="preserve"><value>Teilnehmer</value></data>
-
-  <!-- Trip Create -->
+  <data name="WikipediaSearchDialog_QueryLabel" xml:space="preserve">
+    <value>Suchbegriff</value>
+  </data>
+  <data name="WikipediaSearchDialog_QueryPlaceholder" xml:space="preserve">
+    <value>Begriff eingeben und Enter drücken</value>
+  </data>
+  <data name="WikipediaSearchDialog_NoResults" xml:space="preserve">
+    <value>Keine Ergebnisse gefunden.</value>
+  </data>
+  <data name="WikipediaSearchDialog_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="WikipediaSearchDialog_Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="WikipediaSearchDialog_SearchError" xml:space="preserve">
+    <value>Fehler bei der Suche: {0}</value>
+  </data>
+  <data name="WikipediaSearchDialog_NoSummary" xml:space="preserve">
+    <value>Kein Wikipedia-Artikel gefunden.</value>
+  </data>
+  <data name="WikipediaSearchDialog_LoadError" xml:space="preserve">
+    <value>Fehler beim Laden des Artikels: {0}</value>
+  </data>
+  <data name="Accommodation_CreateTitle" xml:space="preserve">
+    <value>Unterkunft hinzufügen</value>
+  </data>
+  <data name="Accommodation_CreateSubtitle" xml:space="preserve">
+    <value>Lege eine neue Unterkunft für dein Reiseziel an.</value>
+  </data>
+  <data name="Accommodation_EditTitle" xml:space="preserve">
+    <value>Unterkunft bearbeiten</value>
+  </data>
+  <data name="Accommodation_EditSubtitle" xml:space="preserve">
+    <value>Passe die Daten deiner Unterkunft an.</value>
+  </data>
+  <data name="Accommodation_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Accommodation_NamePlaceholder" xml:space="preserve">
+    <value>Name der Unterkunft</value>
+  </data>
+  <data name="Accommodation_TypeLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Accommodation_AddressLabel" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Activity_CreateTitle" xml:space="preserve">
+    <value>Aktivität hinzufügen</value>
+  </data>
+  <data name="Activity_CreateSubtitle" xml:space="preserve">
+    <value>Lege eine neue Aktivität für dein Reiseziel an.</value>
+  </data>
+  <data name="Activity_EditTitle" xml:space="preserve">
+    <value>Aktivität bearbeiten</value>
+  </data>
+  <data name="Activity_EditSubtitle" xml:space="preserve">
+    <value>Passe die Daten deiner Aktivität an.</value>
+  </data>
+  <data name="Activity_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Activity_NamePlaceholder" xml:space="preserve">
+    <value>Name der Aktivität</value>
+  </data>
+  <data name="Activity_DescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Activity_DescriptionPlaceholder" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Activity_DateLabel" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Activity_DurationHoursLabel" xml:space="preserve">
+    <value>Dauer (Std.)</value>
+  </data>
+  <data name="Activity_DurationMinutesLabel" xml:space="preserve">
+    <value>Dauer (Min.)</value>
+  </data>
+  <data name="Activity_WikipediaButton" xml:space="preserve">
+    <value>Aus Wikipedia ergänzen</value>
+  </data>
+  <data name="Activity_WikipediaDialogTitle" xml:space="preserve">
+    <value>Wikipedia Suche</value>
+  </data>
+  <data name="Destination_CreateTitle" xml:space="preserve">
+    <value>Reiseziel hinzufügen</value>
+  </data>
+  <data name="Destination_CreateSubtitle" xml:space="preserve">
+    <value>Lege ein neues Reiseziel für deinen Reiseabschnitt an.</value>
+  </data>
+  <data name="Destination_EditTitle" xml:space="preserve">
+    <value>Ziel bearbeiten</value>
+  </data>
+  <data name="Destination_EditSubtitle" xml:space="preserve">
+    <value>Passe die Daten deines Reiseziels an.</value>
+  </data>
+  <data name="Destination_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Destination_NamePlaceholder" xml:space="preserve">
+    <value>Name des Reiseziels</value>
+  </data>
+  <data name="Destination_DescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Destination_DescriptionPlaceholder" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Destination_ImageLabel" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="Destination_WikipediaButton" xml:space="preserve">
+    <value>Aus Wikipedia ergänzen</value>
+  </data>
+  <data name="Destination_WikipediaDialogTitle" xml:space="preserve">
+    <value>Wikipedia Suche</value>
+  </data>
+  <data name="TravelSegment_CreateTitle" xml:space="preserve">
+    <value>Reiseabschnitt hinzufügen</value>
+  </data>
+  <data name="TravelSegment_CreateSubtitle" xml:space="preserve">
+    <value>Lege einen neuen Reiseabschnitt für deine Reise an.</value>
+  </data>
+  <data name="TravelSegment_EditTitle" xml:space="preserve">
+    <value>Reiseabschnitt bearbeiten</value>
+  </data>
+  <data name="TravelSegment_EditSubtitle" xml:space="preserve">
+    <value>Passe Zeitraum und Beschreibung des Abschnitts an.</value>
+  </data>
+  <data name="TravelSegment_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TravelSegment_NamePlaceholder" xml:space="preserve">
+    <value>Name des Reiseabschnitts</value>
+  </data>
+  <data name="TravelSegment_DescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="TravelSegment_DescriptionPlaceholder" xml:space="preserve">
+    <value>Kurze Beschreibung des Reiseabschnitts</value>
+  </data>
+  <data name="Trip_TabSubtitle" xml:space="preserve">
+    <value>Hier findest du alle Informationen zu deinem Trip.</value>
+  </data>
+  <data name="Trip_TabOverview" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="Trip_TabDayPlan" xml:space="preserve">
+    <value>Tagesplan</value>
+  </data>
+  <data name="Trip_TabParticipants" xml:space="preserve">
+    <value>Teilnehmer</value>
+  </data>
+  <data name="Trip_TabTransport" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="Trip_TabCosts" xml:space="preserve">
+    <value>Reisekosten</value>
+  </data>
+  <data name="Trip_HeaderEditLink" xml:space="preserve">
+    <value>(bearbeiten)</value>
+  </data>
+  <data name="Trip_HeaderDays" xml:space="preserve">
+    <value>Tage</value>
+  </data>
+  <data name="Trip_HeaderDaysUntilStart" xml:space="preserve">
+    <value>Tage bis Start</value>
+  </data>
+  <data name="Trip_HeaderParticipants" xml:space="preserve">
+    <value>Teilnehmer</value>
+  </data>
   <data name="Trip_CreateTitle" xml:space="preserve">
     <value>Neue Reise anlegen</value>
   </data>
-    <data name="Trip_CreateSubtitle" xml:space="preserve">
+  <data name="Trip_CreateSubtitle" xml:space="preserve">
     <value>Lege eine neue Reise mit Zeitraum und Beschreibung an.</value>
   </data>
-    <data name="Trip_CreateDefaultTravelSegmentTitle" xml:space="preserve">
+  <data name="Trip_CreateDefaultTravelSegmentTitle" xml:space="preserve">
     <value>Meine Reise</value>
   </data>
-    <data name="Trip_CreateDefaultDestinationTitle" xml:space="preserve">
+  <data name="Trip_CreateDefaultDestinationTitle" xml:space="preserve">
     <value>Mein Reiseziel</value>
   </data>
-
-  <!-- Trip Edit -->
-  <data name="Trip_EditTitle" xml:space="preserve"><value>Reise bearbeiten</value></data>
-  <data name="Trip_EditSubtitle" xml:space="preserve"><value>Passe die Basisdaten deiner Reise an.</value></data>
-  <data name="Trip_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="Trip_NamePlaceholder" xml:space="preserve"><value>Titel der Reise</value></data>
-  <data name="Trip_DescriptionLabel" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="Trip_DescriptionPlaceholder" xml:space="preserve"><value>Kurze Beschreibung</value></data>
-
-  <!-- Trips (Übersicht / Listenansicht) -->
-  <data name="Trips_Title" xml:space="preserve"><value>Reisen</value></data>
-  <data name="Trips_Subtitle" xml:space="preserve"><value>Alle deine Abenteuer im Überblick.</value></data>
-  <data name="Trips_Status_Ongoing" xml:space="preserve"><value>Laufende Reisen</value></data>
-  <data name="Trips_Status_Upcoming" xml:space="preserve"><value>Bevorstehende Reisen</value></data>
-  <data name="Trips_Status_Pending" xml:space="preserve"><value>In Planung</value></data>
-  <data name="Trips_Status_Past" xml:space="preserve"><value>Abgeschlossene Reisen</value></data>
-  <data name="Trips_StatusDetail_UpcomingToday" xml:space="preserve"><value>Startet heute</value></data>
-  <data name="Trips_StatusDetail_UpcomingInDays" xml:space="preserve"><value>Startet in {0} Tagen</value></data>
-  <data name="Trips_StatusDetail_Ongoing" xml:space="preserve"><value>Tag {0} von {1} • {2} Tage verbleiben</value></data>
-  <data name="Trips_StatusDetail_Past" xml:space="preserve"><value>Abgeschlossen</value></data>
-  <data name="Trips_StatusDetail_Pending" xml:space="preserve"><value>In Planung</value></data>
-  <data name="Trips_NightsLabel" xml:space="preserve"><value>Nächte</value></data>
-  <data name="Trips_NoTrips" xml:space="preserve"><value>Es wurden noch keine Reisen angelegt.</value></data>
-  <data name="Trips_CreateTrip" xml:space="preserve"><value>Neue Reise</value></data>
-
-  <!-- Trip Day Plan -->
-  <data name="DayPlan_CheckIn" xml:space="preserve"><value>Check-In {0}</value></data>
-  <data name="DayPlan_CheckOut" xml:space="preserve"><value>Check-Out {0}</value></data>
-  <data name="DayPlan_EntrySingular" xml:space="preserve"><value>Eintrag</value></data>
-  <data name="DayPlan_EntryPlural" xml:space="preserve"><value>Einträge</value></data>
-
-  <!-- Trip Overview Tabs -->
-  <data name="TripOverview_Destinations" xml:space="preserve"><value>Reiseziele</value></data>
-  <data name="TripOverview_Accommodations" xml:space="preserve"><value>Unterkünfte</value></data>
-  <data name="TripOverview_Activities" xml:space="preserve"><value>Aktivitäten</value></data>
-  <data name="TripOverview_AddSegment" xml:space="preserve"><value>Neuen Reiseabschnitt hinzufügen</value></data>
-  <data name="TripOverview_SelectDestination" xml:space="preserve"><value>Reiseziel auswählen</value></data>
-  <data name="TripOverview_AddTransportation" xml:space="preserve"><value>Transport hinzufügen</value></data>
- 
-
-  <!-- Trip Participants -->
-  <data name="Participants_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="Participants_RoleLabel" xml:space="preserve"><value>Rolle</value></data>
-
-  <!-- Transportation -->
-  <data name="Transportation_EditTitle" xml:space="preserve"><value>Transport bearbeiten</value></data>
-  <data name="Transportation_EditSubtitle" xml:space="preserve"><value>Passe die Daten deines Transports an.</value></data>
-  <data name="Transportation_CreateTitle" xml:space="preserve"><value>Transport hinzufügen</value></data>
-  <data name="Transportation_CreateSubtitle" xml:space="preserve"><value>Lege einen neuen Transport für deine Reise an.</value></data>
-  <data name="Transportation_NameLabel" xml:space="preserve"><value>Name</value></data>
-  <data name="Transportation_NamePlaceholder" xml:space="preserve"><value>Name des Transports</value></data>
-  <data name="Transportation_TypeLabel" xml:space="preserve"><value>Typ</value></data>
-  <data name="Transportation_Identifier" xml:space="preserve"><value>Kennung</value></data>
-  <data name="Transportation_IdentifierPlaceholder" xml:space="preserve"><value>Kennung (z.B. Flugnummer)</value></data>
-  <data name="Transportation_Description" xml:space="preserve"><value>Beschreibung</value></data>
-  <data name="Transportation_DescriptionPlaceholder" xml:space="preserve"><value>Beschreibung des Transports</value></data>
-  <data name="Transportation_Traveltime" xml:space="preserve"><value>Reisezeit</value></data>
-  <data name="Transportation_RouteWebsite" xml:space="preserve"><value>Route Webseite</value></data>
-  <data name="Transportation_Departure" xml:space="preserve"><value>Abfahrt</value></data>
-  <data name="Transportation_Arrival" xml:space="preserve"><value>Ankunft</value></data>
-  <data name="Transportation_PlannedTransferDuration" xml:space="preserve"><value>Geplante Reisedauer</value></data>
-  <data name="Transportation_TransferTo" xml:space="preserve"><value>Transfer nach</value></data>
-
+  <data name="Trip_EditTitle" xml:space="preserve">
+    <value>Reise bearbeiten</value>
+  </data>
+  <data name="Trip_EditSubtitle" xml:space="preserve">
+    <value>Passe die Basisdaten deiner Reise an.</value>
+  </data>
+  <data name="Trip_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Trip_NamePlaceholder" xml:space="preserve">
+    <value>Titel der Reise</value>
+  </data>
+  <data name="Trip_DescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Trip_DescriptionPlaceholder" xml:space="preserve">
+    <value>Kurze Beschreibung</value>
+  </data>
+  <data name="Trips_Title" xml:space="preserve">
+    <value>Reisen</value>
+  </data>
+  <data name="Trips_Subtitle" xml:space="preserve">
+    <value>Alle deine Abenteuer im Überblick.</value>
+  </data>
+  <data name="Trips_Status_Ongoing" xml:space="preserve">
+    <value>Laufende Reisen</value>
+  </data>
+  <data name="Trips_Status_Upcoming" xml:space="preserve">
+    <value>Bevorstehende Reisen</value>
+  </data>
+  <data name="Trips_Status_Pending" xml:space="preserve">
+    <value>In Planung</value>
+  </data>
+  <data name="Trips_Status_Past" xml:space="preserve">
+    <value>Abgeschlossene Reisen</value>
+  </data>
+  <data name="Trips_StatusDetail_UpcomingToday" xml:space="preserve">
+    <value>Startet heute</value>
+  </data>
+  <data name="Trips_StatusDetail_UpcomingInDays" xml:space="preserve">
+    <value>Startet in {0} Tagen</value>
+  </data>
+  <data name="Trips_StatusDetail_Ongoing" xml:space="preserve">
+    <value>Tag {0} von {1} • {2} Tage verbleiben</value>
+  </data>
+  <data name="Trips_StatusDetail_Past" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="Trips_StatusDetail_Pending" xml:space="preserve">
+    <value>In Planung</value>
+  </data>
+  <data name="Trips_NightsLabel" xml:space="preserve">
+    <value>Nächte</value>
+  </data>
+  <data name="Trips_NoTrips" xml:space="preserve">
+    <value>Es wurden noch keine Reisen angelegt.</value>
+  </data>
+  <data name="Trips_CreateTrip" xml:space="preserve">
+    <value>Neue Reise</value>
+  </data>
+  <data name="DayPlan_CheckIn" xml:space="preserve">
+    <value>Check-In {0}</value>
+  </data>
+  <data name="DayPlan_CheckOut" xml:space="preserve">
+    <value>Check-Out {0}</value>
+  </data>
+  <data name="DayPlan_EntrySingular" xml:space="preserve">
+    <value>Eintrag</value>
+  </data>
+  <data name="DayPlan_EntryPlural" xml:space="preserve">
+    <value>Einträge</value>
+  </data>
+  <data name="TripOverview_Destinations" xml:space="preserve">
+    <value>Reiseziele</value>
+  </data>
+  <data name="TripOverview_Accommodations" xml:space="preserve">
+    <value>Unterkünfte</value>
+  </data>
+  <data name="TripOverview_Activities" xml:space="preserve">
+    <value>Aktivitäten</value>
+  </data>
+  <data name="TripOverview_AddSegment" xml:space="preserve">
+    <value>Neuen Reiseabschnitt hinzufügen</value>
+  </data>
+  <data name="TripOverview_SelectDestination" xml:space="preserve">
+    <value>Reiseziel auswählen</value>
+  </data>
+  <data name="TripOverview_AddTransportation" xml:space="preserve">
+    <value>Transport hinzufügen</value>
+  </data>
+  <data name="Participants_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Participants_RoleLabel" xml:space="preserve">
+    <value>Rolle</value>
+  </data>
+  <data name="Transportation_EditTitle" xml:space="preserve">
+    <value>Transport bearbeiten</value>
+  </data>
+  <data name="Transportation_EditSubtitle" xml:space="preserve">
+    <value>Passe die Daten deines Transports an.</value>
+  </data>
+  <data name="Transportation_CreateTitle" xml:space="preserve">
+    <value>Transport hinzufügen</value>
+  </data>
+  <data name="Transportation_CreateSubtitle" xml:space="preserve">
+    <value>Lege einen neuen Transport für deine Reise an.</value>
+  </data>
+  <data name="Transportation_NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Transportation_NamePlaceholder" xml:space="preserve">
+    <value>Name des Transports</value>
+  </data>
+  <data name="Transportation_TypeLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Transportation_Identifier" xml:space="preserve">
+    <value>Kennung</value>
+  </data>
+  <data name="Transportation_IdentifierPlaceholder" xml:space="preserve">
+    <value>Kennung (z.B. Flugnummer)</value>
+  </data>
+  <data name="Transportation_Description" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Transportation_DescriptionPlaceholder" xml:space="preserve">
+    <value>Beschreibung des Transports</value>
+  </data>
+  <data name="Transportation_Traveltime" xml:space="preserve">
+    <value>Reisezeit</value>
+  </data>
+  <data name="Transportation_RouteWebsite" xml:space="preserve">
+    <value>Routenplaner</value>
+  </data>
+  <data name="Transportation_Departure" xml:space="preserve">
+    <value>Abfahrt</value>
+  </data>
+  <data name="Transportation_Arrival" xml:space="preserve">
+    <value>Ankunft</value>
+  </data>
+  <data name="Transportation_PlannedTransferDuration" xml:space="preserve">
+    <value>Geplante Reisedauer</value>
+  </data>
+  <data name="Transportation_TransferTo" xml:space="preserve">
+    <value>Transfer nach</value>
+  </data>
 </root>

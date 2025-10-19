@@ -51,16 +51,16 @@
         );
 
         IsLoading = true;
-        var newId = await TripsState.CreateTripAsync(command);
+        var result = await TripsState.CreateTripAsync(command);
         IsLoading = false;
 
-        if (newId.HasValue)
+        if (result.IsSuccess)
         {
-            Navigation.NavigateTo($"/trips/{newId.Value}");
+            Navigation.NavigateTo($"/trips/{result.Value}");
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 

@@ -196,7 +196,7 @@ namespace LIT.Travelnize.Domain.Trips
         {
             if (travelTime.IsEmpty)
             {
-                return TripErrors.InvalidTransportationDates;
+                return TripErrors.TransportationDatesMayNotBeEmpty;
             }
             var transportation = Transportation.Create(Id, name, description, identifier, departure, arrival,
                 travelTime, routeWebsite, type, targetReference);

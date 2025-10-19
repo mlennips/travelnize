@@ -104,27 +104,27 @@
             FormModel.Description?.Trim() ?? string.Empty
         );
 
-        var ok = await TripsState.UpdateTripAsync(FormModel.TripId, command);
-        if (ok)
+        var result = await TripsState.UpdateTripAsync(FormModel.TripId, command);
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo($"/trips/{TripId}", forceLoad: false);
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 
     private async Task DeleteTripAsync()
     {
         var result = await TripsState.DeleteTripAsync(TripId);
-        if (result)
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo("/trips");
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 

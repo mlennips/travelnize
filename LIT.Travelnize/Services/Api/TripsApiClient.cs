@@ -1,136 +1,130 @@
 ﻿using System.Net.Http.Json;
 using LIT.Travelnize.Domain.Trips.Commands;
 using LIT.Travelnize.Domain.Trips.Queries;
+using LIT.Travelnize.Domain.Common;
 
 namespace LIT.Travelnize.Services.Api
 {
     public class TripsApiClient(HttpClient httpClient)
     {
-        public async Task<Guid?> CreateTripAsync(CreateTripCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync("trips", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> CreateTripAsync(CreateTripCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync("trips", command));
 
-        public async Task<ListTripsResponse[]?> GetTripsAsync(Guid userId)
-            => await httpClient.GetFromJsonAsync<ListTripsResponse[]>($"trips?userId={userId}");
+        public async Task<Result<ListTripsResponse[]>> GetTripsAsync(Guid userId)
+            => await HandleApiResponseAsync<ListTripsResponse[]>(await httpClient.GetAsync($"trips?userId={userId}"));
 
-        public async Task<GetTripResponse?> GetTripAsync(Guid tripId)
-            => await httpClient.GetFromJsonAsync<GetTripResponse>($"trips/{tripId}");
+        public async Task<Result<GetTripResponse>> GetTripAsync(Guid tripId)
+            => await HandleApiResponseAsync<GetTripResponse>(await httpClient.GetAsync($"trips/{tripId}"));
 
-        public async Task<bool> UpdateTripAsync(Guid tripId, UpdateTripCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> UpdateTripAsync(Guid tripId, UpdateTripCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}", command));
 
-        public async Task<bool> DeleteTripAsync(Guid tripId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}")).IsSuccessStatusCode;
+        public async Task<Result<bool>> DeleteTripAsync(Guid tripId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}"));
 
         #region Travel Segments
-        public async Task<Guid?> AddTravelSegmentAsync(Guid tripId, AddTravelSegmentCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/segments", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> AddTravelSegmentAsync(Guid tripId, AddTravelSegmentCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/segments", command));
 
-        public async Task<bool> UpdateTravelSegmentAsync(Guid tripId, Guid segmentId, UpdateTravelSegmentCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/segments/{segmentId}", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> UpdateTravelSegmentAsync(Guid tripId, Guid segmentId, UpdateTravelSegmentCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/segments/{segmentId}", command));
 
-        public async Task<bool> RemoveTravelSegmentAsync(Guid tripId, Guid segmentId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}/segments/{segmentId}")).IsSuccessStatusCode;
+        public async Task<Result<bool>> RemoveTravelSegmentAsync(Guid tripId, Guid segmentId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}/segments/{segmentId}"));
         #endregion
 
         #region Destinations
-        public async Task<Guid?> AddDestinationAsync(Guid tripId, Guid segmentId, AddDestinationCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/segments/{segmentId}/destinations", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> AddDestinationAsync(Guid tripId, Guid segmentId, AddDestinationCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/segments/{segmentId}/destinations", command));
 
-        public async Task<bool> UpdateDestinationAsync(Guid tripId, Guid segmentId, Guid destinationId, UpdateDestinationCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/segments/{segmentId}/destinations/{destinationId}", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> UpdateDestinationAsync(Guid tripId, Guid segmentId, Guid destinationId, UpdateDestinationCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/segments/{segmentId}/destinations/{destinationId}", command));
 
-        public async Task<bool> RemoveDestinationAsync(Guid tripId, Guid segmentId, Guid destinationId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}/segments/{segmentId}/destinations/{destinationId}")).IsSuccessStatusCode;
+        public async Task<Result<bool>> RemoveDestinationAsync(Guid tripId, Guid segmentId, Guid destinationId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}/segments/{segmentId}/destinations/{destinationId}"));
         #endregion
 
         #region Participants
-        public async Task<Guid?> AddParticipantAsync(Guid tripId, AddParticipantCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/participants", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> AddParticipantAsync(Guid tripId, AddParticipantCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/participants", command));
 
-        public async Task<Guid?> AddGuestParticipantAsync(Guid tripId, AddGuestParticipantCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/participants/guest", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> AddGuestParticipantAsync(Guid tripId, AddGuestParticipantCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/participants/guest", command));
 
-        public async Task<bool> UpdateParticipantAsync(Guid tripId, Guid participantId, UpdateParticipantCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/participants/{participantId}", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> UpdateParticipantAsync(Guid tripId, Guid participantId, UpdateParticipantCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/participants/{participantId}", command));
 
-        public async Task<bool> ChangeParticipantPermissionAsync(Guid tripId, Guid participantId, ChangeParticipantPermissionCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/participants/{participantId}/permission", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> ChangeParticipantPermissionAsync(Guid tripId, Guid participantId, ChangeParticipantPermissionCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/participants/{participantId}/permission", command));
 
-        public async Task<bool> RemoveParticipantAsync(Guid tripId, Guid participantId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}/participants/{participantId}")).IsSuccessStatusCode;
+        public async Task<Result<bool>> RemoveParticipantAsync(Guid tripId, Guid participantId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}/participants/{participantId}"));
         #endregion
 
         #region Transportation
-        public async Task<Guid?> AddTransportationAsync(Guid tripId, AddTransportationCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/transportations", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> AddTransportationAsync(Guid tripId, AddTransportationCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/transportations", command));
 
-        public async Task<bool> UpdateTransportationAsync(Guid tripId, Guid transportationId, UpdateTransportationCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/transportations/{transportationId}", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> UpdateTransportationAsync(Guid tripId, Guid transportationId, UpdateTransportationCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/transportations/{transportationId}", command));
 
-        public async Task<bool> RemoveTransportationAsync(Guid tripId, Guid transportationId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}/transportations/{transportationId}")).IsSuccessStatusCode;
+        public async Task<Result<bool>> RemoveTransportationAsync(Guid tripId, Guid transportationId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}/transportations/{transportationId}"));
         #endregion
 
         #region Accommodation
-        public async Task<Guid?> AddAccommodationAsync(Guid tripId, Guid destinationId, AddAccommodationCommand command)
-        {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations", command);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
-        }
+        public async Task<Result<Guid>> AddAccommodationAsync(Guid tripId, Guid destinationId, AddAccommodationCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations", command));
 
-        public async Task<bool> UpdateAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId, UpdateAccommodationCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", command)).IsSuccessStatusCode;
+        public async Task<Result<bool>> UpdateAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId, UpdateAccommodationCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}", command));
 
-        public async Task<bool> RemoveAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}")).IsSuccessStatusCode;
+        public async Task<Result<bool>> RemoveAccommodationAsync(Guid tripId, Guid destinationId, Guid accommodationId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}/destinations/{destinationId}/accommodations/{accommodationId}"));
         #endregion
 
         #region Activities
-        public async Task<Guid?> AddActivityAsync(Guid tripId, Guid destinationId, AddActivityCommand command)
+        public async Task<Result<Guid>> AddActivityAsync(Guid tripId, Guid destinationId, AddActivityCommand command)
+            => await HandleApiResponseAsync<Guid>(await httpClient.PostAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities", command));
+
+        public async Task<Result<bool>> UpdateActivityAsync(Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command)
+            => await HandleApiResponseAsync<bool>(await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}", command));
+
+        public async Task<Result<bool>> RemoveActivityAsync(Guid tripId, Guid destinationId, Guid activityId)
+            => await HandleApiResponseAsync<bool>(await httpClient.DeleteAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}"));
+        #endregion
+
+        #region Error handling
+
+        // Zentrale Fehlerbehandlung
+        private static async Task<Result<T>> HandleApiResponseAsync<T>(HttpResponseMessage response)
         {
-            var response = await httpClient.PostAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities", command);
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Guid>();
-            return null;
+            {
+                if (typeof(T) == typeof(bool))
+                    return (Result<T>)(object)true;
+
+                var value = await response.Content.ReadFromJsonAsync<T>();
+                if (value is not null)
+                    return value;
+                return new ErrorDetail("NullResult", "Die Antwort der API war leer.");
+            }
+            var error = await TryReadErrorDetailAsync(response);
+            return error ?? new ErrorDetail("Unknown", "Unbekannter Fehler");
         }
 
-        public async Task<bool> UpdateActivityAsync(Guid tripId, Guid destinationId, Guid activityId, UpdateActivityCommand command)
-            => (await httpClient.PutAsJsonAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}", command)).IsSuccessStatusCode;
-
-        public async Task<bool> RemoveActivityAsync(Guid tripId, Guid destinationId, Guid activityId)
-            => (await httpClient.DeleteAsync($"trips/{tripId}/destinations/{destinationId}/activities/{activityId}")).IsSuccessStatusCode;
+        private static async Task<ErrorDetail?> TryReadErrorDetailAsync(HttpResponseMessage response)
+        {
+            try
+            {
+                var error = await response.Content.ReadFromJsonAsync<ErrorDetail>();
+                return error;
+            }
+            catch
+            {
+                return null;
+            }
+        }
         #endregion
     }
 }

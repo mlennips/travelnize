@@ -48,7 +48,7 @@ namespace LIT.Travelnize.Domain.Trips
         {
             if (traveltime.IsEmpty)
             {
-                return TripErrors.InvalidTransportationDates;
+                return TripErrors.TransportationDatesMayNotBeEmpty;
             }
             Name = name;
             Description = description;

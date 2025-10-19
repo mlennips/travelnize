@@ -185,14 +185,14 @@
             duration
         );
 
-        var success = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
-        if (success)
+        var result = await TripsState.UpdateActivityAsync(FormModel.TripId, command);
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_UpdateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -217,13 +217,13 @@
     private async Task DeleteActivityAsync()
     {
         var result = await TripsState.RemoveActivityAsync(TripId, DestinationId, ActivityId);
-        if (result)
+        if (result.IsSuccess)
         {
             Navigation.NavigateTo(LinkHelper.TripLink(TripId));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_DeleteFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 

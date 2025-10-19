@@ -142,14 +142,15 @@
             slot
         );
 
-        var newId = await TripsState.AddAccommodationAsync(FormModel.TripId, FormModel.DestinationId, command);
-        if (newId.HasValue)
+
+        var result = await TripsState.AddAccommodationAsync(FormModel.TripId, FormModel.DestinationId, command);
+        if (result.IsSuccess)
         {
-            Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{DestinationId}/accommodations/{newId}/edit");
+            Navigation.NavigateTo($"/trips/{TripId}/travelsegments/{TravelSegmentId}/destinations/{DestinationId}/accommodations/{result.Value}/edit");
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 

@@ -147,14 +147,14 @@
             duration
         );
 
-        var newId = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
-        if (newId.HasValue)
+        var result = await TripsState.AddActivityAsync(FormModel.TripId, FormModel.DestinationId, command);
+        if (result.IsSuccess)
         {
-            Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, newId.Value));
+            Navigation.NavigateTo(LinkHelper.ActivityLinkEdit(TripId, TravelSegmentId, DestinationId, result.Value));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 

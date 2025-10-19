@@ -117,14 +117,14 @@
             slot
         );
 
-        var newId = await TripsState.AddDestinationAsync(FormModel.TripId, FormModel.TravelSegmentId, command);
-        if (newId.HasValue)
+        var result = await TripsState.AddDestinationAsync(FormModel.TripId, FormModel.TravelSegmentId, command);
+        if (result.IsSuccess)
         {
-            Navigation.NavigateTo(LinkHelper.DestinationLinkEdit(TripId, TravelSegmentId, newId.Value));
+            Navigation.NavigateTo(LinkHelper.DestinationLinkEdit(TripId, TravelSegmentId, result.Value));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+            LoadError = result.Error.ToFriendlyMessage();
         }
     }
 

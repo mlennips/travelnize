@@ -23,7 +23,7 @@
         {
             <MudItem xs="12">
                 <MudTextField @bind-Value="Model.Source"
-                              Label="@L["ResourceReference_SourceLabel"]"
+                              Label="@SourceLabel"
                               For="@(() => Model.Source)"
                               HelperText="@L["ResourceReference_UrlLabel"]"
                               Clearable />
@@ -89,7 +89,13 @@
     [Parameter] public ResourceKind? ForceKind { get; set; }
     [Parameter] public bool HideLabel { get; set; } = false;
     [Parameter] public string Label { get; set; } = default!;
+    [Parameter] public string SourceLabel { get; set; } = default!;
     [Parameter] public bool GutterTop { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        SourceLabel ??= L["ResourceReference_SourceLabel"];
+    }
 
     protected override void OnParametersSet()
     {

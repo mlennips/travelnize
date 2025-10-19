@@ -1,4 +1,5 @@
-﻿using LIT.Travelnize.Domain.Trips.Queries;
+﻿using LIT.Travelnize.Domain.Common;
+using LIT.Travelnize.Domain.Trips.Queries;
 using LIT.Travelnize.Domain.Trips.ValueObjects;
 using LIT.Travelnize.Interfaces;
 using LIT.Travelnize.Services.Api;
@@ -59,16 +60,7 @@ namespace LIT.Travelnize.States
         }
 
         private ListTripsResponse[]? _trips;
-        public ListTripsResponse[]? Trips
-        {
-            get => _trips;
-            private set
-            {
-                if (_trips == value) return;
-                _trips = value;
-                NotifyStateChanged();
-            }
-        }
+        public ListTripsResponse[]? Trips => _trips;
 
         public IEnumerable<ListTripsResponse> OngoingTrips =>
             _trips?.Where(t => t.Status == TripStatus.Ongoing).OrderBy(t => t.Slot.Start) ?? Enumerable.Empty<ListTripsResponse>();
@@ -95,7 +87,8 @@ namespace LIT.Travelnize.States
             _logger.LogDebug("Lade Trip-Liste für User {UserId} (force={Force})...", userId, force);
             try
             {
-                _trips = await _tripsApiClient.GetTripsAsync(userId);
+                var result = await _tripsApiClient.GetTripsAsync(userId);
+                _trips = result.Value;
                 _tripsDirty = false;
                 sw.Stop();
                 _logger.LogInformation("Trip-Liste geladen: {Count} Einträge für User {UserId} (in {Elapsed} ms)",
@@ -130,7 +123,8 @@ namespace LIT.Travelnize.States
             _logger.LogInformation("Lade Trip {TripId} (force={Force})...", tripId, force);
             try
             {
-                _selectedTrip = await _tripsApiClient.GetTripAsync(tripId);
+                var result = await _tripsApiClient.GetTripAsync(tripId);
+                _selectedTrip = result.Value;
                 _dirtyTripIds.Remove(tripId);
                 sw.Stop();
                 if (_selectedTrip is null)
@@ -161,18 +155,34 @@ namespace LIT.Travelnize.States
         #endregion
 
         #region Helper Mutations
-        private async Task<TResult?> ExecuteCreateAsync<TResult>(Func<Task<TResult?>> action, string entitySingular, bool markTripsDirty = false)
+        private async Task<TResult> ExecuteCreateAsync<TResult>(Func<Task<TResult>> action, string entitySingular, Guid? tripId) where TResult : Result
         {
             try
             {
-                var id = await action();
-                if (id is not null && markTripsDirty)
+                var result = await action();
+                if (result is null)
+                {
+                    return default!;
+                }
+                else if (result.IsFailure)
+                {
+                    _notificationService.Error("Errors_CreateFailed", entitySingular);
+                }
+                else if (result.IsSuccess)
                 {
                     _tripsDirty = true;
                     _logger.LogDebug("{entitySingular} erstellt und Trip-Liste als dirty markiert (Create)", entitySingular);
                     _notificationService.Success("Success_Created", entitySingular);
+
+                    if (tripId.HasValue)
+                    {
+                        _dirtyTripIds.Add(tripId.Value);
+                        if (_selectedTrip?.Id == tripId)
+                            await LoadTripAsync(tripId.Value, force: true);
+                    }
                 }
-                return id;
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -180,46 +190,42 @@ namespace LIT.Travelnize.States
                 _logger.LogError(ex, "Fehler bei Create-Operation für {entitySingular}", entitySingular);
                 _notificationService.Error("Errors_Generic", entitySingular);
                 NotifyStateChanged();
-                return default;
+                return default!;
             }
         }
 
-        private async Task<bool> ExecuteMutationAsync(Guid tripId, Func<Task<bool>> action, string entitySingular,
-            bool markTripsDirty = false, bool reloadTrip = true, string? successKey = null, string? errorKey = null)
+        private async Task<Result<bool>> ExecuteMutationAsync(Func<Task<Result<bool>>> action, string entitySingular, Guid tripId)
         {
             try
             {
-                var ok = await action();
-                if (ok)
+                var result = await action();
+                if (result.IsSuccess)
                 {
-                    if (markTripsDirty)
-                    {
-                        _tripsDirty = true;
-                        _logger.LogDebug("Trip-Liste als dirty markiert (Mutation)");
-                    }
+                    _tripsDirty = true;
+                    _logger.LogDebug("Trip-Liste als dirty markiert (Mutation)");
                     _dirtyTripIds.Add(tripId);
                     _logger.LogDebug("Trip {TripId} als dirty markiert", tripId);
 
-                    if (reloadTrip && _selectedTrip?.Id == tripId)
+                    if (_selectedTrip?.Id == tripId)
                     {
                         _logger.LogDebug("Trip {TripId} nach Mutation neu laden...", tripId);
                         await LoadTripAsync(tripId, force: true);
                     }
-                    _notificationService.Success(successKey ?? "Success_Updated", entitySingular);
+                    _notificationService.Success("Success_Updated", entitySingular);
                 }
                 else
                 {
-                    _notificationService.Error(errorKey ?? "Errors_UpdateFailed", entitySingular);
+                    _notificationService.Error("Errors_UpdateFailed", entitySingular);
                 }
-                return ok;
+                return result;
             }
             catch (Exception ex)
             {
                 LastError = ex.Message;
-                _logger.LogError(ex, "Fehler bei Mutation für Trip {tripId} ({entitySingular})", tripId, entitySingular);
+                _logger.LogError(ex, "Fehler bei Änderung für Trip {tripId} ({entitySingular})", tripId, entitySingular);
                 _notificationService.Error("Errors_Generic", entitySingular);
                 NotifyStateChanged();
-                return false;
+                return new ErrorDetail("Exception", ex.Message);
             }
         }
         #endregion

@@ -7,9 +7,9 @@
 <EditPageLayout Mode="PageLayoutMode.Create" TModel="TransportationCreateFormModel"
                 Title="@L["Transportation_CreateTitle"]"
                 Subtitle="@L["Transportation_CreateSubtitle"]"
-                Model="FormModel"
-                IsLoading="IsLoading"
-                LoadError="LoadError"
+                Model="@FormModel"
+                IsLoading="@IsLoading"
+                LoadError="@ErrorMessage"
                 CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
@@ -45,10 +45,10 @@
                               Lines="1" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" ShowTime />
+                <PlanningSlotEdit Model="FormModel!.TraveltimeModel" ShowTime StartLabel="@L["Transportation_Departure"]" EndLabel="@L["Transportation_Arrival"]" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" Label="@L["Transportation_RouteWebsite"]" />
+                <ResourceReferenceEdit Model="FormModel!.RouteWebsiteModel" ForceKind="@ResourceKind.Website" SourceLabel="@L["Transportation_RouteWebsite"]" HideLabel />
             </MudItem>
             <MudItem xs="12">
                 <MudPaper Class="pa-4">
@@ -69,7 +69,7 @@
 
     internal TransportationCreateFormModel? FormModel;
     internal bool IsLoading;
-    internal string? LoadError;
+    internal string? ErrorMessage;
 
     protected override void OnInitialized()
     {
@@ -93,11 +93,11 @@
     private async Task LoadTripAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         IsLoading = false;
         StateHasChanged();
@@ -130,7 +130,7 @@
         var traveltime = FormModel.TraveltimeModel.ToPlanningSlot();
         var routeWebsite = !string.IsNullOrWhiteSpace(FormModel.RouteWebsiteModel.Source)
             ? FormModel.RouteWebsiteModel.ToResourceReference()
-            : ResourceReference.Empty; // Fix: Immer ein gültiges Objekt übergeben
+            : ResourceReference.Empty;
 
         var command = new AddTransportationCommand(
             FormModel.TripId,
@@ -142,18 +142,17 @@
             traveltime,
             routeWebsite,
             new TransportationType(FormModel.Type),
-            null // TargetReference kann später ergänzt werden
+            null
         );
 
-        var newId = await TripsState.AddTransportationAsync(FormModel.TripId, command);
-        if (newId.HasValue)
+        var result = await TripsState.AddTransportationAsync(FormModel.TripId, command);
+        if (result.IsSuccess)
         {
-            // Fix: Fallback auf TripLink, da TransportationLinkEdit nicht existiert
             Navigation.NavigateTo(LinkHelper.TripLink(TripId, "transport"));
         }
         else
         {
-            LoadError = TripsState.LastError ?? L["Errors_CreateFailed"];
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -204,4 +203,4 @@
             return [];
         }
     }
-}
+}}

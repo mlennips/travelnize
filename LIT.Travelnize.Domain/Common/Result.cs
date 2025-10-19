@@ -106,5 +106,7 @@
             }
             return this;
         }
+
+        public string ToFriendlyMessage() => Description;
     }
 }

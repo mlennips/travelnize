@@ -13,6 +13,7 @@
         // Transportation
         public static readonly ErrorDetail TransportationNotFound = new("Transportation.NotFound", "Transport konnte nicht gefunden werden.");
         public static readonly ErrorDetail InvalidTransportationDates = new("Transportation.InvalidDates", "Departure date must be before arrival date.");
+        public static readonly ErrorDetail TransportationDatesMayNotBeEmpty = new("Transportation.DatesEmpty", "Departure and arrival date may not be empty.");
 
         // TravelSegment
         public static readonly ErrorDetail TravelSegmentNotFound = new("TravelSegment.NotFound", "Travel segment not found.");
