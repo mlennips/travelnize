@@ -2,7 +2,7 @@
 
 @if (Breadcrumbs.Count > 1)
 {
-    <MudPaper Class="px-4" Elevation="0">
+    <MudPaper Class="px-4 bg-transparent" Style="" Elevation="0">
         <MudBreadcrumbs Items="@Breadcrumbs"
                         Class="text-light small flex-nowrap"
                         Style="font-size:0.75rem" />
@@ -10,7 +10,7 @@
 }
 else
 {
-    <MudPaper Class="px-4" Elevation="0" Style="height:28px"></MudPaper>
+    <MudPaper Class="px-4 invisible" Elevation="0" Style="height:28px"></MudPaper>
 }
 
 @code {

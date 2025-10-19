@@ -127,8 +127,7 @@ code {
     color: var(--mud-palette-tertiary); /* greift MudBlazor Palette (Tertiary) */
 
     display: inline-block;
-    transform: translateY(0px);
-    
+    transform: translateY(0px);    
 }
 
 .dark-theme .brand-accent {

@@ -13,7 +13,7 @@
         @foreach (var travelSegment in Trip.TravelSegments)
         {
             <MudItem xs="12" id="@travelSegment.Id">
-                <MudPaper Elevation="25" Class="bg-soft-travelsegment pa-4 my-0 d-flex align-items-center bg">
+                <MudPaper Elevation="25" Class="card-travelsegment pa-4 my-0 d-flex align-items-center bg">
                     <MudIcon Icon="@IconHelper.TravelSegmentOutlined" Class="me-2 text-travelsegment" />
                     <MudLink Typo="Typo.body2"
                              Class="text-travelsegment"
@@ -25,7 +25,7 @@
             </MudItem>
 
             <MudItem xs="12" sm="12" lg="4" xl="4">
-                <MudPaper Elevation="0" Square Class="border-destination-bottom">
+                <MudPaper Elevation="0" Square Class="border-destination-bottom bg-transparent">
                     <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                         <MudText Typo="Typo.subtitle1" Class="mb-0 text-destination fw-bold">@L["TripOverview_Destinations"]</MudText>
                         <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/create")" Class="text-activity">
@@ -36,7 +36,7 @@
             </MudItem>
             <MudHidden Breakpoint="Breakpoint.MdAndDown">
                 <MudItem xs="12" sm="6" lg="4" xl="4">
-                    <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
+                    <MudPaper Elevation="0" Square Class="border-accommodation-bottom bg-transparent">
                         <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                             <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">@L["TripOverview_Accommodations"]</MudText>
                             <MudLink Class="text-accommodation"
@@ -47,7 +47,7 @@
                     </MudPaper>
                 </MudItem>
                 <MudItem xs="12" sm="6" lg="4" xl="4">
-                    <MudPaper Elevation="0" Square Class="border-activity-bottom">
+                    <MudPaper Elevation="0" Square Class="border-activity-bottom bg-transparent">
                         <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                             <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">@L["TripOverview_Activities"]</MudText>
                             <MudLink Class="text-activity"
@@ -78,15 +78,15 @@
                             </CardHeaderAvatar>
                             <CardHeaderContent>
                                 <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/edit")">
-                                    <MudText Typo="Typo.body1">
+                                    <MudText Typo="Typo.body1" Class="text-light-emphasis">
                                         <PlanningSlotDisplay Slot="@destination.Slot" ShowDays></PlanningSlotDisplay>
                                     </MudText>
-                                    <MudText Typo="Typo.body2">@destination.Name</MudText>
+                                    <MudText Typo="Typo.body2" Class="text-light-emphasis">@destination.Name</MudText>
                                 </MudLink>
                             </CardHeaderContent>
                         </MudCardHeader>
                         <MudCardContent>
-                            <MudText Typo="Typo.body2">@destination.Description</MudText>
+                            <MudText Typo="Typo.body2" Class="text-light-emphasis">@destination.Description</MudText>
                         </MudCardContent>
                         @if (destination.Location.Coordinates.Latitude != 0 && destination.Location.Coordinates.Longitude != 0)
                         {
@@ -95,7 +95,8 @@
                                            Longitude="@(destination.Location.Coordinates.Longitude)"
                                            Zoom="6"
                                            PixelHeight="120"
-                                           MarkerColor="orange" />
+                                           MarkerColor="orange"
+                                           Class="opacity-75"/>
                             </MudCardContent>
                         }
                     </MudCard>
@@ -104,7 +105,7 @@
                 <MudItem xs="12" sm="6" lg="4" xl="4">
                     <MudPaper Elevation="0" Class="mud-width-full">
                         <MudHidden Breakpoint="Breakpoint.LgAndUp">
-                            <MudPaper Elevation="0" Square Class="border-accommodation-bottom">
+                            <MudPaper Elevation="0" Square Class="border-accommodation-bottom bg-transparent">
                                 <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                                     <MudText Typo="Typo.subtitle1" Class="mb-0 text-accommodation fw-bold">@L["TripOverview_Accommodations"]</MudText>
                                     <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/accommodations/create")" Class="text-accommodation">
@@ -138,7 +139,7 @@
                 <MudItem xs="12" sm="6" lg="4" xl="4">
                     <MudPaper Elevation="0" Class="mud-width-full">
                         <MudHidden Breakpoint="Breakpoint.LgAndUp">
-                            <MudPaper Elevation="0" Square Class="border-activity-bottom">
+                            <MudPaper Elevation="0" Square Class="border-activity-bottom bg-transparent">
                                 <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween" Class="ps-0 pb-0">
                                     <MudText Typo="Typo.subtitle1" Class="mb-0 text-activity fw-bold">@L["TripOverview_Activities"]</MudText>
                                     <MudLink Href="@($"/trips/{TripId}/travelsegments/{travelSegment.Id}/destinations/{destination.Id}/activities/create")" Class="text-activity">

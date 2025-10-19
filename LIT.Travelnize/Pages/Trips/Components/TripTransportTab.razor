@@ -15,7 +15,7 @@ else
             .OrderBy(g => g.Key))
         {
             <MudPaper Elevation="0">
-                <MudText Typo="Typo.caption" Class="mb-2 opacity-25 w-100 text-center" HtmlTag="div" Align="Align.Center" GutterBottom>
+                <MudText Typo="Typo.caption" Class="mb-2 opacity-25 w-100 text-center bg-transparent" HtmlTag="div" Align="Align.Center" GutterBottom>
                     @group.Key!.Value.ToLongDateString()
                 </MudText>
                 <MudStack Spacing="2">

@@ -3,12 +3,7 @@
 @using LIT.Travelnize.Helpers
 @inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
 
-<MudPaper Class="bg-light text-bg-light pa-4" Elevation="0" Outlined="false" Style="position: relative;">
-    <MudText Style="position: absolute; top: -17px; right: 10px;"
-             Color="Color.Dark"
-             Class="text-end opacity-25 fw-bolder">
-        <PlanningSlotDisplay Slot="@Trip?.Slot" Typo="Typo.h6"></PlanningSlotDisplay>
-    </MudText>
+<MudPaper Class="pa-4 card-trip bg-soft-trip" Elevation="0" Outlined="true" Style="position: relative;">
     <MudText Color="Color.Secondary" Class="opacity-75">
         @Trip?.Description
         <MudLink Href="@LinkHelper.TripLinkEdit(TripId)" Typo="Typo.caption">

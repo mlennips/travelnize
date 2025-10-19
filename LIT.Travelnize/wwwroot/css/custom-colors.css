@@ -2,7 +2,7 @@
     /* Neue Basisfarben */
     --tn-trip: #7fd7be;           /* Frisches Mintgrün (Reiseplanung: inspirierend, modern) */
     --tn-travelsegment: #6a8cff;  /* Sanftes Indigo-Blau (Segment: strukturiert, vertrauensvoll) */
-    --tn-destination: #ffb86b;    /* Helles Apricot-Orange (Destination: einladend, warm) */
+    --tn-destination: #ff9a7b;    /* Warmes, rötliches Orange (Destination: einladend, warm) */
     --tn-accommodation: #ffe066;  /* Sonniges Gelb (Unterkunft: freundlich, optimistisch) */
     --tn-transportation: #5ad6ff; /* Klarer Himmelblau (Transport: dynamisch, offen) */
     --tn-activity: #ff6fae;       /* Frisches Pink (Aktivität: energiegeladen, spaßig) */
@@ -23,6 +23,33 @@
     --tn-soft-strength: 26%;
     --tn-border-strength: 54%;
     --tn-card-bg-strength: 16%;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Basisfarben für Dark Mode */
+        --tn-trip: #3a6f5a; /* Gedämpftes Mintgrün */
+        --tn-travelsegment: #31436e; /* Dunkles Indigo-Blau */
+        --tn-destination: #b97a4a; /* Warmes, gedecktes Orange */
+        --tn-accommodation: #bfae4e; /* Gedämpftes Goldgelb */
+        --tn-transportation: #357a8a; /* Gedämpftes Himmelblau */
+        --tn-activity: #98335d; /* Dunkles Pink gemäß Wunsch */
+        /* Starke Varianten für Dark Mode */
+        --tn-trip-strong: #23503a;
+        --tn-travelsegment-strong: #1a2947;
+        --tn-destination-strong: #a65c1a;
+        --tn-accommodation-strong: #8c7a1a;
+        --tn-transportation-strong: #185060;
+        --tn-activity-strong: #98335d; /* Ebenfalls angepasst */
+        /* Neutral für Dark Mode */
+        --tn-text-on-dark: #f5f5f5;
+        --tn-text-on-light: #222222;
+        /* Intensitäten bleiben gleich */
+        --tn-soft-strength: 26%;
+        --tn-border-strength: 54%;
+        --tn-card-bg-strength: 16%;
+    }
 }
 
 /* Pastell Vollflächen */
@@ -129,6 +156,26 @@
 
 .text-activity {
     color: var(--tn-activity-strong) !important;
+}
+
+/* Invertierte Textfarben für helle/dunkle Hintergründe */
+.text-trip-inverted {
+    color: var(--tn-text-on-dark) !important;
+}
+.text-travelsegment-inverted {
+    color: var(--tn-text-on-dark) !important;
+}
+.text-destination-inverted {
+    color: var(--tn-text-on-dark) !important;
+}
+.text-accommodation-inverted {
+    color: var(--tn-text-on-dark) !important;
+}
+.text-transportation-inverted {
+    color: var(--tn-text-on-dark) !important;
+}
+.text-activity-inverted {
+    color: var(--tn-text-on-dark) !important;
 }
 
 /* Akzent-Hintergrund + Weiß */
