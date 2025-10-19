@@ -9,7 +9,7 @@
                 Subtitle="@L["TravelSegment_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
@@ -40,7 +40,7 @@
 
     internal TravelSegmentCreateFormModel? FormModel;
     internal bool IsLoading;
-    internal string? LoadError;
+    internal string? ErrorMessage;
 
     protected override void OnInitialized()
     {
@@ -64,11 +64,11 @@
     private async Task LoadTripAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         IsLoading = false;
         StateHasChanged();
@@ -112,7 +112,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 

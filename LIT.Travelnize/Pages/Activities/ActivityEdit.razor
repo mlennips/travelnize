@@ -13,7 +13,7 @@
                 Subtitle="@L["Activity_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit"
                 OnDeleteConfirmed="DeleteActivityAsync">
@@ -81,7 +81,7 @@
 
     private ActivityEditFormModel? FormModel;
     private bool IsLoading;
-    private string? LoadError;
+    private string? ErrorMessage;
 
     private TravelSegmentDto? _segment;
     private DestinationDto? _destination;
@@ -109,11 +109,11 @@
     private async Task LoadTripAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         IsLoading = false;
         StateHasChanged();
@@ -126,21 +126,21 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["Errors_TravelSegmentNotFound"];
+            ErrorMessage = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = L["Errors_DestinationNotFound"];
+            ErrorMessage = L["Errors_DestinationNotFound"];
             return;
         }
 
         _activity = _destination.Activities.FirstOrDefault(a => a.Id == ActivityId);
         if (_activity == null)
         {
-            LoadError = L["Errors_ActivityNotFound"];
+            ErrorMessage = L["Errors_ActivityNotFound"];
             return;
         }
 
@@ -192,7 +192,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -223,7 +223,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 

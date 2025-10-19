@@ -39,10 +39,10 @@
                                 <ValidationSummary />
                             </MudPaper>
                         }
-                        @if (!string.IsNullOrWhiteSpace(LoadError))
+                        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
                         {
                             <MudAlert Severity="Severity.Warning" Elevation="0" Variant="Variant.Filled" Class="mt-4">
-                                @LoadError
+                                @ErrorMessage
                             </MudAlert>
                         }
 
@@ -78,10 +78,10 @@
                     </MudPaper>
                 </EditForm>
             }
-            else if (!string.IsNullOrWhiteSpace(LoadError))
+            else if (!string.IsNullOrWhiteSpace(ErrorMessage))
             {
                 <MudAlert Severity="Severity.Error" Elevation="0" Variant="Variant.Filled">
-                    @LoadError
+                    @ErrorMessage
                 </MudAlert>
             }
         </MudItem>
@@ -101,7 +101,7 @@
     // Data / State
     [Parameter] public TModel? Model { get; set; }
     [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public string? LoadError { get; set; }
+    [Parameter] public string? ErrorMessage { get; set; }
     [Parameter] public bool IsSaving { get; set; }
 
     // Manuelle Steuerung (nur relevant wenn AutoValidate = false)

@@ -9,7 +9,7 @@
                 Subtitle="@L["Accommodation_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 CancelHref="@($"/trips/{TripId}")"
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
@@ -36,7 +36,9 @@
             </MudItem>
 
             <MudItem xs="12">
-                <PlanningSlotEdit Model="FormModel!.CheckInOutModel" Label="@L["Accommodation_CheckInOut"]" GutterTop />
+                <PlanningSlotEdit Model="FormModel!.CheckInOutModel"
+                                  StartLabel="@L["Accommodation_CheckIn"]"
+                                  EndLabel="@L["Accommodation_CheckOut"]" />
             </MudItem>
             <MudItem xs="12">
                 <MudPaper Class="pa-4">
@@ -55,7 +57,7 @@
     internal AccommodationCreateFormModel? FormModel;
     internal AddressEdit.AddressEditModel AddressModel { get; set; } = new();
     internal bool IsLoading;
-    internal string? LoadError;
+    internal string? ErrorMessage;
 
     private TravelSegmentDto? _segment;
     private DestinationDto? _destination;
@@ -82,11 +84,11 @@
     private async Task LoadTripAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         IsLoading = false;
         StateHasChanged();
@@ -99,14 +101,14 @@
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["Errors_TravelSegmentNotFound"];
+            ErrorMessage = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
         _destination = _segment.Destinations.FirstOrDefault(d => d.Id == DestinationId);
         if (_destination == null)
         {
-            LoadError = L["Errors_DestinationNotFound"];
+            ErrorMessage = L["Errors_DestinationNotFound"];
             return;
         }
 
@@ -150,7 +152,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 

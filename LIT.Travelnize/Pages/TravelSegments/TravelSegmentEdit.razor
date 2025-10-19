@@ -9,7 +9,7 @@
                 Subtitle="@L["TravelSegment_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit"
                 OnDeleteConfirmed="DeleteTravelSegmentAsync">
@@ -42,11 +42,9 @@
 
     internal TravelSegmentEditFormModel? FormModel;
     internal bool IsLoading;
-    internal string? LoadError;
+    internal string? ErrorMessage;
 
     private TravelSegmentDto? _segment;
-    private DateTime? _tripSlotStart;
-    private DateTime? _tripSlotEnd;
 
     protected override void OnInitialized()
     {
@@ -70,11 +68,11 @@
     private async Task LoadTripAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         IsLoading = false;
         StateHasChanged();
@@ -84,13 +82,10 @@
     {
         if (TripsState.SelectedTrip == null) return;
 
-        _tripSlotStart = TripsState.SelectedTrip.Slot.Start;
-        _tripSlotEnd = TripsState.SelectedTrip.Slot.End;
-
         _segment = TripsState.SelectedTrip.TravelSegments.FirstOrDefault(s => s.Id == TravelSegmentId);
         if (_segment == null)
         {
-            LoadError = L["Errors_TravelSegmentNotFound"];
+            ErrorMessage = L["Errors_TravelSegmentNotFound"];
             return;
         }
 
@@ -123,7 +118,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -148,7 +143,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 

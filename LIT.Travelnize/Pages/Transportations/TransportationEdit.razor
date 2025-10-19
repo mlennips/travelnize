@@ -9,7 +9,7 @@
                 Subtitle="@L["Transportation_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 CancelHref="@LinkHelper.TripLink(TripId)"
                 OnValidSubmit="HandleValidSubmit"
                 OnDeleteConfirmed="DeleteTransportationAsync">
@@ -71,7 +71,7 @@
 
     private TransportationEditFormModel? FormModel;
     private bool IsLoading;
-    private string? LoadError;
+    private string? ErrorMessage;
 
     private TransportationDto? _transportation;
 
@@ -97,11 +97,11 @@
     private async Task LoadTripAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         IsLoading = false;
         StateHasChanged();
@@ -114,7 +114,7 @@
         _transportation = TripsState.SelectedTrip.Transportations.FirstOrDefault(t => t.Id == TransportationId);
         if (_transportation == null)
         {
-            LoadError = L["Errors_TransportationNotFound"];
+            ErrorMessage = L["Errors_TransportationNotFound"];
             return;
         }
 
@@ -163,7 +163,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -189,7 +189,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 

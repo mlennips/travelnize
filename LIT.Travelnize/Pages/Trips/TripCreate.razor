@@ -10,7 +10,7 @@
                 Subtitle="@L["Trip_CreateSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 CancelHref="/trips"
                 OnValidSubmit="HandleValidSubmit">
     <FormContent>
@@ -36,7 +36,7 @@
 @code {
     internal TripCreateFormModel? FormModel = new();
     internal bool IsLoading;
-    internal string? LoadError;
+    internal string? ErrorMessage;
 
     private async Task HandleValidSubmit(EditContext _)
     {
@@ -60,7 +60,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 

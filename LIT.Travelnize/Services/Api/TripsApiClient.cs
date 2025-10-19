@@ -102,7 +102,7 @@ namespace LIT.Travelnize.Services.Api
             if (response.IsSuccessStatusCode)
             {
                 if (typeof(T) == typeof(bool))
-                    return (Result<T>)(object)true;
+                    return (Result.Success(true) as Result<T>)!;
 
                 var value = await response.Content.ReadFromJsonAsync<T>();
                 if (value is not null)

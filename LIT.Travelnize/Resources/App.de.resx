@@ -555,6 +555,12 @@
   <data name="Accommodation_AddressLabel" xml:space="preserve">
     <value>Adresse</value>
   </data>
+  <data name="Accommodation_CheckIn" xml:space="preserve">
+    <value>Check in</value>
+  </data>
+  <data name="Accommodation_CheckOut" xml:space="preserve">
+    <value>Check out</value>
+  </data>
   <data name="Activity_CreateTitle" xml:space="preserve">
     <value>Aktivität hinzufügen</value>
   </data>

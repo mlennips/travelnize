@@ -13,7 +13,7 @@
                 Subtitle="@L["Trip_EditSubtitle"]"
                 Model="FormModel"
                 IsLoading="IsLoading"
-                LoadError="LoadError"
+                ErrorMessage="@ErrorMessage"
                 AutoValidate="true"
                 CancelHref="@($"/trips/{TripId}")"
                 OnValidSubmit="HandleValidSubmit"
@@ -44,7 +44,7 @@
 
     private TripEditFormModel? FormModel;
     private bool IsLoading;
-    private string? LoadError;
+    private string? ErrorMessage;
 
     protected override void OnInitialized()
     {
@@ -67,12 +67,12 @@
     private async Task LoadAsync()
     {
         IsLoading = true;
-        LoadError = null;
+        ErrorMessage = null;
         await TripsState.LoadTripAsync(TripId);
 
         if (TripsState.SelectedTrip == null)
         {
-            LoadError = L["Errors_TripNotFound"];
+            ErrorMessage = L["Errors_TripNotFound"];
         }
         else
         {
@@ -84,7 +84,7 @@
 
     private void InitializeForm(GetTripResponse trip)
     {
-        LoadError = null;
+        ErrorMessage = null;
 
         FormModel = new TripEditFormModel
         {
@@ -111,7 +111,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 
@@ -124,7 +124,7 @@
         }
         else
         {
-            LoadError = result.Error.ToFriendlyMessage();
+            ErrorMessage = result.Error.ToFriendlyMessage();
         }
     }
 
