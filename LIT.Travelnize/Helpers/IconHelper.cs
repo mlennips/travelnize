@@ -1,5 +1,8 @@
 ﻿
 
+using LIT.Travelnize.Domain.Trips.ValueObjects;
+using MudBlazor;
+
 namespace LIT.Travelnize.Helpers
 {
     public class IconHelper
@@ -39,5 +42,21 @@ namespace LIT.Travelnize.Helpers
         public static string TransportationRounded => MudBlazor.Icons.Material.Rounded.DirectionsTransit;
         public static string TransportationSharp => MudBlazor.Icons.Material.Sharp.DirectionsTransit;
         public static string TransportationTwoTone => MudBlazor.Icons.Material.TwoTone.DirectionsTransit;
+
+        public static string GetIconForTransportationType(TransportationType type)
+        {
+            var typeName = type.Value;
+            return typeName switch
+            {
+                "Flight" => Icons.Material.Filled.Flight,
+                "Train" => Icons.Material.Filled.Train,
+                "Bus" => Icons.Material.Filled.DirectionsBus,
+                "Car" => Icons.Material.Filled.DirectionsCar,
+                "Boat" => Icons.Material.Filled.DirectionsBoat,
+                "Bicycle" => Icons.Material.Filled.DirectionsBike,
+                "Walk" => Icons.Material.Filled.DirectionsWalk,
+                _ => Icons.Material.Filled.DirectionsTransit
+            };
+        }
     }
 }

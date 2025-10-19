@@ -1,21 +1,24 @@
 :root {
-    /* Basis (dezente Flächen) */
-    --tn-trip: #9edff1; /* Pastell aus Blue Light (Reiseplanung ruhig, luftig) */
-    --tn-travelsegment: #96bce9; /* Aufgehellter Brutal Blue (Struktur) */
-    --tn-destination: #ffb29d; /* Warmes Korall-Pastell (Destination) */
-    --tn-accommodation: #fff7b3; /* Sanfteres Crown Yellow (Unterkunft = warm) */
-    --tn-transportation: #b3f2fb; /* Leichte Cyan-Fläche (Bewegung, Dynamik) */
-    --tn-activity: #f9a8c1; /* Pastell aus Sister Sister (Aktivität, lebendig) */
-    /* Starke Varianten (Akzente, Badges, text-bg-*) */
-    --tn-trip-strong: #007fb0; /* Mischung Blue Light + Brutal Blue (solide, fokussiert) */
-    --tn-travelsegment-strong: #0049B7; /* Brutal Blue unverändert */
-    --tn-destination-strong: #cc3a24; /* Satter Korall-Rotton (AA-Kontrast zu Weiß) */
-    --tn-accommodation-strong: #d6b700; /* Abgedunkeltes Gold statt zu helles #fff685 für Kontrast */
-    --tn-transportation-strong: #00DDFF; /* Blue Light unverändert (Bewegung) */
-    --tn-activity-strong: #f75990; /* Sister Sister unverändert (Energie) */
+    /* Neue Basisfarben */
+    --tn-trip: #7fd7be;           /* Frisches Mintgrün (Reiseplanung: inspirierend, modern) */
+    --tn-travelsegment: #6a8cff;  /* Sanftes Indigo-Blau (Segment: strukturiert, vertrauensvoll) */
+    --tn-destination: #ffb86b;    /* Helles Apricot-Orange (Destination: einladend, warm) */
+    --tn-accommodation: #ffe066;  /* Sonniges Gelb (Unterkunft: freundlich, optimistisch) */
+    --tn-transportation: #5ad6ff; /* Klarer Himmelblau (Transport: dynamisch, offen) */
+    --tn-activity: #ff6fae;       /* Frisches Pink (Aktivität: energiegeladen, spaßig) */
+
+    /* Starke Varianten */
+    --tn-trip-strong: #2e8b6d;           /* Sattes Mintgrün */
+    --tn-travelsegment-strong: #2a4d9b;  /* Tiefes Indigo */
+    --tn-destination-strong: #ff7f2a;    /* Kräftiges Apricot */
+    --tn-accommodation-strong: #e6b800;  /* Goldgelb */
+    --tn-transportation-strong: #0099cc; /* Intensives Blau */
+    --tn-activity-strong: #d72660;       /* Kräftiges Pink */
+
     /* Neutral */
     --tn-text-on-dark: #ffffff;
-    --tn-text-on-light: #1a1a1a;
+    --tn-text-on-light: #222222;
+
     /* Ableitungs-Intensitäten */
     --tn-soft-strength: 26%;
     --tn-border-strength: 54%;

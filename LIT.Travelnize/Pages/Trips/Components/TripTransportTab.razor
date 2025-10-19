@@ -30,7 +30,7 @@ else
                                                 <MudText Typo="Typo.subtitle1" Class="fw-bold">@transportation.Name</MudText>
                                              </MudLink>
                                             
-                                            <MudChip T="string" Color="Color.Info" Size="Size.Small" Icon="@GetIconForType(transportation.Type)">
+                                            <MudChip T="string" Color="Color.Info" Size="Size.Small" Icon="@IconHelper.GetIconForTransportationType(transportation.Type)">
                                                 @((@transportation.Type.Value + " " + @transportation.Identifier).Trim())
                                             </MudChip>
                                             @if (!string.IsNullOrWhiteSpace(transportation.RouteWebsite?.Source))
@@ -94,7 +94,7 @@ else
                                         </MudTimelineItem>
                                         <MudTimelineItem Size="Size.Large" Elevation="0" TimelineAlign="TimelineAlign.Default">
                                             <ItemDot>
-                                                <MudIcon Size="Size.Medium" Icon="@GetIconForType(transportation.Type)" />
+                                                <MudIcon Size="Size.Medium" Icon="@IconHelper.GetIconForTransportationType(transportation.Type)" />
                                             </ItemDot>
                                             <ItemContent>
                                                 @{
@@ -154,22 +154,6 @@ else
 
 @code {
     [Parameter] public GetTripResponse? Trip { get; set; }
-
-    private string GetIconForType(TransportationType type)
-    {
-        var typeName = type.Value;
-        return typeName switch
-        {
-            "Flight" => Icons.Material.Filled.Flight,
-            "Train" => Icons.Material.Filled.Train,
-            "Bus" => Icons.Material.Filled.DirectionsBus,
-            "Car" => Icons.Material.Filled.DirectionsCar,
-            "Boat" => Icons.Material.Filled.DirectionsBoat,
-            "Bicycle" => Icons.Material.Filled.DirectionsBike,
-            "Walk" => Icons.Material.Filled.DirectionsWalk,
-            _ => Icons.Material.Filled.DirectionsTransit
-        };
-    }
 
     private DestinationDto? GetTargetDestination(TransportationDto transportation)
     {
