@@ -20,16 +20,8 @@
     }
   ],
   "description": "Plane und verwalte deine Reisen mit Travelnize.",
-  "lang": "de-DE",
   "scope": "./",
   "categories": ["travel", "productivity"],
-  "screenshots": [
-    {
-      "src": "screenshot1.png",
-      "type": "image/png",
-      "sizes": "540x720"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Meine Reisen",
